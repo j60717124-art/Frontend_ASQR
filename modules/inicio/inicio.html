@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Inicio · Sistema de Asistencia QR</title>
+  <link rel="stylesheet" href="/shared/css/colors.css">
+  <link rel="stylesheet" href="/shared/css/menu.css">
+  <link rel="stylesheet" href="inicio.css">
+</head>
+<body>
+  <main class="dashboard">
+    <!--  ENCABEZADO  -->
+    <header class="dash-header">
+      <div class="dash-header__text">
+        <span class="dash-eyebrow" id="fechaHoy">Cargando fecha…</span>
+        <h1 class="dash-title">
+          Hola, <span class="dash-title__accent">Administrador</span> 👋
+        </h1>
+        <p class="dash-subtitle">
+          Aquí tienes el resumen de asistencia del día en tiempo real.
+        </p>
+      </div>
+
+      <div class="dash-header__actions">
+        <button class="btn btn--ghost" type="button">
+          <span>📅</span> Últimos 7 días
+        </button>
+        <button class="btn btn--primary" type="button">
+          <span>📷</span> Escanear QR
+        </button>
+      </div>
+    </header>
+
+    <!-- TARJETAS KPI -->
+    <section class="kpi-grid">
+
+      <article class="kpi-card">
+        <div class="kpi-card__icon kpi-card__icon--success">✓</div>
+        <div class="kpi-card__body">
+          <span class="kpi-card__label">Presentes hoy</span>
+          <strong class="kpi-card__value">412</strong>
+          <span class="kpi-card__delta kpi-card__delta--up">▲ 4.2% vs ayer</span>
+        </div>
+      </article>
+
+      <article class="kpi-card">
+        <div class="kpi-card__icon kpi-card__icon--danger">✕</div>
+        <div class="kpi-card__body">
+          <span class="kpi-card__label">Ausentes</span>
+          <strong class="kpi-card__value">38</strong>
+          <span class="kpi-card__delta kpi-card__delta--down">▼ 1.1% vs ayer</span>
+        </div>
+      </article>
+
+      <article class="kpi-card">
+        <div class="kpi-card__icon kpi-card__icon--accent">⏱</div>
+        <div class="kpi-card__body">
+          <span class="kpi-card__label">Tardanzas</span>
+          <strong class="kpi-card__value">17</strong>
+          <span class="kpi-card__delta">Sin cambios</span>
+        </div>
+      </article>
+
+      <article class="kpi-card">
+        <div class="kpi-card__icon kpi-card__icon--brand">%</div>
+        <div class="kpi-card__body">
+          <span class="kpi-card__label">Asistencia global</span>
+          <strong class="kpi-card__value">91.5%</strong>
+          <span class="kpi-card__delta kpi-card__delta--up">▲ 2.8% esta semana</span>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- GRID PRINCIPAL -->
+    <section class="dash-grid">
+
+      <!-- Gráfico -->
+      <article class="panel panel--chart">
+        <header class="panel__head">
+          <div>
+            <h2 class="panel__title">Asistencia semanal</h2>
+            <p class="panel__subtitle">Porcentaje de presentes por día</p>
+          </div>
+          <div class="panel__legend">
+            <span class="legend-dot legend-dot--accent"></span> Presentes
+            <span class="legend-dot legend-dot--success"></span> Meta 95%
+          </div>
+        </header>
+
+        <div class="chart" aria-hidden="true">
+          <div class="chart__bars">
+            <div class="bar" style="--h: 82%"><span>Lun</span></div>
+            <div class="bar" style="--h: 88%"><span>Mar</span></div>
+            <div class="bar" style="--h: 76%"><span>Mié</span></div>
+            <div class="bar" style="--h: 92%"><span>Jue</span></div>
+            <div class="bar bar--today" style="--h: 91%"><span>Vie</span></div>
+            <div class="bar" style="--h: 60%"><span>Sáb</span></div>
+            <div class="bar" style="--h: 40%"><span>Dom</span></div>
+          </div>
+          <div class="chart__target" style="--target: 95%">
+            <span>Meta 95%</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Accesos rápidos -->
+      <article class="panel panel--quick">
+        <header class="panel__head">
+          <h2 class="panel__title">Accesos rápidos</h2>
+        </header>
+
+        <div class="quick-grid">
+          <a href="qr-estudiante.html" class="quick-item">
+            <span class="quick-item__icon">🎫</span>
+            <span class="quick-item__label">Registrar entrada</span>
+          </a>
+          <a href="asistencia-docente.html" class="quick-item">
+            <span class="quick-item__icon">👩‍🏫</span>
+            <span class="quick-item__label">Asistencia docente</span>
+          </a>
+          <a href="estudiantes.html" class="quick-item">
+            <span class="quick-item__icon">🎓</span>
+            <span class="quick-item__label">Estudiantes</span>
+          </a>
+          <a href="horarios.html" class="quick-item">
+            <span class="quick-item__icon">🗓</span>
+            <span class="quick-item__label">Horarios</span>
+          </a>
+          <a href="qr-institucional.html" class="quick-item">
+            <span class="quick-item__icon">🏫</span>
+            <span class="quick-item__label">QR institucional</span>
+          </a>
+          <a href="configuracion-geocerca.html" class="quick-item">
+            <span class="quick-item__icon">📍</span>
+            <span class="quick-item__label">Geocerca</span>
+          </a>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- SEGUNDA FILA -->
+    <section class="dash-grid dash-grid--2">
+
+      <!-- Últimos registros -->
+      <article class="panel">
+        <header class="panel__head">
+          <div>
+            <h2 class="panel__title">Últimos registros QR</h2>
+            <p class="panel__subtitle">Actualizado hace 1 minuto</p>
+          </div>
+          <a href="#" class="panel__link">Ver todo →</a>
+        </header>
+
+        <ul class="activity">
+          <li class="activity__item">
+            <div class="activity__avatar activity__avatar--success">MG</div>
+            <div class="activity__info">
+              <strong>María González</strong>
+              <span>4° Medio A · Entrada 07:52</span>
+            </div>
+            <span class="badge badge--success">Presente</span>
+          </li>
+          <li class="activity__item">
+            <div class="activity__avatar activity__avatar--accent">JP</div>
+            <div class="activity__info">
+              <strong>Javier Pérez</strong>
+              <span>3° Medio B · Entrada 07:58</span>
+            </div>
+            <span class="badge badge--success">Presente</span>
+          </li>
+          <li class="activity__item">
+            <div class="activity__avatar activity__avatar--danger">LR</div>
+            <div class="activity__info">
+              <strong>Lucía Ramírez</strong>
+              <span>2° Medio A · Entrada 08:14</span>
+            </div>
+            <span class="badge badge--warning">Tardanza</span>
+          </li>
+          <li class="activity__item">
+            <div class="activity__avatar activity__avatar--success">CT</div>
+            <div class="activity__info">
+              <strong>Carlos Torres</strong>
+              <span>1° Medio C · Entrada 07:45</span>
+            </div>
+            <span class="badge badge--success">Presente</span>
+          </li>
+          <li class="activity__item">
+            <div class="activity__avatar activity__avatar--danger">SA</div>
+            <div class="activity__info">
+              <strong>Sofía Aguilar</strong>
+              <span>5° Medio A · Sin registro</span>
+            </div>
+            <span class="badge badge--danger">Ausente</span>
+          </li>
+        </ul>
+      </article>
+
+      <!-- Estado del sistema -->
+      <article class="panel">
+        <header class="panel__head">
+          <div>
+            <h2 class="panel__title">Estado del sistema</h2>
+            <p class="panel__subtitle">Monitoreo en vivo</p>
+          </div>
+        </header>
+
+        <ul class="status-list">
+          <li class="status-item">
+            <span class="status-dot status-dot--ok"></span>
+            <div>
+              <strong>Lector QR principal</strong>
+              <span>Entrada norte · En línea</span>
+            </div>
+            <span class="badge badge--success">OK</span>
+          </li>
+          <li class="status-item">
+            <span class="status-dot status-dot--ok"></span>
+            <div>
+              <strong>Lector QR secundario</strong>
+              <span>Entrada sur · En línea</span>
+            </div>
+            <span class="badge badge--success">OK</span>
+          </li>
+          <li class="status-item">
+            <span class="status-dot status-dot--warning"></span>
+            <div>
+              <strong>Sincronización</strong>
+              <span>Última sync hace 3 min</span>
+            </div>
+            <span class="badge badge--warning">Revisar</span>
+          </li>
+          <li class="status-item">
+            <span class="status-dot status-dot--ok"></span>
+            <div>
+              <strong>Geocerca institucional</strong>
+              <span>Radio 120 m · Activa</span>
+            </div>
+            <span class="badge badge--success">OK</span>
+          </li>
+        </ul>
+      </article>
+
+    </section>
+
+  </main>
+
+  <script src="/shared/js/menu.js"></script>
+  <script>
+    // Fecha en español
+    const fecha = new Date();
+    const opciones = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    const texto = fecha.toLocaleDateString('es-ES', opciones);
+    document.getElementById('fechaHoy').textContent =
+      texto.charAt(0).toUpperCase() + texto.slice(1);
+  </script>
+</body>
+</html>

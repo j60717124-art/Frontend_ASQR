@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bienvenido | Sistema de Asistencia QR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600&family=Newsreader:opsz,wght@6..72,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="bienvenida.css">
+</head>
+<body>
+  <main class="welcome">
+
+    <!-- Logo: QR con birrete puesto e inclinado -->
+    <svg class="logo" viewBox="0 0 320 320" role="img" aria-label="Logo del Sistema de Asistencia QR">
+      <defs>
+        <!-- Degradado de los módulos del QR (coordenadas absolutas del área del QR) -->
+        <linearGradient id="qrGrad" gradientUnits="userSpaceOnUse" x1="70" y1="110" x2="250" y2="290">
+          <stop offset="0" stop-color="#9fe3ff"/>
+          <stop offset="1" stop-color="#3b9cff"/>
+        </linearGradient>
+        <linearGradient id="capLine" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#9fe3ff"/>
+          <stop offset="1" stop-color="#3b9cff"/>
+        </linearGradient>
+        <linearGradient id="boardFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#1b4a99"/>
+          <stop offset="1" stop-color="#0d2a63"/>
+        </linearGradient>
+        <linearGradient id="skullFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0f2f6b"/>
+          <stop offset="1" stop-color="#081633"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Marco de escaneo -->
+      <path class="bracket blue"  d="M56 122 V96 H82 M56 278 V304 H82"/>
+      <path class="bracket green" d="M264 122 V96 H238 M264 278 V304 H238"/>
+
+      <!-- Módulos del QR  -->
+      <g id="qr-modules"></g>
+
+      <!-- Línea de escaneo -->
+      <line class="scan" x1="62" y1="116" x2="258" y2="116"/>
+
+      <!-- Birrete puesto en la esquina superior derecha del QR, inclinado -->
+      <g transform="translate(238 93) rotate(28) scale(.92)">
+        <g class="cap-anim">
+          <!-- Copa (parte que abraza la cabeza); relleno opaco para tapar el QR -->
+          <path class="cap-skull" d="M-38 8 V28 C-38 40 -20 48 0 48 C20 48 38 40 38 28 V8 Z"/>
+          <!-- Tablero -->
+          <path class="cap-board" d="M-76 0 L0 -32 L76 0 L0 32 Z"/>
+          <!-- Botón central -->
+          <circle cx="0" cy="0" r="3.6" fill="#9fe3ff"/>
+          <!-- Cordón y borla -->
+          <path class="cap-cord" d="M0 0 L62 6 V40"/>
+          <path class="cap-tassel" d="M62 38 L58 54 H66 Z"/>
+        </g>
+      </g>
+    </svg>
+
+    <div class="copy">
+      <h1>Sistema de Asistencia QR</h1>
+      <p>Registra la asistencia de docentes y estudiantes de forma rápida y segura.</p>
+      <button type="button" class="btn" id="btn-continuar">Continuar</button>
+    </div>
+
+  </main>
+
+  <script src="bienvenida.js"></script>
+</body>
+</html>

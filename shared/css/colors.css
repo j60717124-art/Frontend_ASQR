@@ -1,0 +1,221 @@
+:root {
+  /* Primary */
+  --primary-50:  #f8fafc;
+  --primary-100: #f1f5f9;
+  --primary-200: #e2e8f0;
+  --primary-300: #cbd5e1;
+  --primary-400: #94a3b8;
+  --primary-500: #64748b;
+  --primary-600: #475569;
+  --primary-700: #334155;
+  --primary-800: #1e293b; /* base */
+  --primary-900: #0f172a;
+  --primary-950: #020617;
+
+  /* Secondary (azul, del degradado del botón) */
+  --secondary-50:  #eff6ff;
+  --secondary-100: #dbeafe;
+  --secondary-200: #bfdbfe;
+  --secondary-300: #93c5fd;
+  --secondary-400: #60a5fa;
+  --secondary-500: #3b82f6;
+  --secondary-600: #2563eb; /* base */
+  --secondary-700: #1d4ed8;
+  --secondary-800: #1e40af;
+  --secondary-900: #1e3a8a;
+  --secondary-950: #172554;
+
+  /* Tertiary (verde esmeralda) */
+  --tertiary-50:  #ecfdf5;
+  --tertiary-100: #d1fae5;
+  --tertiary-200: #a7f3d0;
+  --tertiary-300: #6ee7b7;
+  --tertiary-400: #34d399;
+  --tertiary-500: #10b981; /* base */
+  --tertiary-600: #059669;
+  --tertiary-700: #047857;
+  --tertiary-800: #065f46;
+  --tertiary-900: #064e3b;
+  --tertiary-950: #022c22;
+
+  /* Cyan (lámpara, luz y etiquetas del login) */
+  --cyan-300: #67e8f9;
+  --cyan-400: #22d3ee;
+  --cyan-500: #06b6d4;
+  --cyan-600: #0891b2;
+  --cyan-700: #0e7490;
+  --cyan-950: #083344;
+
+  /* Danger (errores) */
+  --danger-400: #f87171;
+  --danger-500: #ef4444;
+  --danger-600: #dc2626;
+
+  /* Neutral */
+  --neutral-50:  #f8fafc;
+  --neutral-100: #f1f5f9;
+  --neutral-200: #e2e8f0;
+  --neutral-300: #cbd5e1;
+  --neutral-400: #94a3b8;
+  --neutral-500: #64748b;
+  --neutral-600: #475569;
+  --neutral-700: #334155;
+  --neutral-800: #1e293b;
+  --neutral-900: #0f172a; /* base */
+  --neutral-950: #020617;
+
+  /* Panel de ilustración (siempre oscuro, en ambos temas) */
+  --panel-from: #092b45;
+  --panel-to:   #04172b;
+}
+
+/*TEMA CLARO (por defecto)*/
+:root {
+  color-scheme: light;
+
+  /* Fondos */
+  --bg:             var(--neutral-50);
+  --bg-glow:        #ffffff;
+  --bg-edge:        var(--neutral-200);
+  --surface:        #ffffff;
+  --surface-alt:    var(--neutral-100);
+  --input-bg:       var(--neutral-100);
+  --overlay:        rgb(15 23 42 / .5);
+
+  /* Texto */
+  --text:           var(--neutral-900);
+  --text-muted:     var(--neutral-600);
+  --text-subtle:    var(--neutral-500);
+  --text-inverse:   #ffffff;
+
+  /* Bordes */
+  --border:         var(--neutral-200);
+  --border-strong:  var(--neutral-300);
+
+  /* Primario (botones principales, cabeceras) */
+  --primary:        var(--primary-800);
+  --primary-hover:  var(--primary-700);
+  --on-primary:     #ffffff;
+
+  /* Secundario (acento, enlaces, foco) */
+  --accent:         var(--secondary-600);
+  --accent-hover:   var(--secondary-700);
+  --accent-soft:    var(--secondary-100);
+  --on-accent:      #ffffff;
+
+  /* Terciario (éxito, presente, confirmaciones) */
+  --success:        var(--tertiary-500);
+  --success-hover:  var(--tertiary-600);
+  --success-soft:   var(--tertiary-50);
+  --on-success:     var(--tertiary-950);
+
+  /* Login */
+  --brand-label:    var(--cyan-600);
+  --title-accent:   var(--tertiary-600);
+  --danger:         var(--danger-600);
+  --gradient-brand: linear-gradient(100deg, var(--secondary-600), var(--tertiary-500));
+
+  /* Utilidades */
+  --focus-ring:     var(--secondary-500);
+  --shadow:         0 1px 2px rgb(15 23 42 / .06), 0 4px 16px rgb(15 23 42 / .08);
+  --card-shadow:    0 24px 60px rgb(15 23 42 / .14), 0 2px 6px rgb(15 23 42 / .06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --bg:             var(--neutral-900);
+    --bg-glow:        color-mix(in srgb, var(--secondary-900) 55%, var(--neutral-900));
+    --bg-edge:        var(--neutral-950);
+    --surface:        var(--primary-800);
+    --surface-alt:    var(--primary-700);
+    --input-bg:       var(--neutral-900);
+    --overlay:        rgb(2 6 23 / .7);
+
+    --text:           var(--neutral-50);
+    --text-muted:     var(--neutral-400);
+    --text-subtle:    var(--neutral-500);
+    --text-inverse:   var(--neutral-900);
+
+    --border:         var(--neutral-700);
+    --border-strong:  var(--neutral-600);
+
+    --primary:        var(--primary-100);
+    --primary-hover:  var(--primary-200);
+    --on-primary:     var(--primary-900);
+
+    --accent:         var(--secondary-400);
+    --accent-hover:   var(--secondary-300);
+    --accent-soft:    rgb(59 130 246 / .18);
+    --on-accent:      var(--secondary-950);
+
+    --success:        var(--tertiary-400);
+    --success-hover:  var(--tertiary-300);
+    --success-soft:   rgb(16 185 129 / .16);
+    --on-success:     var(--tertiary-950);
+
+    --brand-label:    var(--cyan-400);
+    --title-accent:   var(--tertiary-400);
+    --danger:         var(--danger-400);
+    --gradient-brand: linear-gradient(100deg, var(--secondary-500), var(--tertiary-400));
+
+    --focus-ring:     var(--secondary-300);
+    --shadow:         0 1px 2px rgb(0 0 0 / .4), 0 8px 24px rgb(0 0 0 / .35);
+    --card-shadow:    0 25px 80px rgb(0 0 0 / .55), 0 0 40px rgb(34 211 238 / .07);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg:             var(--neutral-900);
+  --bg-glow:        color-mix(in srgb, var(--secondary-900) 55%, var(--neutral-900));
+  --bg-edge:        var(--neutral-950);
+  --surface:        var(--primary-800);
+  --surface-alt:    var(--primary-700);
+  --input-bg:       var(--neutral-900);
+  --overlay:        rgb(2 6 23 / .7);
+
+  --text:           var(--neutral-50);
+  --text-muted:     var(--neutral-400);
+  --text-subtle:    var(--neutral-500);
+  --text-inverse:   var(--neutral-900);
+
+  --border:         var(--neutral-700);
+  --border-strong:  var(--neutral-600);
+
+  --primary:        var(--primary-100);
+  --primary-hover:  var(--primary-200);
+  --on-primary:     var(--primary-900);
+
+  --accent:         var(--secondary-400);
+  --accent-hover:   var(--secondary-300);
+  --accent-soft:    rgb(59 130 246 / .18);
+  --on-accent:      var(--secondary-950);
+
+  --success:        var(--tertiary-400);
+  --success-hover:  var(--tertiary-300);
+  --success-soft:   rgb(16 185 129 / .16);
+  --on-success:     var(--tertiary-950);
+
+  --brand-label:    var(--cyan-400);
+  --title-accent:   var(--tertiary-400);
+  --danger:         var(--danger-400);
+  --gradient-brand: linear-gradient(100deg, var(--secondary-500), var(--tertiary-400));
+
+  --focus-ring:     var(--secondary-300);
+  --shadow:         0 1px 2px rgb(0 0 0 / .4), 0 8px 24px rgb(0 0 0 / .35);
+  --card-shadow:    0 25px 80px rgb(0 0 0 / .55), 0 0 40px rgb(34 211 238 / .07);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  transition: background-color .25s ease, color .25s ease;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}

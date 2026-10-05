@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio de sesión</title>
+  <link rel="stylesheet" href="/shared/css/colors.css">
+  <link rel="stylesheet" href="login.css">
+  <script>
+    /* Aplica el tema guardado antes de pintar para evitar parpadeos */
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (t !== "light" && t !== "dark") {
+          t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div class="background">
+    <div class="background-pattern"></div>
+    <div class="light light-one"></div>
+    <div class="light light-two"></div>
+
+    <main class="login-container hidden" id="loginContainer">
+
+      <section class="illustration">
+        <!-- La lámpara -->
+        <div class="lamp-wrapper" id="lampWrapper">
+          <div class="lamp-cable"></div>
+          <div class="lamp">
+            <div class="lamp-shade"></div>
+            <div class="lamp-bulb" id="lampBulb"></div>
+          </div>
+        </div>
+
+        <div class="light-beam" id="lightBeam"></div>
+
+        <!-- Libro abierto con pluma (SVG) -->
+        <div class="book-illustration" id="bookIllustration">
+<svg class="book-svg" viewBox="0 0 300 230" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs>
+  <linearGradient id="paperL" gradientUnits="userSpaceOnUse" x1="20" y1="0" x2="150" y2="0">
+    <stop offset="0" stop-color="#f7e6b0"/><stop offset=".55" stop-color="#fbeebf"/><stop offset=".88" stop-color="#d9b45f"/><stop offset="1" stop-color="#9c7430"/>
+  </linearGradient>
+  <linearGradient id="paperR" gradientUnits="userSpaceOnUse" x1="280" y1="0" x2="150" y2="0">
+    <stop offset="0" stop-color="#f7e6b0"/><stop offset=".55" stop-color="#fbeebf"/><stop offset=".88" stop-color="#d9b45f"/><stop offset="1" stop-color="#9c7430"/>
+  </linearGradient>
+  <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ecd291"/><stop offset="1" stop-color="#b98f45"/></linearGradient>
+  <linearGradient id="cover" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14405e"/><stop offset="1" stop-color="#071a2c"/></linearGradient>
+  <linearGradient id="coverEdge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2236"/><stop offset="1" stop-color="#030a14"/></linearGradient>
+  <radialGradient id="glow" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="rgba(255,236,160,.75)"/><stop offset="1" stop-color="rgba(255,220,120,0)"/></radialGradient>
+  <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="rgba(255,205,110,.4)"/><stop offset="1" stop-color="rgba(255,205,110,0)"/></radialGradient>
+  <linearGradient id="vane" gradientUnits="userSpaceOnUse" x1="124" y1="170" x2="258" y2="20">
+    <stop offset="0" stop-color="#fff8e3"/><stop offset="1" stop-color="#f3e3b8"/>
+  </linearGradient>
+  <linearGradient id="teal" gradientUnits="userSpaceOnUse" x1="124" y1="170" x2="258" y2="20">
+    <stop offset=".1" stop-color="rgba(50,190,215,.95)"/><stop offset=".55" stop-color="rgba(70,200,215,.55)"/><stop offset="1" stop-color="rgba(70,200,215,0)"/>
+  </linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbe08a"/><stop offset="1" stop-color="#a97a22"/></linearGradient>
+  <filter id="blur2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.4"/></filter>
+  <clipPath id="clipPages"><path d="M24 118 C46 90 100 84 150 112 C200 84 254 90 276 118 L280 142 C250 130 200 128 150 148 C100 128 50 130 20 142 Z"/></clipPath>
+</defs>
+
+<g transform="translate(0,40)">
+  <!-- resplandor cálido -->
+  <ellipse cx="150" cy="118" rx="150" ry="62" fill="url(#halo)"/>
+  <!-- base / tapa -->
+  <path d="M4 150 C50 138 100 142 150 166 C200 142 250 138 296 150 L296 159 C250 147 200 151 150 175 C100 151 50 147 4 159 Z" fill="url(#coverEdge)" stroke="#19d4f2" stroke-width="1.1"/>
+  <path d="M10 124 C40 96 100 90 150 118 C200 90 260 96 290 124 L296 150 C250 138 200 142 150 166 C100 142 50 138 4 150 Z" fill="url(#cover)" stroke="rgba(25,212,242,.8)" stroke-width="1"/>
+
+  <path d="M20 142 C50 130 100 128 150 148 L150 158 C100 138 50 140 20 152 Z" fill="url(#edge)"/>
+<path d="M20.0 143.4 C50.0 131.4 100.0 129.4 150.0 149.4" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+<path d="M20.0 144.9 C50.0 132.9 100.0 130.9 150.0 150.9" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+<path d="M20.0 146.3 C50.0 134.3 100.0 132.3 150.0 152.3" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+<path d="M20.0 147.8 C50.0 135.8 100.0 133.8 150.0 153.8" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+<path d="M20.0 149.2 C50.0 137.2 100.0 135.2 150.0 155.2" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+<path d="M20.0 150.7 C50.0 138.7 100.0 136.7 150.0 156.7" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+<path d="M24 118 C46 90 100 84 150 112 L150 148 C100 128 50 130 20 142 Z" fill="url(#paperL)"/>
+<path d="M24.0 116.2 C46.0 88.2 100.0 82.2 150.0 110.2" pathLength="100" stroke-dasharray="42 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
+<path d="M24.0 114.4 C46.0 86.4 100.0 80.4 150.0 108.4" pathLength="100" stroke-dasharray="34 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
+<path d="M24.0 112.6 C46.0 84.6 100.0 78.6 150.0 106.6" pathLength="100" stroke-dasharray="26 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
+<path d="M35.4 121.4 C46.6 95.6 100.0 90.2 142.0 117.0" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M35.1 123.3 C46.9 98.8 100.0 93.7 142.0 119.9" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M34.8 125.2 C47.2 102.0 100.0 97.2 142.0 122.8" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M34.5 127.1 C47.5 105.2 100.0 100.7 142.0 125.7" pathLength="100" stroke-dasharray="52 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M34.2 129.0 C47.8 108.4 100.0 104.2 142.0 128.6" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M33.8 131.0 C48.2 111.6 100.0 107.8 142.0 131.4" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M33.5 132.9 C48.5 114.8 100.0 111.3 142.0 134.3" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M33.2 134.8 C48.8 118.0 100.0 114.8 142.0 137.2" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M32.9 136.7 C49.1 121.2 100.0 118.3 142.0 140.1" pathLength="100" stroke-dasharray="63 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M24.0 118.0 C46.0 90.0 100.0 84.0 150.0 112.0" fill="none" stroke="rgba(255,250,225,.9)" stroke-width=".9"/>
+  <path d="M280 142 C250 130 200 128 150 148 L150 158 C200 138 250 140 280 152 Z" fill="url(#edge)"/>
+<path d="M280.0 143.4 C250.0 131.4 200.0 129.4 150.0 149.4" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+<path d="M280.0 144.9 C250.0 132.9 200.0 130.9 150.0 150.9" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+<path d="M280.0 146.3 C250.0 134.3 200.0 132.3 150.0 152.3" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+<path d="M280.0 147.8 C250.0 135.8 200.0 133.8 150.0 153.8" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+<path d="M280.0 149.2 C250.0 137.2 200.0 135.2 150.0 155.2" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+<path d="M280.0 150.7 C250.0 138.7 200.0 136.7 150.0 156.7" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+<path d="M276 118 C254 90 200 84 150 112 L150 148 C200 128 250 130 280 142 Z" fill="url(#paperR)"/>
+<path d="M276.0 116.2 C254.0 88.2 200.0 82.2 150.0 110.2" pathLength="100" stroke-dasharray="42 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
+<path d="M276.0 114.4 C254.0 86.4 200.0 80.4 150.0 108.4" pathLength="100" stroke-dasharray="34 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
+<path d="M276.0 112.6 C254.0 84.6 200.0 78.6 150.0 106.6" pathLength="100" stroke-dasharray="26 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
+<path d="M264.6 121.4 C253.4 95.6 200.0 90.2 158.0 117.0" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M264.9 123.3 C253.1 98.8 200.0 93.7 158.0 119.9" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M265.2 125.2 C252.8 102.0 200.0 97.2 158.0 122.8" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M265.5 127.1 C252.5 105.2 200.0 100.7 158.0 125.7" pathLength="100" stroke-dasharray="52 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M265.8 129.0 C252.2 108.4 200.0 104.2 158.0 128.6" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M266.2 131.0 C251.8 111.6 200.0 107.8 158.0 131.4" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M266.5 132.9 C251.5 114.8 200.0 111.3 158.0 134.3" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M266.8 134.8 C251.2 118.0 200.0 114.8 158.0 137.2" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M267.1 136.7 C250.9 121.2 200.0 118.3 158.0 140.1" pathLength="100" stroke-dasharray="56 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+<path d="M276.0 118.0 C254.0 90.0 200.0 84.0 150.0 112.0" fill="none" stroke="rgba(255,250,225,.9)" stroke-width=".9"/>
+
+  <g clip-path="url(#clipPages)">
+    <rect x="138" y="90" width="24" height="70" fill="rgba(70,40,0,.4)" filter="url(#blur2)"/>
+    <ellipse cx="150" cy="120" rx="120" ry="40" fill="url(#glow)"/>
+  </g>
+  <path d="M150 112 L150 148" stroke="rgba(60,35,0,.6)" stroke-width="1.3"/>
+</g>
+
+<!-- pluma -->
+<g class="quill-svg">
+  <path d="M132.0 179.0 L135.9 175.7 L139.7 172.4 L143.6 169.2 L147.5 165.9 L151.3 162.5 L155.1 159.2 L159.0 155.9 L162.7 152.5 L166.5 149.1 L170.2 145.7 L173.9 142.3 L177.6 138.9 L181.3 135.4 L184.9 131.8 L188.4 128.3" fill="none" stroke="rgba(40,20,0,.5)" stroke-width="5" stroke-linecap="round" filter="url(#blur2)"/>
+  <path d="M160.7 138.1 L159.3 132.5 L159.8 128.7 L160.6 125.2 L161.7 121.8 L162.9 118.6 L164.2 115.6 L165.6 112.6 L167.1 109.6 L168.7 106.8 L170.3 104.0 L172.0 101.2 L173.8 98.5 L175.6 95.8 L177.4 93.2 L179.3 90.6 L181.2 88.0 L183.1 85.5 L185.1 83.0 L187.1 80.5 L189.2 78.1 L191.2 75.6 L193.3 73.2 L195.5 70.9 L197.6 68.5 L199.8 66.2 L202.0 63.9 L204.2 61.6 L206.5 59.4 L208.8 57.1 L211.1 54.9 L213.4 52.7 L215.7 50.6 L218.1 48.4 L220.5 46.2 L222.9 44.1 L225.3 42.0 L227.8 39.9 L230.2 37.9 L232.7 35.8 L235.2 33.8 L237.8 31.8 L240.4 29.9 L243.0 27.9 L245.7 26.1 L248.4 24.3 L251.3 22.5 L254.3 20.9 L258.0 20.0 L258.0 20.0 L257.6 23.9 L256.6 27.3 L255.6 30.6 L254.4 33.9 L253.2 37.1 L252.0 40.3 L250.8 43.4 L249.5 46.5 L248.1 49.6 L246.8 52.7 L245.4 55.7 L244.0 58.7 L242.5 61.7 L241.0 64.7 L239.5 67.6 L238.0 70.5 L236.4 73.3 L234.8 76.1 L233.1 78.9 L231.4 81.7 L229.7 84.4 L227.9 87.1 L226.1 89.7 L224.2 92.4 L222.3 94.9 L220.4 97.5 L218.4 99.9 L216.3 102.4 L214.3 104.8 L212.1 107.2 L209.9 109.5 L207.7 111.7 L205.4 114.0 L203.0 116.1 L200.6 118.3 L198.2 120.3 L195.7 122.3 L193.1 124.3 L190.4 126.2 L187.7 128.0 L184.9 129.8 L182.0 131.5 L179.1 133.1 L176.0 134.7 L172.8 136.1 L169.4 137.3 L165.8 138.3 L160.7 138.1 Z" fill="url(#vane)" stroke="#d9b45a" stroke-width=".9" stroke-linejoin="round"/>
+  <path d="M160.7 138.1 L161.5 134.5 L163.1 131.6 L164.8 128.9 L166.6 126.2 L168.4 123.6 L170.3 121.0 L172.2 118.5 L174.2 115.9 L176.1 113.4 L178.1 110.9 L180.1 108.4 L182.1 105.9 L184.1 103.5 L186.2 101.0 L188.2 98.6 L190.2 96.1 L192.3 93.7 L194.3 91.2 L196.4 88.8 L198.5 86.4 L200.5 84.0 L202.6 81.5 L204.7 79.1 L206.7 76.7 L208.8 74.3 L210.9 71.8 L212.9 69.4 L215.0 67.0 L217.1 64.6 L219.2 62.2 L221.3 59.8 L223.3 57.4 L225.4 54.9 L227.5 52.5 L229.6 50.1 L231.7 47.7 L233.8 45.3 L235.9 42.9 L238.0 40.6 L240.1 38.2 L242.2 35.8 L244.4 33.4 L246.5 31.1 L248.7 28.7 L250.9 26.4 L253.1 24.2 L255.4 21.9 L258.0 20.0 L258.0 20.0 L256.8 23.2 L255.3 26.2 L253.9 29.1 L252.3 32.0 L250.8 34.9 L249.2 37.8 L247.7 40.7 L246.1 43.5 L244.5 46.4 L242.8 49.2 L241.2 52.0 L239.5 54.8 L237.8 57.5 L236.1 60.3 L234.4 63.0 L232.7 65.7 L230.9 68.4 L229.1 71.1 L227.3 73.7 L225.5 76.4 L223.6 79.0 L221.7 81.6 L219.8 84.1 L217.9 86.7 L215.9 89.2 L213.9 91.7 L211.9 94.2 L209.9 96.6 L207.8 99.0 L205.7 101.4 L203.5 103.8 L201.4 106.1 L199.2 108.4 L196.9 110.7 L194.7 112.9 L192.4 115.1 L190.0 117.3 L187.7 119.5 L185.2 121.6 L182.8 123.7 L180.3 125.7 L177.8 127.7 L175.2 129.7 L172.6 131.6 L169.9 133.5 L167.1 135.3 L164.2 136.9 L160.7 138.1 Z" fill="url(#teal)"/>
+  <path d="M163.1 135.9 L162.7 128.7 M163.1 135.9 L168.1 135.7 M165.5 133.8 L164.9 123.0 M165.5 133.8 L173.0 133.4 M167.8 131.6 L167.0 118.0 M167.8 131.6 L177.3 131.1 M170.1 129.4 L169.2 113.4 M170.1 129.4 L181.2 128.8 M172.4 127.2 L171.4 109.1 M172.4 127.2 L185.0 126.5 M174.7 125.0 L173.6 105.0 M174.7 125.0 L188.6 124.2 M177.0 122.7 L175.8 101.2 M177.0 122.7 L192.0 121.9 M179.3 120.5 L178.0 97.5 M179.3 120.5 L195.2 119.6 M181.5 118.2 L180.2 93.9 M181.5 118.2 L198.4 117.3 M183.7 115.9 L182.3 90.5 M183.7 115.9 L201.4 115.0 M186.0 113.7 L184.5 87.2 M186.0 113.7 L204.3 112.6 M188.2 111.4 L186.6 84.1 M188.2 111.4 L207.1 110.3 M190.3 109.0 L188.8 81.0 M190.3 109.0 L209.8 108.0 M192.5 106.7 L190.9 78.0 M192.5 106.7 L212.5 105.6 M194.7 104.4 L193.0 75.1 M194.7 104.4 L215.0 103.2 M196.8 102.0 L195.2 72.4 M196.8 102.0 L217.4 100.9 M198.9 99.6 L197.3 69.6 M198.9 99.6 L219.8 98.5 M201.0 97.2 L199.3 67.0 M201.0 97.2 L222.0 96.1 M203.1 94.8 L201.4 64.5 M203.1 94.8 L224.2 93.7 M205.2 92.4 L203.5 62.0 M205.2 92.4 L226.3 91.2 M207.2 90.0 L205.6 59.6 M207.2 90.0 L228.3 88.8 M209.3 87.5 L207.6 57.3 M209.3 87.5 L230.3 86.4 M211.3 85.1 L209.6 55.0 M211.3 85.1 L232.2 83.9 M213.3 82.6 L211.7 52.8 M213.3 82.6 L234.0 81.4 M215.3 80.1 L213.7 50.7 M215.3 80.1 L235.7 79.0 M217.3 77.6 L215.7 48.6 M217.3 77.6 L237.4 76.5 M219.2 75.1 L217.7 46.6 M219.2 75.1 L239.0 74.0 M221.2 72.5 L219.6 44.7 M221.2 72.5 L240.5 71.5 M223.1 70.0 L221.6 42.8 M223.1 70.0 L242.0 68.9 M225.0 67.4 L223.6 40.9 M225.0 67.4 L243.5 66.4 M226.9 64.9 L225.5 39.2 M226.9 64.9 L244.8 63.9 M228.8 62.3 L227.5 37.4 M228.8 62.3 L246.1 61.3 M230.7 59.7 L229.4 35.7 M230.7 59.7 L247.4 58.8 M232.6 57.1 L231.3 34.1 M232.6 57.1 L248.6 56.2 M234.5 54.5 L233.2 32.5 M234.5 54.5 L249.7 53.6 M236.3 51.9 L235.1 31.0 M236.3 51.9 L250.8 51.1 M238.2 49.2 L237.1 29.5 M238.2 49.2 L251.9 48.5 M240.0 46.6 L239.0 28.1 M240.0 46.6 L252.8 45.9 M241.8 44.0 L240.8 26.7 M241.8 44.0 L253.8 43.3 M243.6 41.3 L242.7 25.4 M243.6 41.3 L254.7 40.7 M245.4 38.7 L244.6 24.2 M245.4 38.7 L255.5 38.1 M247.2 36.0 L246.5 23.0 M247.2 36.0 L256.3 35.5 M249.0 33.4 L248.4 21.9 M249.0 33.4 L257.0 32.9 M250.8 30.7 L250.3 20.9 M250.8 30.7 L257.6 30.3 M252.6 28.0 L252.2 20.0 M252.6 28.0 L258.2 27.7 M254.4 25.3 L254.1 19.4 M254.4 25.3 L258.6 25.1 M256.2 22.7 L256.0 19.0 M256.2 22.7 L258.8 22.5" fill="none" stroke="rgba(160,125,60,.45)" stroke-width=".45"/>
+  <path d="M124.0 170.0 L127.9 166.7 L131.7 163.4 L135.6 160.2 L139.5 156.9 L143.3 153.5 L147.1 150.2 L151.0 146.9 L154.7 143.5 L158.5 140.1 L162.2 136.7 L165.9 133.3 L169.6 129.9 L173.3 126.4 L176.9 122.8 L180.4 119.3 L184.0 115.7 L187.5 112.1 L190.9 108.4 L194.3 104.7 L197.7 101.0 L201.0 97.2 L204.3 93.4 L207.6 89.6 L210.8 85.7 L213.9 81.8 L217.1 77.8 L220.2 73.9 L223.2 69.9 L226.2 65.8 L229.2 61.7 L232.2 57.6 L235.1 53.5 L238.1 49.4 L240.9 45.2 L243.8 41.0 L246.7 36.9 L249.5 32.7 L252.3 28.4 L255.2 24.2 L258.0 20.0" fill="none" stroke="#fff3cf" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M124.0 170.0 L138.6 153.4 L143.4 157.7 Z" fill="url(#gold)" stroke="#7a5512" stroke-width=".5" stroke-linejoin="round"/>
+  <path d="M124.0 170.0 L135.6 160.2" stroke="#5a3d0a" stroke-width=".5"/>
+</g>
+</svg>
+      </div>
+
+      <div class="illustration-text">
+        <span>APRENDE</span>
+        <strong> EL CONOCIMIENTO NO TIENE LÍMITES</strong>
+      </div>
+
+      <div class="floor-light"></div>
+  </section>
+
+  <section class="login-section">
+      <!-- Botón modo claro / oscuro -->
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Cambiar a modo oscuro" title="Cambiar tema">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        </svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <!-- Formulario de Inicio de Sesión -->
+      <div class="login-box" id="loginBox">
+        <div class="login-header">
+          <span class="welcome-label">BIENVENIDO</span>
+          <h1>Sistema de  <span>Asistencia por QR.</span></h1>
+          <p>Inicia sesión para registrar asistencia.</p>
+        </div>
+
+        <form id="loginForm">
+          <div class="input-group">
+            <label for="usuario">USUARIO</label>
+            <div class="input-box">
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/>
+                <path d="M4 21C4 16.8 7.3 14 12 14C16.7 14 20 16.8 20 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+              <input type="text" id="usuario" placeholder="Ingresa tu usuario" autocomplete="username" required>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="password">CONTRASEÑA</label>
+            <div class="input-box">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect x="4" y="10" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.7"/>
+                <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.7"/>
+                <circle cx="12" cy="15" r="1.5" fill="currentColor"/>
+              </svg>
+              <input type="password" id="password" placeholder="Ingresa tu contraseña" autocomplete="current-password" required>
+              <button type="button" id="showPassword" class="show-password" aria-label="Mostrar contraseña">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M2 12S5.5 5 12 5s10 7 10 7-3.5 7-10 7S2 12 2 12Z" stroke="currentColor" stroke-width="1.7"/>
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="login-options">
+            <a href="#" id="forgotPasswordLink">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <button type="submit" class="login-button" id="loginButton">
+            <span>INICIAR </span>
+            <span class="arrow"></span>
+            <span class="button-shine"></span>
+          </button>
+          <p id="message" class="message"></p>
+        </form>
+          <div class="login-footer">
+            <span></span>
+            <p><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>PLATAFORMA SEGURA</p>
+            <span></span>
+          </div>
+      </div>
+
+      <!-- Formulario de Recuperación de Contraseña (Oculto por defecto) -->
+      <div class="login-box hidden-box recover-box" id="recoverBox">
+          <div class="login-header">
+            <span class="welcome-label">RECUPERACIÓN</span>
+            <h1>Recuperar <span>Contraseña</span></h1>
+            <p>Ingresa tu correo para enviarte un enlace.</p>
+          </div>
+
+          <form id="recoverForm">
+            <div class="input-group">
+              <label for="recoverEmail">CORREO ELECTRÓNICO</label>
+              <div class="input-box">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.7"/>
+                  <path d="M3 7L12 13L21 7" stroke="currentColor" stroke-width="1.7"/>
+                </svg>
+                <input type="email" id="recoverEmail" placeholder="tu@correo.com" required>
+              </div>
+            </div>
+
+            <button type="submit" class="login-button" id="recoverButton">
+              <span>ENVIAR ENLACE</span>
+              <span class="arrow"></span>
+              <span class="button-shine"></span>
+            </button>
+            <p id="recoverMessage" class="message"></p>
+          </form>
+
+          <div class="login-footer" style="margin-top: 20px;">
+            <span></span>
+            <a href="#" id="backToLoginLink" class="back-link">VOLVER AL LOGIN</a>
+            <span></span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="login.js"></script>
+</body>
+</html>
