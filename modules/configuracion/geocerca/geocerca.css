@@ -1,7 +1,4 @@
-/* =========================================================
-   CONFIGURACIÓN · GEOCERCA
-   Usa las variables de colors.css y la barra de menu.css
-   ========================================================= */
+/* CONFIGURACIÓN · GEOCERCA */
 
 .geo {
   --sticky-top: calc(var(--nav-top-space) + var(--nav-bar-h) + 24px);
@@ -13,7 +10,7 @@
   gap: 26px;
 }
 
-/* ============ ENCABEZADO ============ */
+/* ENCABEZADO */
 .geo-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; }
 
 .geo-eyebrow {
@@ -27,7 +24,6 @@
 .geo-title { margin: 0 0 6px; font-size: 28px; font-weight: 700; letter-spacing: -.4px; }
 .geo-title__accent { background: var(--gradient-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .geo-sub { margin: 0; max-width: 560px; font-size: 14px; line-height: 1.5; color: var(--text-muted); }
-
 .geo-status { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
 .geo-status small { font-size: 12px; color: var(--text-muted); }
 
@@ -50,7 +46,7 @@
   50%      { box-shadow: 0 0 0 5px transparent; }
 }
 
-/* ============ GRID ============ */
+/* GRID */
 .geo-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
@@ -59,7 +55,7 @@
 }
 .geo-form { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
 
-/* ============ TARJETAS ============ */
+/* TARJETAS */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -80,7 +76,7 @@
 .card__head h2 { margin: 0; font-size: 16.5px; font-weight: 700; letter-spacing: -.2px; }
 .card__head p { margin: 3px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--text-muted); }
 
-/* ============ CAMPOS ============ */
+/* CAMPOS */
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .f { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .f label { font-size: 13px; font-weight: 600; }
@@ -97,14 +93,13 @@
 .input::placeholder { color: var(--text-subtle); }
 .input:focus { outline: 0; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .input.is-invalid { border-color: var(--danger); box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 15%, transparent); }
-
 .input-wrap { position: relative; width: 120px; flex-shrink: 0; }
 .input-wrap .input { padding-right: 32px; text-align: right; font-weight: 600; -moz-appearance: textfield; }
 .input-wrap .input::-webkit-outer-spin-button,
 .input-wrap .input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .unit { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--text-subtle); pointer-events: none; }
 
-/* ============ SLIDERS ============ */
+/* SLIDERS */
 .slider-row { display: flex; align-items: center; gap: 18px; }
 
 input[type="range"] {
@@ -133,7 +128,7 @@ input[type="range"]::-moz-range-thumb {
 }
 input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.15); }
 
-/* ============ CHIPS ============ */
+/* CHIPS */
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip {
   height: 34px; padding: 0 14px;
@@ -150,7 +145,7 @@ input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.15); }
   border-color: color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
-/* ============ BOTONES ============ */
+/* BOTONES */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   height: 44px; padding: 0 18px;
@@ -167,7 +162,7 @@ input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.15); }
 .btn--primary { background: var(--gradient-brand); color: #fff; box-shadow: 0 8px 24px rgb(37 99 235 / .32); }
 .btn--primary:hover:not(:disabled) { box-shadow: 0 12px 30px rgb(37 99 235 / .45); transform: translateY(-1px); }
 
-/* ============ RESUMEN + ACCIONES ============ */
+/* RESUMEN + ACCIONES */
 .card--summary { gap: 16px; }
 .summary {
   padding: 14px 16px; border-radius: 12px;
@@ -179,7 +174,7 @@ input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.15); }
 .actions { display: flex; justify-content: flex-end; gap: 10px; }
 .actions .btn--ghost { align-self: auto; }
 
-/* ============ MAPA ============ */
+/* MAPA */
 .card--map {
   position: sticky; top: var(--sticky-top);
   padding: 0; overflow: hidden;
@@ -237,7 +232,7 @@ input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.15); }
   to   { transform: scale(2.2); opacity: 0; }
 }
 
-/* ============ TOAST ============ */
+/*  TOAST */
 .toast {
   position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   transform: translate(-50%, 20px);
@@ -251,7 +246,7 @@ input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.15); }
 }
 .toast.is-show { opacity: 1; transform: translate(-50%, 0); }
 
-/* ============ RESPONSIVE ============ */
+/* RESPONSIVE */
 @media (max-width: 1000px) {
   .geo-grid { grid-template-columns: 1fr; }
   .card--map { position: relative; top: 0; order: -1; height: 340px; min-height: 0; }

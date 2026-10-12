@@ -1,14 +1,4 @@
-/* =========================================================
-   MÓDULO · CUENTAS
-   Tabla: cuenta (idcuenta, n_usuario, correo, clave, estado,
-          fecha_de_agregacion, rol_idrol, pin_recuperacion,
-          pin_expiracion, intentos_fallidos, bloqueado_hasta)
-   ========================================================= */
-
-/* ---------- CAPA DE DATOS ----------
-   Ahora funciona en modo demostración (localStorage).
-   Para conectarlo a tu backend, reemplaza solo las funciones de `api`
-   por fetch() a tus endpoints. El resto del archivo no cambia. */
+/* MÓDULO · CUENTAS*/
 const API_URL = ""; // ej.: "/api"
 
 const ROLES_DEMO = [
@@ -72,7 +62,7 @@ const api = {
   }
 };
 
-/* ---------- UTILIDADES ---------- */
+/* UTILIDADES */
 const $ = (id) => document.getElementById(id);
 const estado = { cuentas: [], roles: [] };
 
@@ -105,7 +95,7 @@ function aviso(msg) {
   toastTimer = setTimeout(() => t.classList.remove("is-show"), 2600);
 }
 
-/* ---------- LISTADO ---------- */
+/* LISTADO */
 function filtradas() {
   const q = normalizar($("fBuscar").value.trim());
   const rol = $("fRol").value;
@@ -162,14 +152,14 @@ function pintar() {
   $("resumen").textContent = `${total} cuentas · ${activas} activas · ${bloq} bloqueadas`;
 }
 
-/* ---------- COMBOS DE ROL ---------- */
+/* COMBOS DE ROL */
 function llenarRoles() {
   const opciones = estado.roles.map(r => `<option value="${r.idrol}">${escapar(r.nombre)}</option>`).join("");
   $("rol_idrol").innerHTML = '<option value="">Selecciona un rol</option>' + opciones;
   $("fRol").innerHTML = '<option value="">Todos los roles</option>' + opciones;
 }
 
-/* ---------- FORMULARIO ---------- */
+/* FORMULARIO */
 const dlg = $("dlgCuenta");
 const form = $("formCuenta");
 
@@ -291,7 +281,7 @@ $("pin_recuperacion").addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/\D/g, "").slice(0, 6);
 });
 
-/* ---------- ACCIONES DE FILA ---------- */
+/* ACCIONES DE FILA */
 let idEliminar = null;
 
 $("tbody").addEventListener("click", async (e) => {
@@ -324,7 +314,7 @@ $("btnConfirmarEliminar").addEventListener("click", async () => {
   aviso("Cuenta eliminada");
 });
 
-/* ---------- EVENTOS GENERALES ---------- */
+/* EVENTOS GENERALES */
 $("btnNueva").addEventListener("click", () => abrirFormulario(null));
 ["fBuscar", "fRol", "fEstado"].forEach(id => $(id).addEventListener("input", pintar));
 
@@ -332,7 +322,7 @@ $("btnNueva").addEventListener("click", () => abrirFormulario(null));
 document.querySelectorAll("[data-cerrar]").forEach(b => b.addEventListener("click", () => b.closest("dialog").close()));
 document.querySelectorAll("dialog").forEach(d => d.addEventListener("mousedown", (e) => { if (e.target === d) d.close(); }));
 
-/* ---------- INICIO ---------- */
+/* INICIO */
 (async function iniciar() {
   try {
     [estado.roles, estado.cuentas] = await Promise.all([api.roles(), api.listar()]);

@@ -1,7 +1,4 @@
-/* =========================================================
-   MÓDULO · CUENTAS
-   Usa las variables de colors.css y la barra de menu.css
-   ========================================================= */
+/* MÓDULO · CUENTAS */
 
 .sr-only {
   position: absolute; width: 1px; height: 1px; overflow: hidden;
@@ -17,7 +14,7 @@
   gap: 24px;
 }
 
-/* ============ ENCABEZADO ============ */
+/* ENCABEZADO */
 .acc-head {
   display: flex;
   justify-content: space-between;
@@ -33,7 +30,7 @@
 }
 .acc-sub { margin: 0; font-size: 14px; color: var(--text-muted); }
 
-/* ============ BOTONES ============ */
+/* BOTONES */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   height: 44px; padding: 0 18px;
@@ -73,7 +70,7 @@
 }
 .chip:hover { background: var(--accent-soft); }
 
-/* ============ PANEL + BARRA DE FILTROS ============ */
+/* PANEL + BARRA DE FILTROS */
 .panel {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -106,7 +103,7 @@
 }
 .field-search input::placeholder { color: var(--text-subtle); }
 
-/* ============ INPUTS Y COMBO BOX ============ */
+/* INPUTS Y COMBO BOX */
 .input,
 .select {
   width: 100%; height: 44px; padding: 0 12px;
@@ -136,15 +133,12 @@
 }
 .toolbar .select { width: auto; height: 42px; flex: 0 1 190px; }
 .select option { background: var(--surface); color: var(--text); }
-
 .input.is-invalid,
 .select.is-invalid { border-color: var(--danger); box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 15%, transparent); }
 
-/* ============ TABLA ============ */
+/* TABLA */
 .table-wrap { overflow-x: auto; }
-
 .table { width: 100%; border-collapse: collapse; min-width: 860px; }
-
 .table th {
   padding: 12px 20px;
   text-align: left;
@@ -162,7 +156,6 @@
 .table tbody tr { transition: background .2s ease; }
 .table tbody tr:hover { background: var(--surface-alt); }
 .th-actions { width: 130px; }
-
 .user { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .user__avatar {
   width: 38px; height: 38px; border-radius: 50%;
@@ -173,7 +166,6 @@
 .user__info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .user__info strong { font-size: 13.5px; font-weight: 600; }
 .user__info span { font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; }
-
 .muted { color: var(--text-muted); }
 .row-actions { display: flex; justify-content: flex-end; gap: 2px; }
 
@@ -196,7 +188,7 @@
 .empty[hidden] { display: none; }
 .empty span { font-size: 13px; color: var(--text-muted); }
 
-/* ============ MODAL ============ */
+/*  MODAL */
 .modal {
   width: min(640px, calc(100vw - 24px));
   max-height: calc(100dvh - 24px);
@@ -211,7 +203,6 @@
 .modal[open] { display: flex; flex-direction: column; animation: modal-in .25s ease; }
 .modal--sm { width: min(420px, calc(100vw - 24px)); }
 .modal::backdrop { background: var(--overlay); backdrop-filter: blur(3px); }
-
 .modal form { display: flex; flex-direction: column; min-height: 0; flex: 1; }
 
 @keyframes modal-in {
@@ -226,11 +217,9 @@
 }
 .modal__head h2,
 .modal__body > h2 { margin: 0; font-size: 17px; font-weight: 700; }
-
 .modal__body { padding: 22px; overflow-y: auto; flex: 1; }
 .modal--sm .modal__body > h2 { margin-bottom: 8px; }
 .del-text { margin: 0; font-size: 14px; line-height: 1.5; color: var(--text-muted); }
-
 .modal__foot {
   display: flex; justify-content: flex-end; gap: 10px;
   padding: 16px 22px;
@@ -239,19 +228,16 @@
 }
 
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
 .f { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .f label { font-size: 13px; font-weight: 600; }
 .hint { font-size: 12px; color: var(--text-subtle); }
 .err { font-size: 12px; color: var(--danger); min-height: 0; }
 .err:empty { display: none; }
-
 .pass { position: relative; display: flex; align-items: center; }
 .pass .input { padding-right: 46px; }
 .pass .icon-btn,
 .pass .chip { position: absolute; right: 4px; }
 .pass .chip { right: 0; }
-
 .adv { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
 .adv summary {
   cursor: pointer; font-size: 13.5px; font-weight: 600; color: var(--accent);
@@ -261,7 +247,7 @@
 .adv summary::before { content: "▸"; display: inline-block; margin-right: 8px; transition: transform .2s ease; }
 .adv[open] summary::before { transform: rotate(90deg); }
 
-/* ============ TOAST ============ */
+/* TOAST */
 .toast {
   position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   transform: translate(-50%, 20px);
@@ -275,7 +261,7 @@
 }
 .toast.is-show { opacity: 1; transform: translate(-50%, 0); }
 
-/* ============ RESPONSIVE ============ */
+/* RESPONSIVE */
 @media (max-width: 900px) {
   .acc { padding: 24px 20px 50px; }
   .acc-title { font-size: 24px; }
@@ -299,7 +285,6 @@
   .table td[data-label="Usuario"] { display: block; padding-bottom: 8px; }
   .table td[data-label="Usuario"]::before { display: none; }
   .row-actions { width: 100%; justify-content: flex-end; padding-top: 4px; }
-
   .grid { grid-template-columns: 1fr; }
   .modal__body { padding: 18px; }
   .modal__foot .btn { flex: 1; }

@@ -1,18 +1,5 @@
-/* =========================================================
-   CONFIGURACIÓN · GEOCERCA
-   Tabla: configuracion_geocerca (idconfiguracion_geocerca,
-          latitud_referencia decimal(10,7), longitud_referencia decimal(10,7),
-          radio_metros int, intervalo_rotacion_segundos int, actualizado_en datetime)
-   Es una configuración única: siempre se edita el mismo registro.
-   ========================================================= */
+/* CONFIGURACIÓN · GEOCERCA*/
 
-/* ---------- CAPA DE DATOS ----------
-   Ahora funciona en modo demostración (localStorage).
-   Para conectarlo a tu backend, pon tu ruta en API_URL:
-     GET {API_URL}/configuracion-geocerca   → objeto con los campos de la tabla
-                                              (404 o null si aún no existe)
-     PUT {API_URL}/configuracion-geocerca   → guarda (crea o actualiza el único registro)
-   El servidor debe poner actualizado_en = NOW(). */
 const API_URL = ""; // ej.: "/api"
 
 // Valores iniciales mientras no exista una configuración guardada
@@ -66,7 +53,7 @@ const api = {
   }
 };
 
-/* ---------- UTILIDADES ---------- */
+/* UTILIDADES */
 const $ = (id) => document.getElementById(id);
 const estado = { guardado: null };
 
@@ -109,7 +96,7 @@ const lonValida = (v) => Number.isFinite(v) && v >= -180 && v <= 180;
 const radioValido = (v) => Number.isInteger(v) && v >= 10 && v <= 5000;
 const intervaloValido = (v) => Number.isInteger(v) && v >= 5 && v <= 3600;
 
-/* ---------- MAPA (Leaflet) ---------- */
+/* MAPA (Leaflet) */
 let mapa = null, marcador = null, circulo = null;
 
 function colorAcento() {
@@ -174,7 +161,7 @@ function actualizarMapaDesdeCampos() {
   if (radioValido(radio)) circulo.setRadius(radio);
 }
 
-/* ---------- CAMPOS ---------- */
+/* CAMPOS */
 function limpiarError(campo) {
   const e = document.querySelector(`[data-err="${campo}"]`);
   if (e) e.textContent = "";
@@ -238,7 +225,7 @@ function fijarIntervalo(v) {
   refrescar();
 }
 
-/* ---------- RESUMEN, ESTADO Y CAMBIOS ---------- */
+/* RESUMEN, ESTADO Y CAMBIOS */
 function hayCambios() {
   const g = estado.guardado;
   if (!g) return true;
@@ -282,7 +269,7 @@ function aplicarValores(v) {
   refrescar();
 }
 
-/* ---------- VALIDACIÓN Y GUARDADO ---------- */
+/* VALIDACIÓN Y GUARDADO */
 function validar() {
   ["latitud_referencia", "longitud_referencia", "radio_metros", "intervalo_rotacion_segundos"].forEach(limpiarError);
   const { lat, lon, radio, intervalo } = leer();
@@ -323,7 +310,7 @@ $("btnRestablecer").addEventListener("click", () => {
   aviso(estado.guardado ? "Se restauraron los valores guardados" : "Se restauraron los valores iniciales");
 });
 
-/* ---------- EVENTOS ---------- */
+/* EVENTOS */
 ["latitud_referencia", "longitud_referencia"].forEach(id => {
   $(id).addEventListener("input", () => { limpiarError(id); actualizarMapaDesdeCampos(); refrescar(); });
   $(id).addEventListener("change", () => {
@@ -377,7 +364,7 @@ $("btnUbicacion").addEventListener("click", () => {
   );
 });
 
-/* ---------- INICIO ---------- */
+/* INICIO */
 (async function iniciar() {
   try {
     estado.guardado = await api.obtener();

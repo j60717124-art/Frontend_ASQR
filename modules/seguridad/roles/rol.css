@@ -1,7 +1,4 @@
-/* =========================================================
-   MÓDULO · ROLES
-   Usa las variables de colors.css y la barra de menu.css
-   ========================================================= */
+/*modulo roles*/
 
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
@@ -18,7 +15,7 @@
 .acc-title { margin: 0 0 6px; font-size: 28px; font-weight: 700; letter-spacing: -.4px; }
 .acc-sub { margin: 0; font-size: 14px; color: var(--text-muted); }
 
-/* ============ BOTONES ============ */
+/* BOTONES */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   height: 44px; padding: 0 18px;
@@ -49,7 +46,7 @@
 .icon-btn:hover { background: var(--surface-alt); color: var(--text); }
 .icon-btn--danger:hover { background: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger); }
 
-/* ============ PANEL + BUSCADOR ============ */
+/* PANEL + BUSCADOR */
 .panel {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -76,7 +73,7 @@
 }
 .field-search input::placeholder { color: var(--text-subtle); }
 
-/* ============ TABLA ============ */
+/* TABLA */
 .table-wrap { overflow-x: auto; }
 .table { width: 100%; border-collapse: collapse; min-width: 620px; }
 .table th {
@@ -90,7 +87,6 @@
 .th-id { width: 80px; }
 .th-actions { width: 100px; }
 .muted { color: var(--text-muted); }
-
 .role-name { display: flex; align-items: center; gap: 12px; }
 .role-name__ico {
   width: 36px; height: 36px; padding: 8px; flex-shrink: 0;
@@ -98,14 +94,12 @@
 }
 .role-name__ico svg { width: 100%; height: 100%; display: block; }
 .role-name strong { font-weight: 600; }
-
 .row-actions { display: flex; justify-content: flex-end; gap: 2px; }
-
 .empty { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 48px 20px; text-align: center; }
 .empty[hidden] { display: none; }
 .empty span { font-size: 13px; color: var(--text-muted); }
 
-/* ============ FORMULARIO / MODAL ============ */
+/* FORMULARIO / MODAL */
 .input {
   width: 100%; height: 44px; padding: 0 12px;
   border-radius: 11px; border: 1px solid var(--border);
@@ -144,14 +138,13 @@
 .modal--sm .modal__body { gap: 8px; }
 .del-text { margin: 0; font-size: 14px; line-height: 1.5; color: var(--text-muted); }
 .modal__foot { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 22px; border-top: 1px solid var(--border); background: var(--surface-alt); }
-
 .f { display: flex; flex-direction: column; gap: 6px; }
 .f label { font-size: 13px; font-weight: 600; }
 .meta { display: flex; justify-content: space-between; gap: 12px; min-height: 16px; }
 .err { font-size: 12px; color: var(--danger); }
 .count { margin-left: auto; font-size: 12px; color: var(--text-subtle); }
 
-/* ============ TOAST ============ */
+/*  TOAST  */
 .toast {
   position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   transform: translate(-50%, 20px);
@@ -165,7 +158,7 @@
 }
 .toast.is-show { opacity: 1; transform: translate(-50%, 0); }
 
-/* ============ RESPONSIVE ============ */
+/*  RESPONSIVE  */
 @media (max-width: 900px) {
   .acc { padding: 24px 20px 50px; }
   .acc-title { font-size: 24px; }
@@ -177,7 +170,6 @@
   .acc-head .btn { width: 100%; }
   .toolbar { padding: 14px; }
   .field-search { max-width: none; }
-
   .table { min-width: 0; }
   .table thead { display: none; }
   .table, .table tbody, .table tr, .table td { display: block; width: 100%; }
@@ -186,7 +178,6 @@
   .table td { border: 0; padding: 4px 0; }
   .table td.td-id { display: none; }
   .row-actions { justify-content: flex-end; padding-top: 4px; }
-
   .modal__body { padding: 18px; }
   .modal__foot .btn { flex: 1; }
 }

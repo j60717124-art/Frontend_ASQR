@@ -50,8 +50,8 @@ const menuItems = [
     icon: "building",
     // NOTA: Ajusta estas rutas si los archivos no están dentro de una carpeta "institucion"
     submenu: [
-      { title: "Colegio", link: "/modules/institucion/colegio.html" },
-      { title: "Aulas", link: "/modules/institucion/aulas.html" }
+      { title: "Colegio", link: "/modules/institucion/colegio/colegio.html" },
+      { title: "Aulas", link: "/modules/institucion/aulas/aulas.html" }
     ]
   },
   {
@@ -427,7 +427,7 @@ function configurarTema() {
   const root = document.documentElement;
 
   let temaGuardado = null;
-  try { temaGuardado = localStorage.getItem("tema"); } catch (e) {}
+  try { temaGuardado = localStorage.getItem("theme"); } catch (e) {}
 
   const prefiereOscuro = window.matchMedia("(prefers-color-scheme: dark)").matches;
   aplicarTema(temaGuardado || (prefiereOscuro ? "dark" : "light"));
@@ -435,7 +435,7 @@ function configurarTema() {
   themeButton.addEventListener("click", () => {
     const nuevo = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
     aplicarTema(nuevo);
-    try { localStorage.setItem("tema", nuevo); } catch (e) {}
+    try { localStorage.setItem("theme", nuevo); } catch (e) {}
   });
 
   function aplicarTema(tema) {

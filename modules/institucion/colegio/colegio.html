@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Colegio · Sistema de Asistencia QR</title>
+  <link rel="stylesheet" href="/shared/css/colors.css">
+  <link rel="stylesheet" href="/shared/css/menu.css">
+  <link rel="stylesheet" href="colegio.css">
+</head>
+<body>
+  <main class="acc">
+
+    <header class="acc-head">
+      <div>
+        <h1 class="acc-title">Colegio</h1>
+        <p class="acc-sub" id="resumen">Cargando información…</p>
+      </div>
+      <button class="btn btn--primary" type="button" id="btnNuevo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        Nuevo colegio
+      </button>
+    </header>
+
+    <div class="toolbar" id="toolbar" hidden>
+      <label class="field-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="fBuscar" placeholder="Buscar por nombre o ubicación" autocomplete="off" aria-label="Buscar colegios">
+      </label>
+    </div>
+
+    <section class="schools" id="lista" aria-live="polite"></section>
+
+    <div class="empty" id="vacio" hidden>
+      <span class="empty__ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-5h6v5M12 10v.01"/></svg>
+      </span>
+      <strong id="vacioTitulo">Aún no hay colegios registrados</strong>
+      <span id="vacioTexto">Registra los datos del colegio para empezar.</span>
+      <button class="btn btn--primary" type="button" id="btnVacio">Registrar colegio</button>
+    </div>
+  </main>
+
+  <!-- MODAL: CREAR / EDITAR -->
+  <dialog class="modal" id="dlgCol" aria-labelledby="dlgTitulo">
+    <form id="formCol" novalidate>
+      <header class="modal__head">
+        <h2 id="dlgTitulo">Nuevo colegio</h2>
+        <button class="icon-btn" type="button" data-cerrar aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+
+      <div class="modal__body">
+        <input type="hidden" id="idcolegio">
+
+        <div class="f">
+          <label for="nombre">Nombre del colegio</label>
+          <input class="input" id="nombre" maxlength="100" autocomplete="off" placeholder="Ej.: Unidad Educativa San Martín" required>
+          <div class="meta">
+            <small class="err" data-err="nombre"></small>
+            <small class="count" id="cntNombre">0/100</small>
+          </div>
+        </div>
+
+        <div class="f">
+          <label for="telefono">Teléfono</label>
+          <input class="input" id="telefono" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="8 dígitos, ej.: 44123456">
+          <div class="meta"><small class="err" data-err="telefono"></small></div>
+        </div>
+
+        <div class="f">
+          <label for="ubicacion">Ubicación</label>
+          <textarea class="input input--area" id="ubicacion" maxlength="255" rows="3" placeholder="Dirección, zona y referencias para llegar"></textarea>
+          <div class="meta">
+            <small class="err" data-err="ubicacion"></small>
+            <small class="count" id="cntUbic">0/255</small>
+          </div>
+        </div>
+      </div>
+
+      <footer class="modal__foot">
+        <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+        <button class="btn btn--primary" type="submit" id="btnGuardar">Guardar colegio</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- MODAL: CONFIRMAR ELIMINAR -->
+  <dialog class="modal modal--sm" id="dlgEliminar" aria-labelledby="delTitulo">
+    <div class="modal__body">
+      <h2 id="delTitulo">Eliminar colegio</h2>
+      <p class="del-text" id="delTexto"></p>
+    </div>
+    <footer class="modal__foot">
+      <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+      <button class="btn btn--danger" type="button" id="btnConfirmarEliminar">Eliminar colegio</button>
+    </footer>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/shared/js/menu.js"></script>
+  <script src="colegio.js"></script>
+</body>
+</html>

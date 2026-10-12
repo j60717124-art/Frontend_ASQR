@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const bulb = document.getElementById("lampBulb");
     const beam = document.getElementById("lightBeam");
     const prefiereMenosMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
     let secuenciaIniciada = false;
 
     function iniciarSecuencia() {
@@ -49,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
         bulb.classList.add("on");
         beam.classList.add("on");
         fondo.classList.add("lit");
-
         const retraso = prefiereMenosMovimiento ? 150 : 450;
         setTimeout(revelarEscena, retraso);
     }
@@ -84,7 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const recoverEmail = document.getElementById("recoverEmail");
     const recoverButton = document.getElementById("recoverButton");
     const recoverMessage = document.getElementById("recoverMessage");
-
     const recoverStepForm = document.getElementById("recoverStepForm");
     const recoverPin = document.getElementById("recoverPin");
     const recoverNewPassword = document.getElementById("recoverNewPassword");
@@ -92,7 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const recoverConfirmButton = document.getElementById("recoverConfirmButton");
     const recoverStepMessage = document.getElementById("recoverStepMessage");
     const showRecoverPassword = document.getElementById("showRecoverPassword");
-
     const loginBox = document.getElementById("loginBox");
     const recoverBox = document.getElementById("recoverBox");
 

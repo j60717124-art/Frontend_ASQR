@@ -5,12 +5,7 @@
 }
 
 /* Los colores viven en colors.css (tema claro / oscuro) */
-
-/* Variables propias de esta pantalla, complementarias a colors.css.
-   colors.css no define estos tokens (--bg-glow, --card-shadow, etc.);
-   sin ellos el boton "INICIAR" y el pie de pagina quedaban casi
-   invisibles (texto blanco sobre fondo blanco). Se derivan de los
-   tokens que colors.css ya expone, para seguir adaptandose a claro/oscuro. */
+/* Variables de color para el login */
 :root {
     --bg-glow: var(--secondary-50);
     --bg-edge: var(--bg);

@@ -1,19 +1,5 @@
-/* =========================================================
-   MÓDULO · DOCENTES
-   Tabla: docente (iddocente, nombres varchar(70), apellidos varchar(70),
-          ci varchar(10), telefono varchar(8), fecha_agregacion datetime,
-          cuenta_idcuenta int)
-   ========================================================= */
+/* MÓDULO · DOCENTES */
 
-/* ---------- CAPA DE DATOS ----------
-   Ahora funciona en modo demostración (localStorage).
-   Para conectarlo a tu backend, pon tu ruta en API_URL:
-     GET    {API_URL}/docentes
-     POST   {API_URL}/docentes
-     PUT    {API_URL}/docentes/:id
-     DELETE {API_URL}/docentes/:id   (409 si tiene registros asociados)
-     GET    {API_URL}/cuentas        (campos: idcuenta, n_usuario, correo, rol_idrol)
-     GET    {API_URL}/roles          (campos: idrol, nombre_rol) */
 const API_URL = ""; // ej.: "/api"
 
 const hace = (d) => new Date(Date.now() - d * 864e5).toISOString();
@@ -99,7 +85,7 @@ const api = {
   }
 };
 
-/* ---------- UTILIDADES ---------- */
+/* UTILIDADES */
 const $ = (id) => document.getElementById(id);
 const escapar = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const normalizar = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -136,7 +122,7 @@ function aviso(msg) {
   toastTimer = setTimeout(() => t.classList.remove("is-show"), 2800);
 }
 
-/* ---------- LISTADO ---------- */
+/* LISTADO */
 const ICO = {
   edit: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   del: '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/>'
@@ -197,7 +183,7 @@ function pintar() {
   $("resumen").textContent = `${total} ${total === 1 ? "docente registrado" : "docentes registrados"}`;
 }
 
-/* ---------- COMBO DE CUENTAS ---------- */
+/*  COMBO DE CUENTAS */
 // Cuentas libres (sin docente), más la que ya tiene el docente que se edita.
 function llenarCuentas(cuentaActual) {
   const usadas = new Set(estado.lista.map(d => d.cuenta_idcuenta));
@@ -225,7 +211,7 @@ function llenarCuentas(cuentaActual) {
   }
 }
 
-/* ---------- FORMULARIO ---------- */
+/* FORMULARIO */
 const dlg = $("dlgDoc");
 const form = $("formDoc");
 
@@ -323,7 +309,7 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-/* ---------- ACCIONES DE FILA ---------- */
+/* ACCIONES DE FILA */
 let idEliminar = null;
 
 $("tbody").addEventListener("click", (e) => {
@@ -355,7 +341,7 @@ $("btnConfirmarEliminar").addEventListener("click", async () => {
   }
 });
 
-/* ---------- EVENTOS GENERALES ---------- */
+/*  EVENTOS GENERALES */
 $("btnNuevo").addEventListener("click", () => abrirFormulario(null));
 $("fBuscar").addEventListener("input", () => { estado.pagina = 1; pintar(); });
 $("btnPrev").addEventListener("click", () => { estado.pagina--; pintar(); });
@@ -364,7 +350,7 @@ $("btnNext").addEventListener("click", () => { estado.pagina++; pintar(); });
 document.querySelectorAll("[data-cerrar]").forEach(b => b.addEventListener("click", () => b.closest("dialog").close()));
 document.querySelectorAll("dialog").forEach(d => d.addEventListener("mousedown", (e) => { if (e.target === d) d.close(); }));
 
-/* ---------- INICIO ---------- */
+/* INICIO */
 (async function iniciar() {
   try {
     [estado.lista, estado.cuentas, estado.roles] = await Promise.all([api.listar(), api.cuentas(), api.roles()]);
