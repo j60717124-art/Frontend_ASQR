@@ -6,6 +6,46 @@
 
 /* Los colores viven en colors.css (tema claro / oscuro) */
 
+/* Variables propias de esta pantalla, complementarias a colors.css.
+   colors.css no define estos tokens (--bg-glow, --card-shadow, etc.);
+   sin ellos el boton "INICIAR" y el pie de pagina quedaban casi
+   invisibles (texto blanco sobre fondo blanco). Se derivan de los
+   tokens que colors.css ya expone, para seguir adaptandose a claro/oscuro. */
+:root {
+    --bg-glow: var(--secondary-50);
+    --bg-edge: var(--bg);
+    --card-shadow: var(--shadow);
+    --panel-from: var(--surface);
+    --panel-to: var(--surface-alt);
+    --input-bg: var(--surface-alt);
+    --title-accent: var(--accent);
+    --brand-label: var(--accent);
+    --gradient-brand: linear-gradient(100deg, var(--secondary-600), var(--tertiary-500));
+    --cyan-400: #22d3ee;
+    --danger: #dc2626;
+}
+
+:root[data-theme="dark"] {
+    --bg-glow: rgb(99 102 241 / .22);
+    --bg-edge: var(--bg);
+    --panel-from: var(--neutral-950);
+    --panel-to: var(--primary-900);
+    --gradient-brand: linear-gradient(100deg, var(--secondary-400), var(--tertiary-400));
+    --danger: #f87171;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --bg-glow: rgb(99 102 241 / .22);
+        --bg-edge: var(--bg);
+        --panel-from: var(--neutral-950);
+        --panel-to: var(--primary-900);
+        --gradient-brand: linear-gradient(100deg, var(--secondary-400), var(--tertiary-400));
+        --danger: #f87171;
+    }
+}
+
+
 body {
     height: 100vh;
     width: 100vw;
@@ -385,6 +425,11 @@ body {
     display: none;
     opacity: 0;
     transform: translate(-50%, -50%) translateX(25px);
+}
+
+/* Paso 2 de recuperacion (codigo + nueva contrasena): oculto hasta pedir el codigo */
+.paso-oculto {
+    display: none;
 }
 
 .login-box.hidden-box.visible {

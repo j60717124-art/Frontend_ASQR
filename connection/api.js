@@ -1,7 +1,26 @@
+
 const API_BASE_URL = 'http://localhost:8000';
+
+// SESIÓN (sessionStorage)
 
 function obtenerTokenSesion() {
   return sessionStorage.getItem('tokenSesion') || '';
+}
+
+function obtenerCuentaActual() {
+  const datos = sessionStorage.getItem('cuentaActual');
+  return datos ? JSON.parse(datos) : null;
+}
+
+function obtenerTipoCuenta() {
+  return sessionStorage.getItem('tipoCuenta') || '';
+}
+
+// Guarda la sesión a partir de la respuesta real de POST /api/login
+function guardarSesion(respuestaLogin) {
+  sessionStorage.setItem('tokenSesion', respuestaLogin.token);
+  sessionStorage.setItem('tipoCuenta', respuestaLogin.tipo);
+  sessionStorage.setItem('cuentaActual', JSON.stringify(respuestaLogin.usuario));
 }
 
 function manejarSesionVencida() {
@@ -9,10 +28,13 @@ function manejarSesionVencida() {
   sessionStorage.removeItem('tipoCuenta');
   sessionStorage.removeItem('tokenSesion');
 
+
   if (!window.location.pathname.includes('/login/')) {
-    window.location.href = '../login/indexlogin.html';
+    window.location.href = '/modules/login/login.html';
   }
 }
+
+// HEADERS Y PETICIÓN BASE
 
 function getHeaders() {
   const token = obtenerTokenSesion();
@@ -21,7 +43,7 @@ function getHeaders() {
   };
 
   if (token) {
-    // Enviar en ambos formatos para asegurar
+    // Se envía en ambos formatos; el backend acepta cualquiera de los dos (y, como último recurso, también ?token= por query string más abajo).
     headers['X-API-Key'] = token;
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -32,7 +54,7 @@ function getHeaders() {
 async function apiRequest(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  // Añadir token como query param también (último recurso)
+  // Añadir token como query param también (último recurso, por si algún proxy intermedio llegara a descartar los headers personalizados)
   const token = obtenerTokenSesion();
   let finalUrl = url;
   if (token) {
@@ -97,4 +119,37 @@ function apiPut(endpoint, body) {
 
 function apiDelete(endpoint) {
   return apiRequest(endpoint, { method: 'DELETE' });
+}
+
+// AUTENTICACIÓN — atajos sobre POST /api/login (campo "accion")
+
+// Inicia sesión y guarda el token/usuario/tipo en sessionStorage.
+// usuarioOCorreo puede ser el n_usuario o el correo de la cuenta.
+async function apiLogin(usuarioOCorreo, clave) {
+  const datos = await apiPost('/api/login', {
+    accion: 'login',
+    correo: usuarioOCorreo,
+    clave: clave
+  });
+  guardarSesion(datos);
+  return datos;
+}
+
+// Paso 1 de recuperación: pide que se envíe el PIN de 6 dígitos al correo (expira en 5 minutos). Siempre responde "éxito" exista o no la cuenta.
+function apiSolicitarPin(correo) {
+  return apiPost('/api/login', { accion: 'solicitar_pin', correo });
+}
+
+// Paso 2 de recuperación: valida el PIN y cambia la contraseña.
+function apiCambiarClave(correo, pin, nuevaClave) {
+  return apiPost('/api/login', {
+    accion: 'cambiar_clave',
+    correo: correo,
+    pin: pin,
+    nueva_clave: nuevaClave
+  });
+}
+
+function apiLogout() {
+  manejarSesionVencida();
 }

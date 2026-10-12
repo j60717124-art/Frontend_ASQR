@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(iniciarSecuencia, 2700);
     }
 
-    //  LÓGICA DE FORMULARIOS
+    //  ELEMENTOS DEL FORMULARIO DE LOGIN
     const loginForm = document.getElementById("loginForm");
     const usuario = document.getElementById("usuario");
     const password = document.getElementById("password");
@@ -79,11 +79,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginButton = document.getElementById("loginButton");
     const message = document.getElementById("message");
 
-    // Elementos de Recuperación
+    //  ELEMENTOS DE RECUPERACIÓN (paso 1: correo — paso 2: código + nueva clave)
     const recoverForm = document.getElementById("recoverForm");
     const recoverEmail = document.getElementById("recoverEmail");
     const recoverButton = document.getElementById("recoverButton");
     const recoverMessage = document.getElementById("recoverMessage");
+
+    const recoverStepForm = document.getElementById("recoverStepForm");
+    const recoverPin = document.getElementById("recoverPin");
+    const recoverNewPassword = document.getElementById("recoverNewPassword");
+    const recoverConfirmPassword = document.getElementById("recoverConfirmPassword");
+    const recoverConfirmButton = document.getElementById("recoverConfirmButton");
+    const recoverStepMessage = document.getElementById("recoverStepMessage");
+    const showRecoverPassword = document.getElementById("showRecoverPassword");
+
     const loginBox = document.getElementById("loginBox");
     const recoverBox = document.getElementById("recoverBox");
 
@@ -91,23 +100,45 @@ document.addEventListener("DOMContentLoaded", () => {
     const forgotPasswordLink = document.getElementById("forgotPasswordLink");
     const backToLoginLink = document.getElementById("backToLoginLink");
 
-    // Mostrar/Ocultar contraseña
+    // Mostrar/Ocultar contraseña (login)
     showPassword.addEventListener("click", () => {
         const visible = password.type === "password";
         password.type = visible ? "text" : "password";
         showPassword.setAttribute("aria-label", visible ? "Ocultar contraseña" : "Mostrar contraseña");
     });
 
+    // Mostrar/Ocultar contraseña (recuperación, paso 2)
+    showRecoverPassword.addEventListener("click", () => {
+        const visible = recoverNewPassword.type === "password";
+        recoverNewPassword.type = visible ? "text" : "password";
+        showRecoverPassword.setAttribute("aria-label", visible ? "Ocultar contraseña" : "Mostrar contraseña");
+    });
+
+    // Reinicia el formulario de recuperación a su estado inicial (paso 1 visible)
+    function reiniciarRecuperacion() {
+        recoverForm.classList.remove("paso-oculto");
+        recoverStepForm.classList.add("paso-oculto");
+        recoverForm.reset();
+        recoverStepForm.reset();
+        recoverMessage.textContent = "";
+        recoverMessage.className = "message";
+        recoverStepMessage.textContent = "";
+        recoverStepMessage.className = "message";
+        recoverButton.disabled = false;
+        recoverConfirmButton.disabled = false;
+    }
+
     // Alternar entre Login y Recuperación
     forgotPasswordLink.addEventListener("click", (e) => {
         e.preventDefault();
+        reiniciarRecuperacion();
         loginBox.classList.remove("visible");
         loginBox.classList.add("hidden-box");
         recoverBox.classList.remove("hidden-box");
         setTimeout(() => {
             recoverBox.classList.add("visible");
         }, 50);
-        recoverMessage.textContent = "";
+        message.textContent = "";
     });
 
     backToLoginLink.addEventListener("click", (e) => {
@@ -118,36 +149,110 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
             loginBox.classList.add("visible");
         }, 50);
-        message.textContent = "";
+        reiniciarRecuperacion();
     });
 
-    //  ENVÍO DEL FORMULARIO DE LOGIN (SIN VALIDACIONES, REDIRIGE DIRECTO)
-    loginForm.addEventListener("submit", (event) => {
+    //  ENVÍO DEL FORMULARIO DE LOGIN — valida contra la base de datos vía api.js
+    loginForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        // Feedback visual breve (opcional)
+        const usuarioValor = usuario.value.trim();
+        const claveValor = password.value;
+
+        if (!usuarioValor || !claveValor) {
+            showMessage("Completa tu usuario/correo y tu contraseña.", "error", message);
+            return;
+        }
+
         loginButton.disabled = true;
         const textoBoton = loginButton.querySelector("span:first-child");
         if (textoBoton) textoBoton.textContent = "ENTRANDO...";
+        message.textContent = "";
 
-        // Redirige directo al inicio
-        window.location.href = "../inicio/inicio.html";
+        try {
+            // apiLogin ya guarda token/usuario/tipo en sessionStorage si todo sale bien
+            await apiLogin(usuarioValor, claveValor);
+            showMessage("Acceso correcto. Redirigiendo...", "success", message);
+            setTimeout(() => {
+                window.location.href = "../../modules/inicio/dashboard/inicio.html";
+            }, 600);
+        } catch (error) {
+            showMessage(error.message, "error", message);
+            loginButton.disabled = false;
+            if (textoBoton) textoBoton.textContent = "INICIAR";
+        }
     });
 
-    //  ENVÍO DEL FORMULARIO DE RECUPERACIÓN (SIN VALIDACIONES)
-    recoverForm.addEventListener("submit", (event) => {
+    //  PASO 1 DE RECUPERACIÓN — pide el código de 6 dígitos al correo
+    recoverForm.addEventListener("submit", async (event) => {
         event.preventDefault();
+
+        const correoValor = recoverEmail.value.trim();
+        if (!correoValor) {
+            showMessage("Ingresa tu correo electrónico.", "error", recoverMessage);
+            return;
+        }
 
         recoverButton.disabled = true;
         const textoBoton = recoverButton.querySelector("span:first-child");
         if (textoBoton) textoBoton.textContent = "ENVIANDO...";
+        recoverMessage.textContent = "";
 
-        setTimeout(() => {
-            showMessage("Enlace enviado. Revisa tu correo.", "success", recoverMessage);
-            recoverEmail.value = "";
+        try {
+            await apiSolicitarPin(correoValor);
+            showMessage("Si el correo existe, te enviamos un código. Revisa tu bandeja (expira en 5 minutos).", "success", recoverMessage);
+            // Avanza al paso 2: código + nueva contraseña
+            recoverForm.classList.add("paso-oculto");
+            recoverStepForm.classList.remove("paso-oculto");
+            recoverPin.focus();
+        } catch (error) {
+            showMessage(error.message, "error", recoverMessage);
+        } finally {
             recoverButton.disabled = false;
-            if (textoBoton) textoBoton.textContent = "ENVIAR ENLACE";
-        }, 1200);
+            if (textoBoton) textoBoton.textContent = "ENVIAR CÓDIGO";
+        }
+    });
+
+    //  PASO 2 DE RECUPERACIÓN — valida el código y cambia la contraseña
+    recoverStepForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const correoValor = recoverEmail.value.trim();
+        const pinValor = recoverPin.value.trim();
+        const nuevaClave = recoverNewPassword.value;
+        const confirmarClave = recoverConfirmPassword.value;
+
+        if (!pinValor || !nuevaClave || !confirmarClave) {
+            showMessage("Completa el código y la nueva contraseña.", "error", recoverStepMessage);
+            return;
+        }
+        if (nuevaClave.length < 6) {
+            showMessage("La nueva contraseña debe tener al menos 6 caracteres.", "error", recoverStepMessage);
+            return;
+        }
+        if (nuevaClave !== confirmarClave) {
+            showMessage("Las contraseñas no coinciden.", "error", recoverStepMessage);
+            return;
+        }
+
+        recoverConfirmButton.disabled = true;
+        const textoBoton = recoverConfirmButton.querySelector("span:first-child");
+        if (textoBoton) textoBoton.textContent = "CAMBIANDO...";
+        recoverStepMessage.textContent = "";
+
+        try {
+            await apiCambiarClave(correoValor, pinValor, nuevaClave);
+            showMessage("Contraseña actualizada. Ya puedes iniciar sesión.", "success", recoverStepMessage);
+            setTimeout(() => {
+                backToLoginLink.click();
+                usuario.focus();
+            }, 1200);
+        } catch (error) {
+            showMessage(error.message, "error", recoverStepMessage);
+        } finally {
+            recoverConfirmButton.disabled = false;
+            if (textoBoton) textoBoton.textContent = "CAMBIAR CONTRASEÑA";
+        }
     });
 
     //  MODO CLARO / OSCURO

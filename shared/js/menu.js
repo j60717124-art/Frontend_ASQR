@@ -18,52 +18,55 @@ function svg(name) {
 }
 
 const menuItems = [
-  { title: "Inicio", icon: "home", link: "inicio.html" },
+  // CORRECCIÓN: Rutas absolutas desde la raíz del proyecto
+  { title: "Inicio", icon: "home", link: "/modules/inicio/dashboard/inicio.html" },
   {
     title: "Académico",
     icon: "academic",
     submenu: [
-      { title: "Estudiantes", link: "estudiantes.html" },
-      { title: "Docentes", link: "docentes.html" },
-      { title: "Materias", link: "materias.html" },
-      { title: "Niveles", link: "niveles.html" },
-      { title: "Cursos", link: "cursos.html" },
-      { title: "Paralelos", link: "paralelos.html" },
-      { title: "Horarios", link: "horarios.html" },
-      { title: "Asignaciones", link: "asignaciones.html" }
+      { title: "Estudiantes", link: "/modules/academico/estudiante/estudiante.html" },
+      { title: "Docentes", link: "/modules/academico/docente/docente.html" },
+      { title: "Materias", link: "/modules/academico/materia/materia.html" },
+      { title: "Niveles", link: "/modules/academico/nivel/nivel.html" },
+      { title: "Cursos", link: "/modules/academico/curso/curso.html" },
+      { title: "Paralelos", link: "/modules/academico/paralelo/paralelo.html" },
+      { title: "Horarios", link: "/modules/academico/horario/horario.html" },
+      { title: "Asignaciones", link: "/modules/academico/asignacion/asignacion.html" }
     ]
   },
   {
     title: "Gestión",
     icon: "manage",
+    // NOTA: Ajusta estas rutas si los archivos no están dentro de una carpeta "gestion"
     submenu: [
-      { title: "Gestión académica", link: "gestion-academica.html" },
-      { title: "Asistencia docente", link: "asistencia-docente.html" },
-      { title: "QR Estudiante", link: "qr-estudiante.html" },
-      { title: "QR Institucional", link: "qr-institucional.html" }
+      { title: "Gestión académica", link: "/modules/gestion/gestion-academica.html" },
+      { title: "Asistencia docente", link: "/modules/gestion/asistencia-docente.html" },
+      { title: "QR Estudiante", link: "/modules/gestion/qr-estudiante.html" },
+      { title: "QR Institucional", link: "/modules/gestion/qr-institucional.html" }
     ]
   },
   {
     title: "Institución",
     icon: "building",
+    // NOTA: Ajusta estas rutas si los archivos no están dentro de una carpeta "institucion"
     submenu: [
-      { title: "Colegio", link: "colegio.html" },
-      { title: "Aulas", link: "aulas.html" }
+      { title: "Colegio", link: "/modules/institucion/colegio.html" },
+      { title: "Aulas", link: "/modules/institucion/aulas.html" }
     ]
   },
   {
     title: "Seguridad",
     icon: "shield",
     submenu: [
-      { title: "Cuentas", link: "cuentas.html" },
-      { title: "Roles", link: "roles.html" }
+      { title: "Cuentas", link: "/modules/seguridad/cuentas/cuenta.html" },
+      { title: "Roles", link: "/modules/seguridad/roles/rol.html" }
     ]
   },
   {
     title: "Configuración",
     icon: "settings",
     submenu: [
-      { title: "Geocerca", link: "configuracion-geocerca.html" }
+      { title: "Geocerca", link: "/modules/configuracion/geocerca/geocerca.html" }
     ]
   }
 ];
@@ -79,7 +82,7 @@ function crearMenu() {
         <span class="topnav__ball-core" id="ballCore"></span>
       </span>
 
-      <a class="topnav__brand" href="inicio.html" aria-label="Sistema Académico">
+      <a class="topnav__brand" href="/modules/inicio/dashboard/inicio.html" aria-label="Sistema Académico">
         <span class="topnav__logo">A</span>
         <span class="topnav__brand-text">
           <strong>Sistema</strong>
@@ -153,13 +156,13 @@ function configurarNavegacion() {
       el.type = "button";
       el.setAttribute("aria-haspopup", "true");
       el.setAttribute("aria-expanded", "false");
-      if (data.submenu.some(s => s.link === paginaActual)) {
+      if (data.submenu.some(s => s.link.endsWith(paginaActual))) {
         restIndex = i;
         li.classList.add("is-page");
       }
     } else {
       el.href = data.link;
-      if (data.link === paginaActual) {
+      if (data.link.endsWith(paginaActual)) {
         restIndex = i;
         li.classList.add("is-page");
       }
@@ -220,7 +223,7 @@ function configurarNavegacion() {
       <div class="topnav__dropdown-title">${data.title}</div>
       <div class="topnav__dropdown-list">
         ${data.submenu.map(s => `
-          <a class="submenu-item${s.link === paginaActual ? " active" : ""}" href="${s.link}" role="menuitem">${s.title}</a>
+          <a class="submenu-item${s.link.endsWith(paginaActual) ? " active" : ""}" href="${s.link}" role="menuitem">${s.title}</a>
         `).join("")}
       </div>
     `;
@@ -447,7 +450,8 @@ function configurarTema() {
 /*  Cerrar sesión  */
 function configurarCerrarSesion() {
   document.getElementById("logoutButton").addEventListener("click", () => {
-     window.location.href = "bienvenida.html";
+     // CORRECCIÓN: Ruta absoluta a la raíz para el archivo de bienvenida/login
+     window.location.href = "/bienvenida.html";
   });
 }
 

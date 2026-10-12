@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cuentas · Sistema de Asistencia QR</title>
+  <link rel="stylesheet" href="/shared/css/colors.css">
+  <link rel="stylesheet" href="/shared/css/menu.css">
+  <link rel="stylesheet" href="cuenta.css">
+</head>
+<body>
+  <main class="acc">
+
+    <!-- ENCABEZADO -->
+    <header class="acc-head">
+      <div>
+        <h1 class="acc-title">Cuentas de usuario</h1>
+        <p class="acc-sub" id="resumen">Cargando cuentas…</p>
+      </div>
+      <button class="btn btn--primary" type="button" id="btnNueva">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        Nueva cuenta
+      </button>
+    </header>
+
+    <!-- LISTADO -->
+    <section class="panel">
+      <div class="toolbar">
+        <label class="field-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="fBuscar" placeholder="Buscar por usuario o correo" autocomplete="off" aria-label="Buscar cuentas">
+        </label>
+        <select class="select" id="fRol" aria-label="Filtrar por rol"><option value="">Todos los roles</option></select>
+        <select class="select" id="fEstado" aria-label="Filtrar por estado">
+          <option value="">Todos los estados</option>
+          <option>Activo</option>
+          <option>Inactivo</option>
+          <option>Bloqueado</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Intentos fallidos</th>
+              <th>Bloqueado hasta</th>
+              <th>Creada</th>
+              <th class="th-actions"><span class="sr-only">Acciones</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty" id="vacio" hidden>
+          <strong>No hay cuentas para mostrar</strong>
+          <span>Cambia los filtros o crea una cuenta nueva.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: CREAR / EDITAR -->
+  <dialog class="modal" id="dlgCuenta" aria-labelledby="dlgTitulo">
+    <form id="formCuenta" novalidate>
+      <header class="modal__head">
+        <h2 id="dlgTitulo">Nueva cuenta</h2>
+        <button class="icon-btn" type="button" data-cerrar aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+
+      <div class="modal__body">
+        <input type="hidden" id="idcuenta">
+
+        <div class="grid">
+          <div class="f">
+            <label for="n_usuario">Nombre de usuario</label>
+            <input class="input" id="n_usuario" name="n_usuario" maxlength="60" autocomplete="off" required>
+            <small class="err" data-err="n_usuario"></small>
+          </div>
+
+          <div class="f">
+            <label for="correo">Correo electrónico</label>
+            <input class="input" id="correo" name="correo" type="email" maxlength="80" autocomplete="off" required>
+            <small class="err" data-err="correo"></small>
+          </div>
+
+          <div class="f">
+            <label for="clave">Contraseña</label>
+            <div class="pass">
+              <input class="input" id="clave" name="clave" type="password" maxlength="255" autocomplete="new-password">
+              <button class="icon-btn" type="button" id="verClave" aria-label="Mostrar contraseña">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <small class="hint" id="hintClave">Mínimo 8 caracteres.</small>
+            <small class="err" data-err="clave"></small>
+          </div>
+
+          <div class="f">
+            <label for="rol_idrol">Rol</label>
+            <select class="select" id="rol_idrol" name="rol_idrol" required>
+              <option value="">Selecciona un rol</option>
+            </select>
+            <small class="err" data-err="rol_idrol"></small>
+          </div>
+
+          <div class="f">
+            <label for="estado">Estado</label>
+            <select class="select" id="estado" name="estado" required>
+              <option>Activo</option>
+              <option>Inactivo</option>
+              <option>Bloqueado</option>
+            </select>
+          </div>
+
+          <div class="f">
+            <label for="fecha_de_agregacion">Fecha de creación</label>
+            <input class="input" id="fecha_de_agregacion" type="text" readonly tabindex="-1" value="Se asigna al guardar">
+          </div>
+        </div>
+
+        <details class="adv" id="advanced">
+          <summary>Seguridad y recuperación</summary>
+          <div class="grid">
+            <div class="f">
+              <label for="pin_recuperacion">PIN de recuperación</label>
+              <div class="pass">
+                <input class="input" id="pin_recuperacion" name="pin_recuperacion" inputmode="numeric" maxlength="6" placeholder="6 dígitos" autocomplete="off">
+                <button class="chip" type="button" id="genPin">Generar</button>
+              </div>
+              <small class="err" data-err="pin_recuperacion"></small>
+            </div>
+
+            <div class="f">
+              <label for="pin_expiracion">Expiración del PIN</label>
+              <input class="input" id="pin_expiracion" name="pin_expiracion" type="datetime-local">
+            </div>
+
+            <div class="f">
+              <label for="intentos_fallidos">Intentos fallidos</label>
+              <input class="input" id="intentos_fallidos" name="intentos_fallidos" type="number" min="0" step="1" value="0">
+              <small class="err" data-err="intentos_fallidos"></small>
+            </div>
+
+            <div class="f">
+              <label for="bloqueado_hasta">Bloqueado hasta</label>
+              <input class="input" id="bloqueado_hasta" name="bloqueado_hasta" type="datetime-local">
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <footer class="modal__foot">
+        <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+        <button class="btn btn--primary" type="submit" id="btnGuardar">Guardar cuenta</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- MODAL: CONFIRMAR ELIMINAR -->
+  <dialog class="modal modal--sm" id="dlgEliminar" aria-labelledby="delTitulo">
+    <div class="modal__body">
+      <h2 id="delTitulo">Eliminar cuenta</h2>
+      <p class="del-text" id="delTexto"></p>
+    </div>
+    <footer class="modal__foot">
+      <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+      <button class="btn btn--danger" type="button" id="btnConfirmarEliminar">Eliminar cuenta</button>
+    </footer>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/shared/js/menu.js"></script>
+  <script src="cuenta.js"></script>
+</body>
+</html>

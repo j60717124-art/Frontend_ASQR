@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Estudiantes · Sistema de Asistencia QR</title>
+  <link rel="stylesheet" href="/shared/css/colors.css">
+  <link rel="stylesheet" href="/shared/css/menu.css">
+  <link rel="stylesheet" href="estudiante.css">
+</head>
+<body>
+  <main class="acc">
+
+    <header class="acc-head">
+      <div>
+        <h1 class="acc-title">Estudiantes</h1>
+        <p class="acc-sub" id="resumen">Cargando estudiantes…</p>
+      </div>
+      <button class="btn btn--primary" type="button" id="btnNuevo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        Nuevo estudiante
+      </button>
+    </header>
+
+    <section class="panel">
+      <div class="toolbar">
+        <label class="field-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="fBuscar" placeholder="Buscar por nombre, apellido o CI" autocomplete="off" aria-label="Buscar estudiantes">
+        </label>
+        <select class="select" id="fEstado" aria-label="Filtrar por estado">
+          <option value="">Todos los estados</option>
+          <option>Activo</option>
+          <option>Inactivo</option>
+          <option>Retirado</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Estudiante</th>
+              <th>CI</th>
+              <th>Estado</th>
+              <th>Registrado</th>
+              <th class="th-actions"><span class="sr-only">Acciones</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty" id="vacio" hidden>
+          <strong>No hay estudiantes para mostrar</strong>
+          <span>Cambia los filtros o registra un estudiante nuevo.</span>
+        </div>
+      </div>
+
+      <footer class="pager" id="pager" hidden>
+        <span id="pagerInfo"></span>
+        <div class="pager__btns">
+          <button class="btn btn--ghost btn--sm" type="button" id="btnPrev">Anterior</button>
+          <button class="btn btn--ghost btn--sm" type="button" id="btnNext">Siguiente</button>
+        </div>
+      </footer>
+    </section>
+  </main>
+
+  <!-- MODAL: CREAR / EDITAR -->
+  <dialog class="modal" id="dlgEst" aria-labelledby="dlgTitulo">
+    <form id="formEst" novalidate>
+      <header class="modal__head">
+        <h2 id="dlgTitulo">Nuevo estudiante</h2>
+        <button class="icon-btn" type="button" data-cerrar aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+
+      <div class="modal__body">
+        <input type="hidden" id="idestudiante">
+
+        <div class="grid">
+          <div class="f">
+            <label for="nombres">Nombres</label>
+            <input class="input" id="nombres" maxlength="70" autocomplete="off" required>
+            <small class="err" data-err="nombres"></small>
+          </div>
+
+          <div class="f">
+            <label for="apellidos">Apellidos</label>
+            <input class="input" id="apellidos" maxlength="70" autocomplete="off" required>
+            <small class="err" data-err="apellidos"></small>
+          </div>
+
+          <div class="f">
+            <label for="ci">Cédula de identidad</label>
+            <input class="input" id="ci" maxlength="10" autocomplete="off" placeholder="Ej.: 8456123" required>
+            <small class="err" data-err="ci"></small>
+          </div>
+
+          <div class="f">
+            <label for="estado_estudiante">Estado</label>
+            <select class="select" id="estado_estudiante" required>
+              <option>Activo</option>
+              <option>Inactivo</option>
+              <option>Retirado</option>
+            </select>
+          </div>
+
+          <div class="f f--full">
+            <label for="fecha_agregacion">Fecha de registro</label>
+            <input class="input" id="fecha_agregacion" type="text" readonly tabindex="-1" value="Se asigna al guardar">
+          </div>
+        </div>
+      </div>
+
+      <footer class="modal__foot">
+        <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+        <button class="btn btn--primary" type="submit" id="btnGuardar">Guardar estudiante</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- MODAL: CONFIRMAR ELIMINAR -->
+  <dialog class="modal modal--sm" id="dlgEliminar" aria-labelledby="delTitulo">
+    <div class="modal__body">
+      <h2 id="delTitulo">Eliminar estudiante</h2>
+      <p class="del-text" id="delTexto"></p>
+    </div>
+    <footer class="modal__foot">
+      <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+      <button class="btn btn--danger" type="button" id="btnConfirmarEliminar">Eliminar estudiante</button>
+    </footer>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/shared/js/menu.js"></script>
+  <script src="estudiante.js"></script>
+</body>
+</html>

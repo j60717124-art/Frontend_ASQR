@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Roles · Sistema de Asistencia QR</title>
+  <link rel="stylesheet" href="/shared/css/colors.css">
+  <link rel="stylesheet" href="/shared/css/menu.css">
+  <link rel="stylesheet" href="rol.css">
+</head>
+<body>
+  <main class="acc">
+
+    <header class="acc-head">
+      <div>
+        <h1 class="acc-title">Roles</h1>
+        <p class="acc-sub" id="resumen">Cargando roles…</p>
+      </div>
+      <button class="btn btn--primary" type="button" id="btnNuevo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        Nuevo rol
+      </button>
+    </header>
+
+    <section class="panel">
+      <div class="toolbar">
+        <label class="field-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="fBuscar" placeholder="Buscar por nombre o descripción" autocomplete="off" aria-label="Buscar roles">
+        </label>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="th-id">N.º</th>
+              <th>Rol</th>
+              <th>Descripción</th>
+              <th class="th-actions"><span class="sr-only">Acciones</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty" id="vacio" hidden>
+          <strong>No hay roles para mostrar</strong>
+          <span>Cambia la búsqueda o crea un rol nuevo.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: CREAR / EDITAR -->
+  <dialog class="modal" id="dlgRol" aria-labelledby="dlgTitulo">
+    <form id="formRol" novalidate>
+      <header class="modal__head">
+        <h2 id="dlgTitulo">Nuevo rol</h2>
+        <button class="icon-btn" type="button" data-cerrar aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+
+      <div class="modal__body">
+        <input type="hidden" id="idrol">
+
+        <div class="f">
+          <label for="nombre_rol">Nombre del rol</label>
+          <input class="input" id="nombre_rol" maxlength="30" autocomplete="off" placeholder="Ej.: Docente" required>
+          <div class="meta">
+            <small class="err" data-err="nombre_rol"></small>
+            <small class="count" id="cntNombre">0/30</small>
+          </div>
+        </div>
+
+        <div class="f">
+          <label for="descripcion_rol">Descripción</label>
+          <textarea class="input input--area" id="descripcion_rol" maxlength="100" rows="3" placeholder="Qué puede hacer una persona con este rol"></textarea>
+          <div class="meta">
+            <small class="err" data-err="descripcion_rol"></small>
+            <small class="count" id="cntDesc">0/100</small>
+          </div>
+        </div>
+      </div>
+
+      <footer class="modal__foot">
+        <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+        <button class="btn btn--primary" type="submit" id="btnGuardar">Guardar rol</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- MODAL: CONFIRMAR ELIMINAR -->
+  <dialog class="modal modal--sm" id="dlgEliminar" aria-labelledby="delTitulo">
+    <div class="modal__body">
+      <h2 id="delTitulo">Eliminar rol</h2>
+      <p class="del-text" id="delTexto"></p>
+    </div>
+    <footer class="modal__foot">
+      <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+      <button class="btn btn--danger" type="button" id="btnConfirmarEliminar">Eliminar rol</button>
+    </footer>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/shared/js/menu.js"></script>
+  <script src="rol.js"></script>
+</body>
+</html>
