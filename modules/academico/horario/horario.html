@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Horarios · Sistema de Asistencia QR</title>
+  <link rel="stylesheet" href="/shared/css/colors.css">
+  <link rel="stylesheet" href="/shared/css/menu.css">
+  <link rel="stylesheet" href="horario.css">
+</head>
+<body>
+  <main class="acc">
+
+    <header class="acc-head">
+      <div>
+        <h1 class="acc-title">Horarios</h1>
+        <p class="acc-sub" id="resumen">Cargando horarios…</p>
+      </div>
+      <div class="acc-actions">
+        <div class="seg" role="group" aria-label="Tipo de vista">
+          <button type="button" id="vLista" aria-pressed="true">Lista</button>
+          <button type="button" id="vSemana" aria-pressed="false">Semana</button>
+        </div>
+        <button class="btn btn--primary" type="button" id="btnNuevo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          Nuevo horario
+        </button>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="toolbar">
+        <label class="field-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="fBuscar" placeholder="Buscar materia, docente o aula" autocomplete="off" aria-label="Buscar horarios">
+        </label>
+        <select class="select" id="fDia" aria-label="Filtrar por día"><option value="">Todos los días</option></select>
+        <select class="select" id="fDocente" aria-label="Filtrar por docente"><option value="">Todos los docentes</option></select>
+        <select class="select" id="fAula" aria-label="Filtrar por aula"><option value="">Todas las aulas</option></select>
+      </div>
+
+      <!-- VISTA LISTA -->
+      <div id="vistaLista">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Día</th>
+                <th>Horario</th>
+                <th>Materia</th>
+                <th>Docente</th>
+                <th>Aula</th>
+                <th>Estudiantes</th>
+                <th class="th-actions"><span class="sr-only">Acciones</span></th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+          <div class="empty" id="vacio" hidden>
+            <strong>No hay horarios para mostrar</strong>
+            <span>Cambia los filtros o crea un horario nuevo.</span>
+          </div>
+        </div>
+
+        <footer class="pager" id="pager" hidden>
+          <span id="pagerInfo"></span>
+          <div class="pager__btns">
+            <button class="btn btn--ghost btn--sm" type="button" id="btnPrev">Anterior</button>
+            <button class="btn btn--ghost btn--sm" type="button" id="btnNext">Siguiente</button>
+          </div>
+        </footer>
+      </div>
+
+      <!-- VISTA SEMANA -->
+      <div class="week" id="vistaSemana" hidden></div>
+    </section>
+  </main>
+
+  <!-- MODAL: CREAR / EDITAR HORARIO -->
+  <dialog class="modal" id="dlgHorario" aria-labelledby="dlgTitulo">
+    <form id="formHorario" novalidate>
+      <header class="modal__head">
+        <h2 id="dlgTitulo">Nuevo horario</h2>
+        <button class="icon-btn" type="button" data-cerrar aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+
+      <div class="modal__body">
+        <input type="hidden" id="idhorario">
+
+        <div class="grid">
+          <div class="f f--full">
+            <label for="dia">Día</label>
+            <select class="select" id="dia" required>
+              <option value="">Selecciona un día</option>
+            </select>
+            <small class="err" data-err="dia"></small>
+          </div>
+
+          <div class="f">
+            <label for="hora_inicio">Hora de inicio</label>
+            <input class="input" id="hora_inicio" type="time" required>
+            <small class="err" data-err="hora_inicio"></small>
+          </div>
+
+          <div class="f">
+            <label for="hora_fin">Hora de fin</label>
+            <input class="input" id="hora_fin" type="time" required>
+            <small class="err" data-err="hora_fin"></small>
+          </div>
+
+          <div class="f f--full">
+            <label for="materia_idmateria">Materia</label>
+            <select class="select" id="materia_idmateria" required><option value="">Selecciona una materia</option></select>
+            <small class="err" data-err="materia_idmateria"></small>
+          </div>
+
+          <div class="f">
+            <label for="docente_iddocente">Docente</label>
+            <select class="select" id="docente_iddocente" required><option value="">Selecciona un docente</option></select>
+            <small class="err" data-err="docente_iddocente"></small>
+          </div>
+
+          <div class="f">
+            <label for="aula_idaula">Aula</label>
+            <select class="select" id="aula_idaula" required><option value="">Selecciona un aula</option></select>
+            <small class="err" data-err="aula_idaula"></small>
+          </div>
+        </div>
+      </div>
+
+      <footer class="modal__foot">
+        <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+        <button class="btn btn--primary" type="submit" id="btnGuardar">Guardar horario</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- MODAL: DETALLE Y ESTUDIANTES DEL HORARIO -->
+  <dialog class="modal modal--det" id="dlgDetalle" aria-labelledby="detTitulo">
+    <header class="modal__head">
+      <h2 id="detTitulo">Horario</h2>
+      <button class="icon-btn" type="button" data-cerrar aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </header>
+
+    <div class="modal__body">
+      <div class="det-info" id="detInfo"></div>
+
+      <section class="det-sec">
+        <header class="det-sec__head">
+          <h3>Estudiantes asignados <span class="badge badge--next" id="detCount">0</span></h3>
+          <button class="btn btn--ghost btn--sm" type="button" id="btnAgregar">Agregar estudiantes</button>
+        </header>
+        <label class="field-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="detBuscar" placeholder="Buscar entre los asignados" autocomplete="off" aria-label="Buscar entre los asignados">
+        </label>
+        <ul class="slist" id="detLista"></ul>
+      </section>
+
+      <section class="det-sec det-add" id="detAdd" hidden>
+        <header class="det-sec__head">
+          <h3>Agregar estudiantes</h3>
+          <button class="btn btn--ghost btn--sm" type="button" id="btnCerrarAdd">Cerrar</button>
+        </header>
+        <label class="field-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="addBuscar" placeholder="Buscar por nombre o CI" autocomplete="off" aria-label="Buscar estudiantes para agregar">
+        </label>
+        <ul class="slist" id="addLista"></ul>
+        <div class="det-add__foot">
+          <span id="addInfo">Solo se muestran estudiantes activos que aún no están en este horario.</span>
+          <button class="btn btn--primary btn--sm" type="button" id="btnAddOk" disabled>Agregar seleccionados</button>
+        </div>
+      </section>
+    </div>
+
+    <footer class="modal__foot">
+      <button class="btn btn--ghost" type="button" data-cerrar>Cerrar</button>
+      <button class="btn btn--primary" type="button" id="btnEditarDesdeDetalle">Editar horario</button>
+    </footer>
+  </dialog>
+
+  <!-- MODAL: CONFIRMAR ELIMINAR -->
+  <dialog class="modal modal--sm" id="dlgEliminar" aria-labelledby="delTitulo">
+    <div class="modal__body">
+      <h2 id="delTitulo">Eliminar horario</h2>
+      <p class="del-text" id="delTexto"></p>
+    </div>
+    <footer class="modal__foot">
+      <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+      <button class="btn btn--danger" type="button" id="btnConfirmarEliminar">Eliminar horario</button>
+    </footer>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/shared/js/menu.js"></script>
+  <script src="horario.js"></script>
+</body>
+</html>

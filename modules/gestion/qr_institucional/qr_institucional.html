@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>QR institucional · Sistema de Asistencia QR</title>
+  <link rel="stylesheet" href="/shared/css/colors.css">
+  <link rel="stylesheet" href="/shared/css/menu.css">
+  <link rel="stylesheet" href="qr_institucional.css">
+</head>
+<body>
+  <main class="acc">
+
+    <header class="acc-head">
+      <div>
+        <h1 class="acc-title">QR institucional</h1>
+        <p class="acc-sub">Código dinámico para registrar la asistencia. Cambia automáticamente para evitar fraudes.</p>
+      </div>
+    </header>
+
+    <!-- ESCENARIO 3D -->
+    <section class="hero" id="hero" aria-label="Código QR en vivo">
+      <div class="hero__floor" aria-hidden="true"></div>
+
+      <div class="hero__bar">
+        <span class="live" id="live"><i></i><b id="liveText">EN VIVO</b></span>
+        <span class="hero__bar-text">Cambia cada <b id="txtIntervalo">5</b> segundos</span>
+        <button class="hero__fs" type="button" id="btnFs" aria-label="Pantalla completa" title="Pantalla completa">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        </button>
+      </div>
+
+      <div class="scene" id="scene">
+        <div class="tilt" id="tilt">
+          <div class="orbit orbit--a" aria-hidden="true"></div>
+          <div class="orbit orbit--b" aria-hidden="true"></div>
+
+          <div class="float">
+            <div class="qrwrap">
+              <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
+                <defs>
+                  <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#22d3ee"/>
+                    <stop offset="1" stop-color="#34d399"/>
+                  </linearGradient>
+                </defs>
+                <rect class="ring__track" x="1" y="1" width="98" height="98" rx="9"/>
+                <rect class="ring__bar" id="ringBar" x="1" y="1" width="98" height="98" rx="9" pathLength="100"/>
+              </svg>
+
+              <div class="qrcard" id="qrCard">
+                <div class="qrcard__inner" id="qrSvg">
+                  <div class="qrcard__msg">Generando código…</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="floorshadow" aria-hidden="true"></div>
+      </div>
+
+      <div class="chips3d">
+        <div class="chip3d chip3d--big">
+          <small>Cambia en</small>
+          <strong><span id="seg">5</span><em>s</em></strong>
+        </div>
+        <div class="chip3d">
+          <small>Emitido</small>
+          <strong id="emitido">—</strong>
+        </div>
+        <div class="chip3d">
+          <small>Vence</small>
+          <strong id="vence">—</strong>
+        </div>
+        <div class="chip3d">
+          <small>Código</small>
+          <strong id="numero">—</strong>
+          <span class="chip3d__sub" id="firma">firma —</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTORIAL -->
+    <section class="panel">
+      <header class="panel__head">
+        <div>
+          <h2 class="panel__title">Últimos códigos emitidos</h2>
+          <p class="panel__sub">Se actualiza en vivo con cada rotación.</p>
+        </div>
+      </header>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>N.º</th>
+              <th>Emitido</th>
+              <th>Vence</th>
+              <th>Firma</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty" id="vacio">
+          <strong>Aún no hay códigos emitidos</strong>
+          <span>Aparecerán aquí en cuanto se genere el primero.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Generador de QR. Para no depender de internet, descarga el archivo y colócalo en /shared/js/ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <script src="/shared/js/menu.js"></script>
+  <script src="qr_institucional.js"></script>
+</body>
+</html>

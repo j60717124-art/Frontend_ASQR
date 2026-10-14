@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>QR de estudiantes · Sistema de Asistencia QR</title>
+  <link rel="stylesheet" href="/shared/css/colors.css">
+  <link rel="stylesheet" href="/shared/css/menu.css">
+  <link rel="stylesheet" href="qr_estudiante.css">
+</head>
+<body>
+  <main class="acc">
+
+    <header class="acc-head">
+      <div>
+        <h1 class="acc-title">QR de estudiantes</h1>
+        <p class="acc-sub" id="resumen">Cargando estudiantes…</p>
+      </div>
+      <div class="acc-actions">
+        <button class="btn btn--ghost" type="button" id="btnFaltantes" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3zM20 14v.01M14 20h3M20 17v4"/></svg>
+          <span id="txtFaltantes">Generar QR faltantes</span>
+        </button>
+        <button class="btn btn--primary" type="button" id="btnImprimirSel" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9V3h10v6M7 18H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M7 14h10v7H7z"/></svg>
+          <span id="txtImprimirSel">Imprimir seleccionados</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="toolbar">
+        <label class="field-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="fBuscar" placeholder="Buscar por nombre, apellido o CI" autocomplete="off" aria-label="Buscar estudiantes">
+        </label>
+        <select class="select" id="fQr" aria-label="Filtrar por QR">
+          <option value="">Todos</option>
+          <option value="con">Con QR vigente</option>
+          <option value="sin">Sin QR</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="th-check"><input type="checkbox" id="chkTodos" aria-label="Seleccionar todos los estudiantes filtrados"></th>
+              <th>Estudiante</th>
+              <th>CI</th>
+              <th>Estado</th>
+              <th>Código QR</th>
+              <th>Emitido</th>
+              <th class="th-actions"><span class="sr-only">Ver</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty" id="vacio" hidden>
+          <strong>No hay estudiantes para mostrar</strong>
+          <span>Cambia los filtros o registra estudiantes en el módulo Estudiantes.</span>
+        </div>
+      </div>
+
+      <footer class="pager" id="pager" hidden>
+        <span id="pagerInfo"></span>
+        <div class="pager__btns">
+          <button class="btn btn--ghost btn--sm" type="button" id="btnPrev">Anterior</button>
+          <button class="btn btn--ghost btn--sm" type="button" id="btnNext">Siguiente</button>
+        </div>
+      </footer>
+    </section>
+  </main>
+
+  <!-- MODAL: QR Y DATOS DEL ESTUDIANTE -->
+  <dialog class="modal modal--qr" id="dlgQr" aria-labelledby="qrTitulo">
+    <header class="modal__head">
+      <h2 id="qrTitulo">QR del estudiante</h2>
+      <button class="icon-btn" type="button" data-cerrar aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </header>
+    <div class="modal__body" id="qrBody"></div>
+    <footer class="modal__foot" id="qrFoot"></footer>
+  </dialog>
+
+  <!-- MODAL: CONFIRMAR -->
+  <dialog class="modal modal--sm" id="dlgConfirm" aria-labelledby="cfTitulo">
+    <div class="modal__body">
+      <h2 id="cfTitulo"></h2>
+      <p class="del-text" id="cfTexto"></p>
+    </div>
+    <footer class="modal__foot">
+      <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+      <button class="btn btn--primary" type="button" id="cfOk">Aceptar</button>
+    </footer>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Área exclusiva de impresión: tarjetas de estudiante -->
+  <div id="printArea" aria-hidden="true"></div>
+
+  <!-- Generador de QR. Para no depender de internet, descarga el archivo y colócalo en /shared/js/ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <script src="/shared/js/menu.js"></script>
+  <script src="qr_estudiante.js"></script>
+</body>
+</html>

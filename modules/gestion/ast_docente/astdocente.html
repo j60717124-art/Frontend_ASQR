@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Asistencia docente · Sistema de Asistencia QR</title>
+  <link rel="stylesheet" href="/shared/css/colors.css">
+  <link rel="stylesheet" href="/shared/css/menu.css">
+  <link rel="stylesheet" href="astdocente.css">
+</head>
+<body>
+  <main class="acc">
+
+    <header class="acc-head">
+      <div>
+        <h1 class="acc-title">Asistencia docente</h1>
+        <p class="acc-sub" id="resumen">Cargando registros…</p>
+      </div>
+      <button class="btn btn--primary" type="button" id="btnNuevo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        Registrar asistencia
+      </button>
+    </header>
+
+    <!-- RESUMEN (según los filtros aplicados) -->
+    <section class="stats" aria-label="Resumen">
+      <article class="stat-card">
+        <span class="stat-card__ico stat-card__ico--all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></span>
+        <div class="stat-card__body"><span class="stat-card__label">Registros</span><strong class="stat-card__value" id="stTotal">0</strong><span class="stat-card__note" id="stRango">Todos los días</span></div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-card__ico stat-card__ico--ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></span>
+        <div class="stat-card__body"><span class="stat-card__label">Aceptados</span><strong class="stat-card__value" id="stOk">0</strong><span class="stat-card__note" id="stOkPct">0 %</span></div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-card__ico stat-card__ico--no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span>
+        <div class="stat-card__body"><span class="stat-card__label">Rechazados</span><strong class="stat-card__value" id="stNo">0</strong><span class="stat-card__note" id="stNoPct">0 %</span></div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="toolbar">
+        <label class="field-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="fBuscar" placeholder="Buscar docente" autocomplete="off" aria-label="Buscar docente">
+        </label>
+        <select class="select" id="fResultado" aria-label="Filtrar por resultado">
+          <option value="">Todos los resultados</option>
+          <option>Aceptado</option>
+          <option>Rechazado</option>
+        </select>
+        <label class="date-f">Desde <input class="input" type="date" id="fDesde"></label>
+        <label class="date-f">Hasta <input class="input" type="date" id="fHasta"></label>
+        <button class="btn btn--link" type="button" id="btnLimpiar" hidden>Limpiar filtros</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Docente</th>
+              <th>Resultado</th>
+              <th>Motivo de rechazo</th>
+              <th>Ubicación</th>
+              <th class="th-actions"><span class="sr-only">Acciones</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty" id="vacio" hidden>
+          <strong>No hay registros para mostrar</strong>
+          <span>Cambia los filtros o registra una asistencia.</span>
+        </div>
+      </div>
+
+      <footer class="pager" id="pager" hidden>
+        <span id="pagerInfo"></span>
+        <div class="pager__btns">
+          <button class="btn btn--ghost btn--sm" type="button" id="btnPrev">Anterior</button>
+          <button class="btn btn--ghost btn--sm" type="button" id="btnNext">Siguiente</button>
+        </div>
+      </footer>
+    </section>
+  </main>
+
+  <!-- MODAL: REGISTRAR / EDITAR -->
+  <dialog class="modal" id="dlgAsis" aria-labelledby="dlgTitulo">
+    <form id="formAsis" novalidate>
+      <header class="modal__head">
+        <h2 id="dlgTitulo">Registrar asistencia</h2>
+        <button class="icon-btn" type="button" data-cerrar aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+
+      <div class="modal__body">
+        <input type="hidden" id="idasistencia_docente">
+
+        <div class="grid">
+          <div class="f f--full">
+            <label for="docente_iddocente">Docente</label>
+            <select class="select" id="docente_iddocente" required>
+              <option value="">Selecciona un docente</option>
+            </select>
+            <small class="err" data-err="docente_iddocente"></small>
+          </div>
+
+          <div class="f">
+            <label for="fecha">Fecha</label>
+            <input class="input" id="fecha" type="date" required>
+            <small class="err" data-err="fecha"></small>
+          </div>
+
+          <div class="f">
+            <label for="hora">Hora</label>
+            <input class="input" id="hora" type="time" step="1" required>
+            <small class="err" data-err="hora"></small>
+          </div>
+
+          <div class="f f--full">
+            <label for="resultado">Resultado</label>
+            <select class="select" id="resultado" required>
+              <option>Aceptado</option>
+              <option>Rechazado</option>
+            </select>
+          </div>
+
+          <div class="f f--full">
+            <label for="motivo_rechazo">Motivo de rechazo</label>
+            <input class="input" id="motivo_rechazo" maxlength="150" list="motivos" autocomplete="off" placeholder="Solo si el resultado es Rechazado">
+            <datalist id="motivos">
+              <option value="Fuera de la geocerca">
+              <option value="Código QR vencido">
+              <option value="Código QR inválido">
+              <option value="Fuera del horario permitido">
+              <option value="Ya registró asistencia">
+            </datalist>
+            <small class="err" data-err="motivo_rechazo"></small>
+          </div>
+
+          <div class="f">
+            <label for="latitud">Latitud</label>
+            <input class="input" id="latitud" inputmode="decimal" autocomplete="off" placeholder="-17.3935000">
+            <small class="err" data-err="latitud"></small>
+          </div>
+
+          <div class="f">
+            <label for="longitud">Longitud</label>
+            <input class="input" id="longitud" inputmode="decimal" autocomplete="off" placeholder="-66.1570000">
+            <small class="err" data-err="longitud"></small>
+          </div>
+
+          <div class="f f--full geo-row">
+            <button class="btn btn--ghost" type="button" id="btnUbicacion">Usar mi ubicación actual</button>
+            <span class="dist" id="dist"></span>
+          </div>
+        </div>
+      </div>
+
+      <footer class="modal__foot">
+        <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+        <button class="btn btn--primary" type="submit" id="btnGuardar">Guardar registro</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- MODAL: CONFIRMAR ELIMINAR -->
+  <dialog class="modal modal--sm" id="dlgEliminar" aria-labelledby="delTitulo">
+    <div class="modal__body">
+      <h2 id="delTitulo">Eliminar registro</h2>
+      <p class="del-text" id="delTexto"></p>
+    </div>
+    <footer class="modal__foot">
+      <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+      <button class="btn btn--danger" type="button" id="btnConfirmarEliminar">Eliminar registro</button>
+    </footer>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/shared/js/menu.js"></script>
+  <script src="astdocente.js"></script>
+</body>
+</html>

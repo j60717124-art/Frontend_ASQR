@@ -182,7 +182,7 @@ body {
   height: var(--ball-out);
   margin-left: calc(var(--ball-out) / -2);
   border-radius: 50%;
-  background: var(--bg);              /* crea la muesca en la barra */
+  background: var(--bg);
   display: grid;
   place-items: center;
   z-index: 2;
@@ -531,10 +531,18 @@ body {
 
 /* TABLET CHICA / ESCRITORIO PEQUEÑO */
 @media (max-width: 1100px) {
-  .topnav__brand-text { display: none; }
-  .topnav__items { width: 420px; }
-  .topnav__search-box { width: 200px; }
-  .topnav__search-box kbd { display: none; }
+  .topnav__brand-text {
+    display: none;
+  }
+  .topnav__items {
+    width: 420px;
+  }
+  .topnav__search-box {
+    width: 200px;
+  }
+  .topnav__search-box kbd {
+    display: none;
+  }
 }
 
 /* MÓVIL / TABLET */
@@ -577,9 +585,13 @@ body {
   }
 
   /* Lupa visible; el buscador se vuelve un panel bajo la barra */
-  .topnav__search { position: static; }
+  .topnav__search {
+    position: static;
+  }
 
-  .topnav__search-toggle { display: block; }
+  .topnav__search-toggle {
+    display: block;
+  }
 
   .topnav__search-box {
     display: none;
@@ -594,7 +606,9 @@ body {
     z-index: 6;
   }
 
-  .topnav__bar.is-search-open .topnav__search-box { display: flex; }
+  .topnav__bar.is-search-open .topnav__search-box {
+    display: flex;
+  }
   .topnav__bar.is-search-open .topnav__search-toggle {
     background: var(--accent-soft);
     color: var(--accent);

@@ -18,7 +18,6 @@ function svg(name) {
 }
 
 const menuItems = [
-  // CORRECCIÓN: Rutas absolutas desde la raíz del proyecto
   { title: "Inicio", icon: "home", link: "/modules/inicio/dashboard/inicio.html" },
   {
     title: "Académico",
@@ -37,18 +36,16 @@ const menuItems = [
   {
     title: "Gestión",
     icon: "manage",
-    // NOTA: Ajusta estas rutas si los archivos no están dentro de una carpeta "gestion"
     submenu: [
-      { title: "Gestión académica", link: "/modules/gestion/gestion-academica.html" },
-      { title: "Asistencia docente", link: "/modules/gestion/asistencia-docente.html" },
-      { title: "QR Estudiante", link: "/modules/gestion/qr-estudiante.html" },
-      { title: "QR Institucional", link: "/modules/gestion/qr-institucional.html" }
+      { title: "Gestión académica", link: "/modules/gestion/g_academica/g_academica.html" },
+      { title: "Asistencia docente", link: "/modules/gestion/ast_docente/astdocente.html" },
+      { title: "QR Estudiante", link: "/modules/gestion/qr_estudiante/qr_estudiante.html" },
+      { title: "QR Institucional", link: "/modules/gestion/qr_institucional/qr_institucional.html" }
     ]
   },
   {
     title: "Institución",
     icon: "building",
-    // NOTA: Ajusta estas rutas si los archivos no están dentro de una carpeta "institucion"
     submenu: [
       { title: "Colegio", link: "/modules/institucion/colegio/colegio.html" },
       { title: "Aulas", link: "/modules/institucion/aulas/aulas.html" }

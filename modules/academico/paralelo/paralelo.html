@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Paralelos · Sistema de Asistencia QR</title>
+  <link rel="stylesheet" href="/shared/css/colors.css">
+  <link rel="stylesheet" href="/shared/css/menu.css">
+  <link rel="stylesheet" href="paralelo.css">
+</head>
+<body>
+  <main class="acc">
+
+    <header class="acc-head">
+      <div>
+        <h1 class="acc-title">Paralelos</h1>
+        <p class="acc-sub" id="resumen">Cargando paralelos…</p>
+      </div>
+      <button class="btn btn--primary" type="button" id="btnNuevo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        Nuevo paralelo
+      </button>
+    </header>
+
+    <section class="panel">
+      <div class="toolbar">
+        <label class="field-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="fBuscar" placeholder="Buscar por letra, curso o nivel" autocomplete="off" aria-label="Buscar paralelos">
+        </label>
+        <select class="select" id="fNivel" aria-label="Filtrar por nivel">
+          <option value="">Todos los niveles</option>
+        </select>
+        <select class="select" id="fColegio" aria-label="Filtrar por colegio" hidden>
+          <option value="">Todos los colegios</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Paralelo</th>
+              <th>Curso</th>
+              <th>Nivel</th>
+              <th>Colegio</th>
+              <th class="th-actions"><span class="sr-only">Acciones</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty" id="vacio" hidden>
+          <strong>No hay paralelos para mostrar</strong>
+          <span>Cambia los filtros o crea un paralelo nuevo.</span>
+        </div>
+      </div>
+
+      <footer class="pager" id="pager" hidden>
+        <span id="pagerInfo"></span>
+        <div class="pager__btns">
+          <button class="btn btn--ghost btn--sm" type="button" id="btnPrev">Anterior</button>
+          <button class="btn btn--ghost btn--sm" type="button" id="btnNext">Siguiente</button>
+        </div>
+      </footer>
+    </section>
+  </main>
+
+  <!-- MODAL: CREAR / EDITAR -->
+  <dialog class="modal" id="dlgParalelo" aria-labelledby="dlgTitulo">
+    <form id="formParalelo" novalidate>
+      <header class="modal__head">
+        <h2 id="dlgTitulo">Nuevo paralelo</h2>
+        <button class="icon-btn" type="button" data-cerrar aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+
+      <div class="modal__body">
+        <input type="hidden" id="idparalelo">
+
+        <div class="grid">
+          <div class="f f--full">
+            <label for="curso_idcurso">Curso</label>
+            <select class="select" id="curso_idcurso" required>
+              <option value="">Selecciona un curso</option>
+            </select>
+            <div class="meta">
+              <small class="err" data-err="curso_idcurso"></small>
+              <small class="hint" id="hintCurso"></small>
+            </div>
+          </div>
+
+          <div class="f f--full">
+            <label for="nombre">Letra del paralelo</label>
+            <input class="input input--letter" id="nombre" maxlength="1" autocomplete="off" placeholder="A" required>
+            <div class="letters" id="letras" role="group" aria-label="Letras sugeridas"></div>
+            <div class="meta">
+              <small class="err" data-err="nombre"></small>
+              <small class="hint" id="hintLetra"></small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="modal__foot">
+        <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+        <button class="btn btn--primary" type="submit" id="btnGuardar">Guardar paralelo</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- MODAL: CONFIRMAR ELIMINAR -->
+  <dialog class="modal modal--sm" id="dlgEliminar" aria-labelledby="delTitulo">
+    <div class="modal__body">
+      <h2 id="delTitulo">Eliminar paralelo</h2>
+      <p class="del-text" id="delTexto"></p>
+    </div>
+    <footer class="modal__foot">
+      <button class="btn btn--ghost" type="button" data-cerrar>Cancelar</button>
+      <button class="btn btn--danger" type="button" id="btnConfirmarEliminar">Eliminar paralelo</button>
+    </footer>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/shared/js/menu.js"></script>
+  <script src="paralelo.js"></script>
+</body>
+</html>
