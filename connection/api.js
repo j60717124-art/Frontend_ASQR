@@ -2,7 +2,6 @@ const API_BASE_URL = 'https://backend-asqr.onrender.com';
 //const API_BASE_URL = 'http://localhost:8000';
 
 // SESIÓN (sessionStorage)
-
 function obtenerTokenSesion() {
   return sessionStorage.getItem('tokenSesion') || '';
 }
