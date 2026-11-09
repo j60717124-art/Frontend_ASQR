@@ -1,5 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
-    //  SECUENCIA DE ANIMACIÓN DE ENTRADA
+    // VALIDACIÓN DE SESIÓN ACTIVA
+    if (typeof sesionVigente === 'function' && sesionVigente()) {
+        const tipo = (typeof obtenerTipoCuenta === 'function' ? obtenerTipoCuenta() : '').toLowerCase();
+        redirigirSegunRol(tipo);
+        return;
+    }
+    if (typeof obtenerTokenSesion === 'function' && obtenerTokenSesion()) limpiarSesion();
+
+    // SECUENCIA DE ANIMACIÓN DE ENTRADA
     const fondo = document.querySelector(".background");
     const lampWrapper = document.getElementById("lampWrapper");
     const bulb = document.getElementById("lampBulb");
@@ -69,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(iniciarSecuencia, 2700);
     }
 
-    //  ELEMENTOS DEL FORMULARIO DE LOGIN
+    // ELEMENTOS DEL FORMULARIO DE LOGIN
     const loginForm = document.getElementById("loginForm");
     const usuario = document.getElementById("usuario");
     const password = document.getElementById("password");
@@ -77,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginButton = document.getElementById("loginButton");
     const message = document.getElementById("message");
 
-    //  ELEMENTOS DE RECUPERACIÓN (paso 1: correo — paso 2: código + nueva clave)
+    // ELEMENTOS DE RECUPERACIÓN
     const recoverForm = document.getElementById("recoverForm");
     const recoverEmail = document.getElementById("recoverEmail");
     const recoverButton = document.getElementById("recoverButton");
@@ -96,6 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const forgotPasswordLink = document.getElementById("forgotPasswordLink");
     const backToLoginLink = document.getElementById("backToLoginLink");
 
+    recoverPin.addEventListener("input", () => { recoverPin.value = recoverPin.value.replace(/\D/g, "").slice(0, 6); });
+
     // Mostrar/Ocultar contraseña (login)
     showPassword.addEventListener("click", () => {
         const visible = password.type === "password";
@@ -103,14 +113,14 @@ document.addEventListener("DOMContentLoaded", () => {
         showPassword.setAttribute("aria-label", visible ? "Ocultar contraseña" : "Mostrar contraseña");
     });
 
-    // Mostrar/Ocultar contraseña (recuperación, paso 2)
+    // Mostrar/Ocultar contraseña (recuperación)
     showRecoverPassword.addEventListener("click", () => {
         const visible = recoverNewPassword.type === "password";
         recoverNewPassword.type = visible ? "text" : "password";
         showRecoverPassword.setAttribute("aria-label", visible ? "Ocultar contraseña" : "Mostrar contraseña");
     });
 
-    // Reinicia el formulario de recuperación a su estado inicial (paso 1 visible)
+    // Reinicia el formulario de recuperación
     function reiniciarRecuperacion() {
         recoverForm.classList.remove("paso-oculto");
         recoverStepForm.classList.add("paso-oculto");
@@ -148,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
         reiniciarRecuperacion();
     });
 
-    //  ENVÍO DEL FORMULARIO DE LOGIN — valida contra la base de datos vía api.js
+    // ENVÍO DEL FORMULARIO DE LOGIN
     loginForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
@@ -167,11 +177,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             // apiLogin ya guarda token/usuario/tipo en sessionStorage si todo sale bien
-            await apiLogin(usuarioValor, claveValor);
+            const respuesta = await apiLogin(usuarioValor, claveValor);
             showMessage("Acceso correcto. Redirigiendo...", "success", message);
+
+            // Redirigir según el rol
+            const rol = (respuesta.tipo || '').toLowerCase();
+
             setTimeout(() => {
-                window.location.href = "../../modules/inicio/dashboard/inicio.html";
+                redirigirSegunRol(rol);
             }, 600);
+
         } catch (error) {
             showMessage(error.message, "error", message);
             loginButton.disabled = false;
@@ -179,13 +194,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    //  PASO 1 DE RECUPERACIÓN — pide el código de 6 dígitos al correo
+    //  PASO 1 DE RECUPERACIÓN — pide el codigo de recuperacion
     recoverForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
         const correoValor = recoverEmail.value.trim();
         if (!correoValor) {
             showMessage("Ingresa tu correo electrónico.", "error", recoverMessage);
+            return;
+        }
+        const msgCorreo = validadores.correo(correoValor);
+        if (msgCorreo) {
+            showMessage(msgCorreo, "error", recoverMessage);
             return;
         }
 
@@ -195,9 +215,8 @@ document.addEventListener("DOMContentLoaded", () => {
         recoverMessage.textContent = "";
 
         try {
-            await apiSolicitarPin(correoValor);
-            showMessage("Si el correo existe, te enviamos un código. Revisa tu bandeja (expira en 5 minutos).", "success", recoverMessage);
-            // Avanza al paso 2: código + nueva contraseña
+            const respuesta = await apiSolicitarPin(correoValor);
+            showMessage((respuesta && respuesta.message ? respuesta.message : "Si el correo existe, se envió un código de verificación.") + " Revisa tu bandeja (el código expira en 5 minutos).", "success", recoverMessage);
             recoverForm.classList.add("paso-oculto");
             recoverStepForm.classList.remove("paso-oculto");
             recoverPin.focus();
@@ -209,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    //  PASO 2 DE RECUPERACIÓN — valida el código y cambia la contraseña
+    // PASO 2 DE RECUPERACIÓN — valida y cambia
     recoverStepForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
@@ -222,8 +241,14 @@ document.addEventListener("DOMContentLoaded", () => {
             showMessage("Completa el código y la nueva contraseña.", "error", recoverStepMessage);
             return;
         }
-        if (nuevaClave.length < 6) {
-            showMessage("La nueva contraseña debe tener al menos 6 caracteres.", "error", recoverStepMessage);
+        const msgPin = validadores.pin(pinValor);
+        if (msgPin) {
+            showMessage(msgPin, "error", recoverStepMessage);
+            return;
+        }
+        const msgClave = validadores.clave(nuevaClave);
+        if (msgClave) {
+            showMessage(msgClave, "error", recoverStepMessage);
             return;
         }
         if (nuevaClave !== confirmarClave) {
@@ -238,6 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             await apiCambiarClave(correoValor, pinValor, nuevaClave);
+            mostrarExito("Contraseña actualizada. Ya puedes iniciar sesión.");
             showMessage("Contraseña actualizada. Ya puedes iniciar sesión.", "success", recoverStepMessage);
             setTimeout(() => {
                 backToLoginLink.click();
@@ -251,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    //  MODO CLARO / OSCURO
+    // MODO CLARO / OSCURO
     const themeToggle = document.getElementById("themeToggle");
     const raiz = document.documentElement;
 
@@ -276,9 +302,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     actualizarBotonTema();
 
-    // Función auxiliar para mostrar mensajes (los colores están en login.css)
+    // FUNCIONES AUXILIARES
     function showMessage(text, type, element) {
         element.textContent = text;
         element.className = "message " + (type || "");
+    }
+
+    // Redirige al panel correspondiente según el rol
+    function redirigirSegunRol(tipo) {
+        const rol = (tipo || '').toLowerCase();
+
+        // El docente va directo al escáner; el resto al panel de control
+        window.location.href = rol === 'docente'
+            ? '../escaner_qr/escaner_qr.html'
+            : '../inicio/dashboard/inicio.html';
     }
 });

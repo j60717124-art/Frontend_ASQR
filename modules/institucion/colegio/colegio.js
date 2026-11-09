@@ -1,67 +1,7 @@
-/* =========================================================
-   MÓDULO · COLEGIO
-   Tabla: colegio (idcolegio, nombre varchar(100), telefono varchar(8),
-          ubicacion varchar(255))
-   ========================================================= */
-
-/* ---------- CAPA DE DATOS ----------
-   Ahora funciona en modo demostración (localStorage).
-   Para conectarlo a tu backend, pon tu ruta en API_URL:
-     GET    {API_URL}/colegios
-     POST   {API_URL}/colegios
-     PUT    {API_URL}/colegios/:id
-     DELETE {API_URL}/colegios/:id   (409 si tiene registros asociados) */
-const API_URL = ""; // ej.: "/api"
-
-const COLEGIOS_DEMO = [
-  { idcolegio: 1, nombre: "Unidad Educativa San Martín", telefono: "44123456", ubicacion: "Av. Principal #123, Zona Norte. Frente a la plaza central." }
-];
-
+// MÓDULO  COLEGIO
 const estado = { lista: [] };
 
-const api = {
-  async listar() {
-    if (API_URL) return (await fetch(`${API_URL}/colegios`)).json();
-    try {
-      const g = JSON.parse(localStorage.getItem("colegios_demo"));
-      if (Array.isArray(g)) return g;
-    } catch (e) {}
-    return COLEGIOS_DEMO.slice();
-  },
-  async guardar(col) {
-    if (API_URL) {
-      const nuevo = !col.idcolegio;
-      const r = await fetch(`${API_URL}/colegios${nuevo ? "" : "/" + col.idcolegio}`, {
-        method: nuevo ? "POST" : "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(col)
-      });
-      if (!r.ok) throw new Error("guardar");
-      return r.json();
-    }
-    if (!col.idcolegio) {
-      col.idcolegio = Math.max(0, ...estado.lista.map(x => x.idcolegio)) + 1;
-      estado.lista.push(col);
-    } else {
-      const i = estado.lista.findIndex(x => x.idcolegio === col.idcolegio);
-      estado.lista[i] = col;
-    }
-    localStorage.setItem("colegios_demo", JSON.stringify(estado.lista));
-    return col;
-  },
-  async eliminar(id) {
-    if (API_URL) {
-      const r = await fetch(`${API_URL}/colegios/${id}`, { method: "DELETE" });
-      if (r.status === 409) throw new Error("en_uso");
-      if (!r.ok) throw new Error("eliminar");
-      return;
-    }
-    estado.lista = estado.lista.filter(x => x.idcolegio !== id);
-    localStorage.setItem("colegios_demo", JSON.stringify(estado.lista));
-  }
-};
-
-/* ---------- UTILIDADES ---------- */
+// UTILIDADES
 const $ = (id) => document.getElementById(id);
 const escapar = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const normalizar = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -73,16 +13,7 @@ function iniciales(nombre) {
   return letras.join("").toUpperCase();
 }
 
-let toastTimer;
-function aviso(msg) {
-  const t = $("toast");
-  t.textContent = msg;
-  t.classList.add("is-show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("is-show"), 2800);
-}
-
-/* ---------- LISTADO ---------- */
+// LISTADO
 const ICO = {
   edit: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   del: '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/>',
@@ -147,9 +78,12 @@ function pintar() {
     : `${n} colegios registrados`;
 }
 
-/* ---------- FORMULARIO ---------- */
+// FORMULARIO
 const dlg = $("dlgCol");
 const form = $("formCol");
+
+// Errores del backend que se muestran junto al campo correspondiente
+const REGLAS_ERROR = [[/tel[eé]fono/i, "telefono"], [/ubicaci/i, "ubicacion"], [/colegio/i, "nombre"]];
 
 function contadores() {
   $("cntNombre").textContent = `${$("nombre").value.length}/100`;
@@ -157,8 +91,7 @@ function contadores() {
 }
 
 function limpiarErrores() {
-  form.querySelectorAll(".err").forEach(e => (e.textContent = ""));
-  form.querySelectorAll(".is-invalid").forEach(e => e.classList.remove("is-invalid"));
+  limpiarErroresFormulario(form);
 }
 
 function abrirFormulario(col) {
@@ -176,68 +109,84 @@ function abrirFormulario(col) {
 }
 
 function marcarError(campo, msg) {
-  form.querySelector(`[data-err="${campo}"]`).textContent = msg;
-  $(campo).classList.add("is-invalid");
+  marcarErrorCampo(form, campo, msg);
 }
 
 function validar() {
   limpiarErrores();
   let ok = true;
-  const id = Number($("idcolegio").value) || null;
+  const id = $("idcolegio").value ? String($("idcolegio").value) : null;
   const nombre = limpiarEspacios($("nombre").value);
   const tel = $("telefono").value.trim();
 
   if (nombre.length < 3) { marcarError("nombre", "Escribe al menos 3 caracteres."); ok = false; }
-  else if (estado.lista.some(c => c.idcolegio !== id && normalizar(c.nombre) === normalizar(nombre))) {
+  else if (estado.lista.some(c => String(c.idcolegio) !== id && normalizar(c.nombre) === normalizar(nombre))) {
     marcarError("nombre", "Ya existe un colegio con ese nombre."); ok = false;
   }
 
-  if (tel && !/^\d{8}$/.test(tel)) { marcarError("telefono", "El teléfono debe tener exactamente 8 dígitos."); ok = false; }
+  const msgTel = validadores.telefono(tel);
+  if (msgTel) { marcarError("telefono", msgTel); ok = false; }
   return ok;
 }
 
+validarEnVivo(form, "telefono", (v) => validadores.telefono(v));
 $("nombre").addEventListener("input", contadores);
 $("ubicacion").addEventListener("input", contadores);
 $("telefono").addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/\D/g, "").slice(0, 8);
 });
 
+// GUARDAR COLEGIO
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!validar()) { form.querySelector(".is-invalid")?.focus(); return; }
 
-  const col = {
-    idcolegio: Number($("idcolegio").value) || null,
+  const id = $("idcolegio").value;
+  const editando = !!id;
+
+  const payload = {
     nombre: limpiarEspacios($("nombre").value),
     telefono: $("telefono").value.trim() || null,
     ubicacion: limpiarEspacios($("ubicacion").value) || null
   };
-  const editando = !!col.idcolegio;
 
-  $("btnGuardar").disabled = true;
+  setCargando($("btnGuardar"), true, "Guardando…");
   try {
-    await api.guardar(col);
-    if (API_URL) estado.lista = await api.listar();
+    if (editando) {
+      await apiPut(`/colegios/${id}`, payload);
+      mostrarExito("Colegio actualizado correctamente");
+    } else {
+      await apiPost(`/colegios`, payload);
+      mostrarExito("Colegio registrado correctamente");
+    }
+
+    await cargarColegios(); // Recargar lista
     dlg.close();
-    pintar();
-    aviso(editando ? "Colegio actualizado" : "Colegio registrado");
+
   } catch (err) {
-    aviso("No se pudo guardar el colegio. Intenta de nuevo.");
+    errorFormulario(form, err, REGLAS_ERROR, "No se pudo guardar el colegio");
   } finally {
-    $("btnGuardar").disabled = false;
+    setCargando($("btnGuardar"), false);
   }
 });
 
-/* ---------- ACCIONES ---------- */
+// ACCIONES
 let idEliminar = null;
 
 $("lista").addEventListener("click", (e) => {
   const btn = e.target.closest("[data-accion]");
   if (!btn) return;
-  const col = estado.lista.find(x => x.idcolegio === Number(btn.dataset.id));
-  if (!col) return;
+
+  const id = String(btn.dataset.id);
+  const col = estado.lista.find(x => String(x.idcolegio) === id);
+
+  if (!col) {
+    console.warn("Colegio no encontrado para id:", id, estado.lista);
+    return;
+  }
 
   if (btn.dataset.accion === "editar") abrirFormulario(col);
+
   if (btn.dataset.accion === "eliminar") {
     idEliminar = col.idcolegio;
     $("delTexto").textContent = `Se eliminará «${col.nombre}». Esta acción no se puede deshacer.`;
@@ -246,21 +195,22 @@ $("lista").addEventListener("click", (e) => {
 });
 
 $("btnConfirmarEliminar").addEventListener("click", async () => {
+  const btnDel = $("btnConfirmarEliminar");
+  setCargando(btnDel, true, "Eliminando…");
   try {
-    await api.eliminar(idEliminar);
-    if (API_URL) estado.lista = await api.listar();
+    await apiDelete(`/colegios/${idEliminar}`);
+    await cargarColegios();
     $("dlgEliminar").close();
-    pintar();
-    aviso("Colegio eliminado");
+    mostrarExito("Colegio eliminado correctamente");
   } catch (err) {
     $("dlgEliminar").close();
-    aviso(err.message === "en_uso"
-      ? "No se puede eliminar: el colegio tiene registros asociados."
-      : "No se pudo eliminar el colegio. Intenta de nuevo.");
+    mostrarError(err, "No se puede eliminar: el colegio tiene aulas, cursos u otros registros asociados.");
+  } finally {
+    setCargando(btnDel, false);
   }
 });
 
-/* ---------- EVENTOS GENERALES ---------- */
+// EVENTOS GENERALES
 $("btnNuevo").addEventListener("click", () => abrirFormulario(null));
 $("btnVacio").addEventListener("click", () => abrirFormulario(null));
 $("fBuscar").addEventListener("input", pintar);
@@ -268,13 +218,24 @@ $("fBuscar").addEventListener("input", pintar);
 document.querySelectorAll("[data-cerrar]").forEach(b => b.addEventListener("click", () => b.closest("dialog").close()));
 document.querySelectorAll("dialog").forEach(d => d.addEventListener("mousedown", (e) => { if (e.target === d) d.close(); }));
 
-/* ---------- INICIO ---------- */
-(async function iniciar() {
+// INICIO Y CARGA DE DATOS
+async function cargarColegios() {
   try {
-    estado.lista = await api.listar();
+    const data = await apiGet('/colegios');
+    estado.lista = Array.isArray(data) ? data : (data?.colegios ?? data?.data ?? []);
+    pintar();
   } catch (err) {
-    $("resumen").textContent = "No se pudo cargar la información.";
-    return;
+    $("resumen").textContent = "Error al cargar la información.";
+    mostrarError(err, "Error al cargar la información.");
+    mostrarErrorTabla($("lista"), err, cargarColegios);
   }
-  pintar();
+}
+
+(async function iniciar() {
+  mostrarSkeleton($("lista"), 5);
+  $("resumen").textContent = "Cargando información...";
+  await cargarColegios();
 })();
+
+// PERMISOS
+aplicarSoloLectura(esAdmin(), ["btnNuevo"]);

@@ -4,7 +4,6 @@
     box-sizing: border-box;
 }
 
-/* Los colores viven en colors.css (tema claro / oscuro) */
 /* Variables de color para el login */
 :root {
     --bg-glow: var(--secondary-50);
@@ -21,25 +20,24 @@
 }
 
 :root[data-theme="dark"] {
-    --bg-glow: rgb(99 102 241 / .22);
     --bg-edge: var(--bg);
     --panel-from: var(--neutral-950);
     --panel-to: var(--primary-900);
     --gradient-brand: linear-gradient(100deg, var(--secondary-400), var(--tertiary-400));
     --danger: #f87171;
+    --bg-glow: rgb(99 102 241 / .22);
 }
 
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-        --bg-glow: rgb(99 102 241 / .22);
         --bg-edge: var(--bg);
         --panel-from: var(--neutral-950);
         --panel-to: var(--primary-900);
         --gradient-brand: linear-gradient(100deg, var(--secondary-400), var(--tertiary-400));
         --danger: #f87171;
+        --bg-glow: rgb(99 102 241 / .22);
     }
 }
-
 
 body {
     height: 100vh;
@@ -126,10 +124,12 @@ body {
 }
 
 @keyframes aparecer-panel {
-    to { opacity: 1; transform: translateY(0); }
+    to {
+        opacity: 1; transform: translateY(0);
+    }
 }
 
-/*  PANEL IZQUIERDO (ILUSTRACIÓN)  */
+/*  PANEL IZQUIERDO */
 .illustration {
     position: relative;
     height: 100%;
@@ -153,14 +153,38 @@ body {
 }
 
 @keyframes lamp-drop-swing {
-    0% { top: -150px; transform: translateX(-50%) rotate(0deg); }
-    40% { top: 30px; transform: translateX(-50%) rotate(0deg); }
-    50% { top: 30px; transform: translateX(-50%) rotate(15deg); }
-    60% { top: 30px; transform: translateX(-50%) rotate(-12deg); }
-    70% { top: 30px; transform: translateX(-50%) rotate(8deg); }
-    80% { top: 30px; transform: translateX(-50%) rotate(-5deg); }
-    90% { top: 30px; transform: translateX(-50%) rotate(2deg); }
-    100% { top: 30px; transform: translateX(-50%) rotate(0deg); }
+    0% {
+        top: -150px;
+        transform: translateX(-50%) rotate(0deg);
+    }
+    40% {
+        top: 30px;
+        transform: translateX(-50%) rotate(0deg);
+    }
+    50% {
+        top: 30px;
+        transform: translateX(-50%) rotate(15deg);
+    }
+    60% {
+        top: 30px;
+        transform: translateX(-50%) rotate(-12deg);
+    }
+    70% {
+        top: 30px;
+        transform: translateX(-50%) rotate(8deg);
+    }
+    80% {
+        top: 30px;
+        transform: translateX(-50%) rotate(-5deg);
+    }
+    90% {
+        top: 30px;
+        transform: translateX(-50%) rotate(2deg);
+    }
+    100% {
+        top: 30px;
+        transform: translateX(-50%) rotate(0deg);
+    }
 }
 
 .lamp-cable {
@@ -177,7 +201,9 @@ body {
 }
 
 @keyframes fade-in-cable {
-    to { opacity: 1; }
+    to {
+        opacity: 1;
+    }
 }
 
 .lamp {
@@ -277,7 +303,6 @@ body {
     transform: translateY(0) scale(1);
 }
 
-/* sombra de contacto en el suelo (no flota) */
 .book-illustration::after {
     content: "";
     position: absolute;
@@ -304,8 +329,12 @@ body {
 }
 
 @keyframes bookFloat {
-    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
-    50% { transform: translateY(-6px) rotate(-1.5deg); }
+    0%, 100% {
+        transform: translateY(0) rotate(-1.5deg);
+    }
+    50% {
+        transform: translateY(-6px) rotate(-1.5deg);
+    }
 }
 
 .floor-light {
@@ -355,7 +384,7 @@ body {
     letter-spacing: 2.5px;
 }
 
-/* --- PANEL DERECHO (LOGIN) --- */
+/* PANEL DERECHO (LOGIN) */
 .login-section {
     display: flex;
     align-items: center;
@@ -367,7 +396,6 @@ body {
     transition: background-color .25s ease;
 }
 
-/* Botón modo claro / oscuro */
 .theme-toggle {
     position: absolute;
     top: 18px;
@@ -396,9 +424,15 @@ body {
     height: 19px;
 }
 
-.theme-toggle .icon-sun { display: none; }
-:root[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
-:root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+.theme-toggle .icon-sun {
+    display: none;
+}
+:root[data-theme="dark"] .theme-toggle .icon-sun {
+    display: block;
+}
+:root[data-theme="dark"] .theme-toggle .icon-moon {
+    display: none;
+}
 
 .login-box {
     width: 100%;
@@ -422,7 +456,6 @@ body {
     transform: translate(-50%, -50%) translateX(25px);
 }
 
-/* Paso 2 de recuperacion (codigo + nueva contrasena): oculto hasta pedir el codigo */
 .paso-oculto {
     display: none;
 }
@@ -604,8 +637,12 @@ body {
 }
 
 @keyframes button-shine {
-    0% { left: -80%; }
-    45%, 100% { left: 150%; }
+    0% {
+        left: -80%;
+    }
+    45%, 100% {
+        left: 150%;
+    }
 }
 
 .message {
@@ -616,9 +653,15 @@ body {
     color: var(--text-muted);
 }
 
-.message.success { color: var(--success-hover); }
-.message.error   { color: var(--danger); }
-.message.info    { color: var(--accent); }
+.message.success {
+    color: var(--success-hover);
+}
+.message.error   {
+    color: var(--danger);
+}
+.message.info    {
+    color: var(--accent);
+}
 
 .login-footer {
     display: flex;
@@ -648,7 +691,6 @@ body {
     height: 13px;
 }
 
-/* RECUPERAR CONTRASEÑA (centrado) */
 .recover-box .login-header {
     text-align: center;
 }
@@ -671,7 +713,6 @@ body {
     color: var(--accent-hover);
 }
 
-/* RESPONSIVIDAD */
 @media (max-width: 850px) {
     .login-container {
         grid-template-columns: 1fr;
@@ -762,4 +803,21 @@ body {
         height: 153px;
         bottom: 40px;
     }
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+input[type="password"]::-webkit-reveal {
+    display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button {
+    display: none !important;
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
 }

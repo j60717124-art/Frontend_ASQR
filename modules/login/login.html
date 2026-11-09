@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="/shared/css/colors.css">
   <link rel="stylesheet" href="login.css">
   <script>
-    /* Aplica el tema guardado antes de pintar para evitar parpadeos */
     (function () {
       try {
         var t = localStorage.getItem("theme");
@@ -44,25 +43,56 @@
 <svg class="book-svg" viewBox="0 0 300 230" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 <defs>
   <linearGradient id="paperL" gradientUnits="userSpaceOnUse" x1="20" y1="0" x2="150" y2="0">
-    <stop offset="0" stop-color="#f7e6b0"/><stop offset=".55" stop-color="#fbeebf"/><stop offset=".88" stop-color="#d9b45f"/><stop offset="1" stop-color="#9c7430"/>
+    <stop offset="0" stop-color="#f7e6b0"/>
+    <stop offset=".55" stop-color="#fbeebf"/>
+    <stop offset=".88" stop-color="#d9b45f"/>
+    <stop offset="1" stop-color="#9c7430"/>
   </linearGradient>
   <linearGradient id="paperR" gradientUnits="userSpaceOnUse" x1="280" y1="0" x2="150" y2="0">
-    <stop offset="0" stop-color="#f7e6b0"/><stop offset=".55" stop-color="#fbeebf"/><stop offset=".88" stop-color="#d9b45f"/><stop offset="1" stop-color="#9c7430"/>
+    <stop offset="0" stop-color="#f7e6b0"/>
+    <stop offset=".55" stop-color="#fbeebf"/>
+    <stop offset=".88" stop-color="#d9b45f"/>
+    <stop offset="1" stop-color="#9c7430"/>
   </linearGradient>
-  <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ecd291"/><stop offset="1" stop-color="#b98f45"/></linearGradient>
-  <linearGradient id="cover" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14405e"/><stop offset="1" stop-color="#071a2c"/></linearGradient>
-  <linearGradient id="coverEdge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2236"/><stop offset="1" stop-color="#030a14"/></linearGradient>
-  <radialGradient id="glow" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="rgba(255,236,160,.75)"/><stop offset="1" stop-color="rgba(255,220,120,0)"/></radialGradient>
-  <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="rgba(255,205,110,.4)"/><stop offset="1" stop-color="rgba(255,205,110,0)"/></radialGradient>
+  <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ecd291"/>
+    <stop offset="1" stop-color="#b98f45"/>
+  </linearGradient>
+  <linearGradient id="cover" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#14405e"/>
+    <stop offset="1" stop-color="#071a2c"/>
+  </linearGradient>
+  <linearGradient id="coverEdge" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#0b2236"/>
+    <stop offset="1" stop-color="#030a14"/>
+  </linearGradient>
+  <radialGradient id="glow" cx="50%" cy="45%" r="55%">
+    <stop offset="0" stop-color="rgba(255,236,160,.75)"/>
+    <stop offset="1" stop-color="rgba(255,220,120,0)"/>
+  </radialGradient>
+  <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="rgba(255,205,110,.4)"/>
+    <stop offset="1" stop-color="rgba(255,205,110,0)"/>
+  </radialGradient>
   <linearGradient id="vane" gradientUnits="userSpaceOnUse" x1="124" y1="170" x2="258" y2="20">
-    <stop offset="0" stop-color="#fff8e3"/><stop offset="1" stop-color="#f3e3b8"/>
+    <stop offset="0" stop-color="#fff8e3"/>
+    <stop offset="1" stop-color="#f3e3b8"/>
   </linearGradient>
   <linearGradient id="teal" gradientUnits="userSpaceOnUse" x1="124" y1="170" x2="258" y2="20">
-    <stop offset=".1" stop-color="rgba(50,190,215,.95)"/><stop offset=".55" stop-color="rgba(70,200,215,.55)"/><stop offset="1" stop-color="rgba(70,200,215,0)"/>
+    <stop offset=".1" stop-color="rgba(50,190,215,.95)"/>
+    <stop offset=".55" stop-color="rgba(70,200,215,.55)"/>
+    <stop offset="1" stop-color="rgba(70,200,215,0)"/>
   </linearGradient>
-  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbe08a"/><stop offset="1" stop-color="#a97a22"/></linearGradient>
-  <filter id="blur2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.4"/></filter>
-  <clipPath id="clipPages"><path d="M24 118 C46 90 100 84 150 112 C200 84 254 90 276 118 L280 142 C250 130 200 128 150 148 C100 128 50 130 20 142 Z"/></clipPath>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#fbe08a"/>
+    <stop offset="1" stop-color="#a97a22"/>
+  </linearGradient>
+  <filter id="blur2" x="-20%" y="-20%" width="140%" height="140%">
+    <feGaussianBlur stdDeviation="2.4"/>
+  </filter>
+  <clipPath id="clipPages">
+    <path d="M24 118 C46 90 100 84 150 112 C200 84 254 90 276 118 L280 142 C250 130 200 128 150 148 C100 128 50 130 20 142 Z"/>
+  </clipPath>
 </defs>
 
 <g transform="translate(0,40)">
@@ -71,49 +101,48 @@
   <!-- base / tapa -->
   <path d="M4 150 C50 138 100 142 150 166 C200 142 250 138 296 150 L296 159 C250 147 200 151 150 175 C100 151 50 147 4 159 Z" fill="url(#coverEdge)" stroke="#19d4f2" stroke-width="1.1"/>
   <path d="M10 124 C40 96 100 90 150 118 C200 90 260 96 290 124 L296 150 C250 138 200 142 150 166 C100 142 50 138 4 150 Z" fill="url(#cover)" stroke="rgba(25,212,242,.8)" stroke-width="1"/>
-
   <path d="M20 142 C50 130 100 128 150 148 L150 158 C100 138 50 140 20 152 Z" fill="url(#edge)"/>
-<path d="M20.0 143.4 C50.0 131.4 100.0 129.4 150.0 149.4" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
-<path d="M20.0 144.9 C50.0 132.9 100.0 130.9 150.0 150.9" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
-<path d="M20.0 146.3 C50.0 134.3 100.0 132.3 150.0 152.3" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
-<path d="M20.0 147.8 C50.0 135.8 100.0 133.8 150.0 153.8" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
-<path d="M20.0 149.2 C50.0 137.2 100.0 135.2 150.0 155.2" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
-<path d="M20.0 150.7 C50.0 138.7 100.0 136.7 150.0 156.7" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
-<path d="M24 118 C46 90 100 84 150 112 L150 148 C100 128 50 130 20 142 Z" fill="url(#paperL)"/>
-<path d="M24.0 116.2 C46.0 88.2 100.0 82.2 150.0 110.2" pathLength="100" stroke-dasharray="42 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
-<path d="M24.0 114.4 C46.0 86.4 100.0 80.4 150.0 108.4" pathLength="100" stroke-dasharray="34 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
-<path d="M24.0 112.6 C46.0 84.6 100.0 78.6 150.0 106.6" pathLength="100" stroke-dasharray="26 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
-<path d="M35.4 121.4 C46.6 95.6 100.0 90.2 142.0 117.0" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M35.1 123.3 C46.9 98.8 100.0 93.7 142.0 119.9" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M34.8 125.2 C47.2 102.0 100.0 97.2 142.0 122.8" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M34.5 127.1 C47.5 105.2 100.0 100.7 142.0 125.7" pathLength="100" stroke-dasharray="52 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M34.2 129.0 C47.8 108.4 100.0 104.2 142.0 128.6" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M33.8 131.0 C48.2 111.6 100.0 107.8 142.0 131.4" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M33.5 132.9 C48.5 114.8 100.0 111.3 142.0 134.3" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M33.2 134.8 C48.8 118.0 100.0 114.8 142.0 137.2" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M32.9 136.7 C49.1 121.2 100.0 118.3 142.0 140.1" pathLength="100" stroke-dasharray="63 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M24.0 118.0 C46.0 90.0 100.0 84.0 150.0 112.0" fill="none" stroke="rgba(255,250,225,.9)" stroke-width=".9"/>
+  <path d="M20.0 143.4 C50.0 131.4 100.0 129.4 150.0 149.4" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+  <path d="M20.0 144.9 C50.0 132.9 100.0 130.9 150.0 150.9" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+  <path d="M20.0 146.3 C50.0 134.3 100.0 132.3 150.0 152.3" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+  <path d="M20.0 147.8 C50.0 135.8 100.0 133.8 150.0 153.8" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+  <path d="M20.0 149.2 C50.0 137.2 100.0 135.2 150.0 155.2" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+  <path d="M20.0 150.7 C50.0 138.7 100.0 136.7 150.0 156.7" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+  <path d="M24 118 C46 90 100 84 150 112 L150 148 C100 128 50 130 20 142 Z" fill="url(#paperL)"/>
+  <path d="M24.0 116.2 C46.0 88.2 100.0 82.2 150.0 110.2" pathLength="100" stroke-dasharray="42 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
+  <path d="M24.0 114.4 C46.0 86.4 100.0 80.4 150.0 108.4" pathLength="100" stroke-dasharray="34 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
+  <path d="M24.0 112.6 C46.0 84.6 100.0 78.6 150.0 106.6" pathLength="100" stroke-dasharray="26 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
+  <path d="M35.4 121.4 C46.6 95.6 100.0 90.2 142.0 117.0" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M35.1 123.3 C46.9 98.8 100.0 93.7 142.0 119.9" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M34.8 125.2 C47.2 102.0 100.0 97.2 142.0 122.8" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M34.5 127.1 C47.5 105.2 100.0 100.7 142.0 125.7" pathLength="100" stroke-dasharray="52 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M34.2 129.0 C47.8 108.4 100.0 104.2 142.0 128.6" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M33.8 131.0 C48.2 111.6 100.0 107.8 142.0 131.4" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M33.5 132.9 C48.5 114.8 100.0 111.3 142.0 134.3" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M33.2 134.8 C48.8 118.0 100.0 114.8 142.0 137.2" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M32.9 136.7 C49.1 121.2 100.0 118.3 142.0 140.1" pathLength="100" stroke-dasharray="63 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M24.0 118.0 C46.0 90.0 100.0 84.0 150.0 112.0" fill="none" stroke="rgba(255,250,225,.9)" stroke-width=".9"/>
   <path d="M280 142 C250 130 200 128 150 148 L150 158 C200 138 250 140 280 152 Z" fill="url(#edge)"/>
-<path d="M280.0 143.4 C250.0 131.4 200.0 129.4 150.0 149.4" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
-<path d="M280.0 144.9 C250.0 132.9 200.0 130.9 150.0 150.9" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
-<path d="M280.0 146.3 C250.0 134.3 200.0 132.3 150.0 152.3" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
-<path d="M280.0 147.8 C250.0 135.8 200.0 133.8 150.0 153.8" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
-<path d="M280.0 149.2 C250.0 137.2 200.0 135.2 150.0 155.2" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
-<path d="M280.0 150.7 C250.0 138.7 200.0 136.7 150.0 156.7" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
-<path d="M276 118 C254 90 200 84 150 112 L150 148 C200 128 250 130 280 142 Z" fill="url(#paperR)"/>
-<path d="M276.0 116.2 C254.0 88.2 200.0 82.2 150.0 110.2" pathLength="100" stroke-dasharray="42 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
-<path d="M276.0 114.4 C254.0 86.4 200.0 80.4 150.0 108.4" pathLength="100" stroke-dasharray="34 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
-<path d="M276.0 112.6 C254.0 84.6 200.0 78.6 150.0 106.6" pathLength="100" stroke-dasharray="26 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
-<path d="M264.6 121.4 C253.4 95.6 200.0 90.2 158.0 117.0" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M264.9 123.3 C253.1 98.8 200.0 93.7 158.0 119.9" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M265.2 125.2 C252.8 102.0 200.0 97.2 158.0 122.8" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M265.5 127.1 C252.5 105.2 200.0 100.7 158.0 125.7" pathLength="100" stroke-dasharray="52 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M265.8 129.0 C252.2 108.4 200.0 104.2 158.0 128.6" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M266.2 131.0 C251.8 111.6 200.0 107.8 158.0 131.4" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M266.5 132.9 C251.5 114.8 200.0 111.3 158.0 134.3" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M266.8 134.8 C251.2 118.0 200.0 114.8 158.0 137.2" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M267.1 136.7 C250.9 121.2 200.0 118.3 158.0 140.1" pathLength="100" stroke-dasharray="56 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
-<path d="M276.0 118.0 C254.0 90.0 200.0 84.0 150.0 112.0" fill="none" stroke="rgba(255,250,225,.9)" stroke-width=".9"/>
+  <path d="M280.0 143.4 C250.0 131.4 200.0 129.4 150.0 149.4" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+  <path d="M280.0 144.9 C250.0 132.9 200.0 130.9 150.0 150.9" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+  <path d="M280.0 146.3 C250.0 134.3 200.0 132.3 150.0 152.3" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+  <path d="M280.0 147.8 C250.0 135.8 200.0 133.8 150.0 153.8" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+  <path d="M280.0 149.2 C250.0 137.2 200.0 135.2 150.0 155.2" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+  <path d="M280.0 150.7 C250.0 138.7 200.0 136.7 150.0 156.7" fill="none" stroke="rgba(130,90,30,.45)" stroke-width=".5"/>
+  <path d="M276 118 C254 90 200 84 150 112 L150 148 C200 128 250 130 280 142 Z" fill="url(#paperR)"/>
+  <path d="M276.0 116.2 C254.0 88.2 200.0 82.2 150.0 110.2" pathLength="100" stroke-dasharray="42 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
+  <path d="M276.0 114.4 C254.0 86.4 200.0 80.4 150.0 108.4" pathLength="100" stroke-dasharray="34 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
+  <path d="M276.0 112.6 C254.0 84.6 200.0 78.6 150.0 106.6" pathLength="100" stroke-dasharray="26 100" fill="none" stroke="rgba(150,105,40,.4)" stroke-width=".6"/>
+  <path d="M264.6 121.4 C253.4 95.6 200.0 90.2 158.0 117.0" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M264.9 123.3 C253.1 98.8 200.0 93.7 158.0 119.9" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M265.2 125.2 C252.8 102.0 200.0 97.2 158.0 122.8" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M265.5 127.1 C252.5 105.2 200.0 100.7 158.0 125.7" pathLength="100" stroke-dasharray="52 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M265.8 129.0 C252.2 108.4 200.0 104.2 158.0 128.6" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M266.2 131.0 C251.8 111.6 200.0 107.8 158.0 131.4" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M266.5 132.9 C251.5 114.8 200.0 111.3 158.0 134.3" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M266.8 134.8 C251.2 118.0 200.0 114.8 158.0 137.2" pathLength="100" stroke-dasharray="100 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M267.1 136.7 C250.9 121.2 200.0 118.3 158.0 140.1" pathLength="100" stroke-dasharray="56 100" fill="none" stroke="rgba(100,65,20,.38)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M276.0 118.0 C254.0 90.0 200.0 84.0 150.0 112.0" fill="none" stroke="rgba(255,250,225,.9)" stroke-width=".9"/>
 
   <g clip-path="url(#clipPages)">
     <rect x="138" y="90" width="24" height="70" fill="rgba(70,40,0,.4)" filter="url(#blur2)"/>
@@ -134,12 +163,10 @@
 </g>
 </svg>
       </div>
-
       <div class="illustration-text">
         <span>APRENDE</span>
         <strong> EL CONOCIMIENTO NO TIENE LÍMITES</strong>
       </div>
-
       <div class="floor-light"></div>
   </section>
 
@@ -211,7 +238,7 @@
           </div>
       </div>
 
-      <!-- Formulario de Recuperación de Contraseña (Oculto por defecto) -->
+      <!-- Formulario de Recuperación de Contraseña -->
       <div class="login-box hidden-box recover-box" id="recoverBox">
           <div class="login-header">
             <span class="welcome-label">RECUPERACIÓN</span>
@@ -240,7 +267,7 @@
             <p id="recoverMessage" class="message"></p>
           </form>
 
-          <!-- Paso 2: código recibido + nueva contraseña (oculto hasta completar el paso 1) -->
+          <!-- Paso 2: código recibido + nueva contraseña) -->
           <form id="recoverStepForm" class="paso-oculto">
             <div class="input-group">
               <label for="recoverPin">CÓDIGO DE VERIFICACIÓN</label>
@@ -296,7 +323,9 @@
       </section>
     </main>
   </div>
+  <script src="/connection/config.js"></script>
   <script src="/connection/api.js"></script>
+  <script src="/shared/js/ui.js"></script>
   <script src="login.js"></script>
 </body>
 </html>

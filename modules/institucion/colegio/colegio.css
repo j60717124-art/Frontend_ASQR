@@ -160,7 +160,9 @@
   font-family: inherit;
   font-size: 14px;
 }
-.field-search input::placeholder { color: var(--text-subtle); }
+.field-search input::placeholder {
+  color: var(--text-subtle);
+}
 
 /* FORMULARIO / MODAL */
 .input {
@@ -211,7 +213,9 @@
   flex-direction: column;
   animation: modal-in .25s ease;
 }
-.modal--sm { width: min(420px, calc(100vw - 24px)); }
+.modal--sm {
+  width: min(420px, calc(100vw - 24px));
+}
 .modal::backdrop {
   background: var(--overlay);
   backdrop-filter: blur(3px);
@@ -224,8 +228,14 @@
 }
 
 @keyframes modal-in {
-  from { opacity: 0; transform: translateY(12px) scale(.98); }
-  to   { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(.98);
+  }
+  to   {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .modal__head {
@@ -315,8 +325,12 @@
 
 /* RESPONSIVE */
 @media (max-width: 900px) {
-  .acc { padding: 24px 20px 50px; }
-  .acc-title { font-size: 24px; }
+  .acc {
+    padding: 24px 20px 50px;
+  }
+  .acc-title {
+    font-size: 24px;
+  }
 }
 
 @media (max-width: 700px) {
@@ -354,7 +368,9 @@
 }
 
 /* TARJETAS DE COLEGIO */
-.toolbar[hidden], .empty[hidden] { display: none; }
+.toolbar[hidden], .empty[hidden] {
+  display: none;
+}
 
 .schools {
   display: grid;
@@ -398,7 +414,14 @@
   letter-spacing: .5px;
   box-shadow: 0 6px 18px rgb(37 99 235 / .32);
 }
-.school__name { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: -.2px; line-height: 1.25; overflow-wrap: anywhere; }
+.school__name {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -.2px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
 
 .school__info {
   display: flex;
@@ -525,6 +548,11 @@
 }
 
 @media (max-width: 600px) {
-  .schools { grid-template-columns: 1fr; gap: 14px; }
-  .school { padding: 18px; }
+  .schools {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .school {
+    padding: 18px;
+  }
 }

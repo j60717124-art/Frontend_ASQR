@@ -1,101 +1,15 @@
-/* =========================================================
-   MÓDULO · AULA
-   Tabla: aula (idaula, nombre varchar(100), ubicacion varchar(255),
-          colegio_idcolegio int)
-   ========================================================= */
-
-/* ---------- CAPA DE DATOS ----------
-   Ahora funciona en modo demostración (localStorage).
-   Para conectarlo a tu backend, pon tu ruta en API_URL:
-     GET    {API_URL}/aulas
-     POST   {API_URL}/aulas
-     PUT    {API_URL}/aulas/:id
-     DELETE {API_URL}/aulas/:id    (409 si tiene horarios u otros registros)
-     GET    {API_URL}/colegios     (campos: idcolegio, nombre) */
-const API_URL = ""; // ej.: "/api"
-
-const COLEGIOS_DEMO = [
-  { idcolegio: 1, nombre: "Unidad Educativa San Martín" }
-];
-
-const AULAS_DEMO = [
-  { idaula: 1, nombre: "Aula 101", ubicacion: "Bloque A · Planta baja", colegio_idcolegio: 1 },
-  { idaula: 2, nombre: "Aula 102", ubicacion: "Bloque A · Planta baja", colegio_idcolegio: 1 },
-  { idaula: 3, nombre: "Aula 201", ubicacion: "Bloque A · 2.º piso", colegio_idcolegio: 1 },
-  { idaula: 4, nombre: "Laboratorio de Computación", ubicacion: "Bloque B · 1.er piso, junto a la biblioteca", colegio_idcolegio: 1 },
-  { idaula: 5, nombre: "Sala de Música", ubicacion: null, colegio_idcolegio: 1 }
-];
+// MÓDULO  AULA
 
 const estado = { aulas: [], colegios: [], pagina: 1 };
 const POR_PAGINA = 10;
 
-const leerLocal = (clave, defecto) => {
-  try {
-    const g = JSON.parse(localStorage.getItem(clave));
-    if (Array.isArray(g)) return g;
-  } catch (e) {}
-  return defecto.slice();
-};
-
-const api = {
-  async listar() {
-    if (API_URL) return (await fetch(`${API_URL}/aulas`)).json();
-    return leerLocal("aulas_demo", AULAS_DEMO);
-  },
-  async colegios() {
-    if (API_URL) return (await fetch(`${API_URL}/colegios`)).json();
-    return leerLocal("colegios_demo", COLEGIOS_DEMO);
-  },
-  async guardar(aula) {
-    if (API_URL) {
-      const nueva = !aula.idaula;
-      const r = await fetch(`${API_URL}/aulas${nueva ? "" : "/" + aula.idaula}`, {
-        method: nueva ? "POST" : "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(aula)
-      });
-      if (!r.ok) throw new Error("guardar");
-      return r.json();
-    }
-    if (!aula.idaula) {
-      aula.idaula = Math.max(0, ...estado.aulas.map(x => x.idaula)) + 1;
-      estado.aulas.push(aula);
-    } else {
-      const i = estado.aulas.findIndex(x => x.idaula === aula.idaula);
-      estado.aulas[i] = aula;
-    }
-    localStorage.setItem("aulas_demo", JSON.stringify(estado.aulas));
-    return aula;
-  },
-  async eliminar(id) {
-    if (API_URL) {
-      const r = await fetch(`${API_URL}/aulas/${id}`, { method: "DELETE" });
-      if (r.status === 409) throw new Error("en_uso");
-      if (!r.ok) throw new Error("eliminar");
-      return;
-    }
-    estado.aulas = estado.aulas.filter(x => x.idaula !== id);
-    localStorage.setItem("aulas_demo", JSON.stringify(estado.aulas));
-  }
-};
-
-/* ---------- UTILIDADES ---------- */
 const $ = (id) => document.getElementById(id);
 const escapar = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const normalizar = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const limpiarEspacios = (s) => s.trim().replace(/\s+/g, " ");
 const nombreColegio = (id) => estado.colegios.find(c => c.idcolegio === id)?.nombre ?? "Sin colegio";
 
-let toastTimer;
-function aviso(msg) {
-  const t = $("toast");
-  t.textContent = msg;
-  t.classList.add("is-show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("is-show"), 2800);
-}
-
-/* ---------- LISTADO ---------- */
+// LISTADO
 const ICO = {
   edit: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   del: '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/>',
@@ -131,7 +45,7 @@ function pintar() {
         </div>
       </td>
       <td data-label="Ubicación" class="muted loc">${a.ubicacion ? escapar(a.ubicacion) : "—"}</td>
-      <td data-label="Colegio"><span class="badge badge--school" title="${escapar(nombreColegio(a.colegio_idcolegio))}"><span>${escapar(nombreColegio(a.colegio_idcolegio))}</span></span></td>
+      <td data-label="Colegio"><span class="badge badge--school" title="${escapar(a.colegio_nombre || nombreColegio(a.colegio_idcolegio))}"><span>${escapar(a.colegio_nombre || nombreColegio(a.colegio_idcolegio))}</span></span></td>
       <td>
         <div class="row-actions">
           <button class="icon-btn" data-accion="editar" data-id="${a.idaula}" title="Editar" aria-label="Editar ${escapar(a.nombre)}">${icono("edit")}</button>
@@ -149,18 +63,21 @@ function pintar() {
   $("resumen").textContent = `${n} ${n === 1 ? "aula registrada" : "aulas registradas"}`;
 }
 
-/* ---------- COMBOS DE COLEGIO ---------- */
+// COMBOS DE COLEGIO
 function llenarColegios() {
   const ordenados = estado.colegios.slice().sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
   const opciones = ordenados.map(c => `<option value="${c.idcolegio}">${escapar(c.nombre)}</option>`).join("");
   $("colegio_idcolegio").innerHTML = '<option value="">Selecciona un colegio</option>' + opciones;
   $("fColegio").innerHTML = '<option value="">Todos los colegios</option>' + opciones;
-  $("fColegio").hidden = ordenados.length < 2; // con un solo colegio el filtro no aporta nada
+  $("fColegio").hidden = ordenados.length < 2;
 }
 
-/* ---------- FORMULARIO ---------- */
+// FORMULARIO
 const dlg = $("dlgAula");
 const form = $("formAula");
+
+// Errores del backend que se muestran junto al campo correspondiente
+const REGLAS_ERROR = [[/colegio/i, "colegio_idcolegio"], [/ubicaci/i, "ubicacion"], [/aula/i, "nombre"]];
 
 function contadores() {
   $("cntNombre").textContent = `${$("nombre").value.length}/100`;
@@ -168,8 +85,7 @@ function contadores() {
 }
 
 function limpiarErrores() {
-  form.querySelectorAll(".err").forEach(e => (e.textContent = ""));
-  form.querySelectorAll(".is-invalid").forEach(e => e.classList.remove("is-invalid"));
+  limpiarErroresFormulario(form);
 }
 
 function abrirFormulario(aula) {
@@ -181,7 +97,6 @@ function abrirFormulario(aula) {
   $("nombre").value = aula?.nombre ?? "";
   $("ubicacion").value = aula?.ubicacion ?? "";
 
-  // Con un solo colegio se preselecciona; sin colegios se avisa
   $("colegio_idcolegio").value = aula?.colegio_idcolegio ?? (estado.colegios.length === 1 ? estado.colegios[0].idcolegio : "");
   const hint = $("hintColegio");
   if (!estado.colegios.length) {
@@ -198,8 +113,7 @@ function abrirFormulario(aula) {
 }
 
 function marcarError(campo, msg) {
-  form.querySelector(`[data-err="${campo}"]`).textContent = msg;
-  $(campo).classList.add("is-invalid");
+  marcarErrorCampo(form, campo, msg);
 }
 
 function validar() {
@@ -209,9 +123,11 @@ function validar() {
   const nombre = limpiarEspacios($("nombre").value);
   const colegio = Number($("colegio_idcolegio").value);
 
-  if (nombre.length < 2) { marcarError("nombre", "Escribe al menos 2 caracteres."); ok = false; }
+  if (nombre.length < 1) { marcarError("nombre", "Escribe al menos 1 caracter."); ok = false; }
   if (!colegio) { marcarError("colegio_idcolegio", "Selecciona el colegio al que pertenece el aula."); ok = false; }
-  if (nombre.length >= 2 && colegio &&
+
+  // Validación local para evitar duplicados
+  if (nombre.length >= 1 && colegio &&
       estado.aulas.some(a => a.idaula !== id && a.colegio_idcolegio === colegio && normalizar(a.nombre) === normalizar(nombre))) {
     marcarError("nombre", "Ya existe un aula con ese nombre en este colegio."); ok = false;
   }
@@ -221,33 +137,41 @@ function validar() {
 $("nombre").addEventListener("input", contadores);
 $("ubicacion").addEventListener("input", contadores);
 
+// GUARDAR AULA
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!validar()) { form.querySelector(".is-invalid")?.focus(); return; }
 
-  const aula = {
-    idaula: Number($("idaula").value) || null,
+  const id = $("idaula").value;
+  const editando = !!id;
+
+  const payload = {
     nombre: limpiarEspacios($("nombre").value),
     ubicacion: limpiarEspacios($("ubicacion").value) || null,
     colegio_idcolegio: Number($("colegio_idcolegio").value)
   };
-  const editando = !!aula.idaula;
 
-  $("btnGuardar").disabled = true;
+  setCargando($("btnGuardar"), true, "Guardando…");
   try {
-    await api.guardar(aula);
-    if (API_URL) estado.aulas = await api.listar();
+    if (editando) {
+      await apiPut(`/aulas/${id}`, payload);
+      mostrarExito("Aula actualizada correctamente");
+    } else {
+      await apiPost(`/aulas`, payload);
+      mostrarExito("Aula creada correctamente");
+    }
+
+    await cargarAulas(); // Recargar lista
     dlg.close();
-    pintar();
-    aviso(editando ? "Aula actualizada" : "Aula creada");
+
   } catch (err) {
-    aviso("No se pudo guardar el aula. Intenta de nuevo.");
+    errorFormulario(form, err, REGLAS_ERROR, "No se pudo guardar el aula");
   } finally {
-    $("btnGuardar").disabled = false;
+    setCargando($("btnGuardar"), false);
   }
 });
 
-/* ---------- ACCIONES DE FILA ---------- */
+// ACCIONES DE FILA
 let idEliminar = null;
 
 $("tbody").addEventListener("click", (e) => {
@@ -257,6 +181,7 @@ $("tbody").addEventListener("click", (e) => {
   if (!aula) return;
 
   if (btn.dataset.accion === "editar") abrirFormulario(aula);
+
   if (btn.dataset.accion === "eliminar") {
     idEliminar = aula.idaula;
     $("delTexto").textContent = `Se eliminará «${aula.nombre}». Esta acción no se puede deshacer.`;
@@ -265,21 +190,22 @@ $("tbody").addEventListener("click", (e) => {
 });
 
 $("btnConfirmarEliminar").addEventListener("click", async () => {
+  const btnDel = $("btnConfirmarEliminar");
+  setCargando(btnDel, true, "Eliminando…");
   try {
-    await api.eliminar(idEliminar);
-    if (API_URL) estado.aulas = await api.listar();
+    await apiDelete(`/aulas/${idEliminar}`);
+    await cargarAulas();
     $("dlgEliminar").close();
-    pintar();
-    aviso("Aula eliminada");
+    mostrarExito("Aula eliminada correctamente");
   } catch (err) {
     $("dlgEliminar").close();
-    aviso(err.message === "en_uso"
-      ? "No se puede eliminar: el aula tiene horarios u otros registros asociados."
-      : "No se pudo eliminar el aula. Intenta de nuevo.");
+    mostrarError(err, "No se puede eliminar: el aula tiene horarios u otros registros asociados.");
+  } finally {
+    setCargando(btnDel, false);
   }
 });
 
-/* ---------- EVENTOS GENERALES ---------- */
+// EVENTOS GENERALES
 $("btnNueva").addEventListener("click", () => abrirFormulario(null));
 ["fBuscar", "fColegio"].forEach(id => $(id).addEventListener("input", () => { estado.pagina = 1; pintar(); }));
 $("btnPrev").addEventListener("click", () => { estado.pagina--; pintar(); });
@@ -288,14 +214,32 @@ $("btnNext").addEventListener("click", () => { estado.pagina++; pintar(); });
 document.querySelectorAll("[data-cerrar]").forEach(b => b.addEventListener("click", () => b.closest("dialog").close()));
 document.querySelectorAll("dialog").forEach(d => d.addEventListener("mousedown", (e) => { if (e.target === d) d.close(); }));
 
-/* ---------- INICIO ---------- */
-(async function iniciar() {
+// INICIO Y CARGA DE DATOS
+async function cargarAulas() {
   try {
-    [estado.aulas, estado.colegios] = await Promise.all([api.listar(), api.colegios()]);
+    estado.aulas = await apiGet('/aulas');
+    pintar();
   } catch (err) {
-    $("resumen").textContent = "No se pudieron cargar las aulas.";
-    return;
+    $("resumen").textContent = "Error al cargar las aulas.";
+    mostrarError(err, "Error al cargar las aulas.");
+    mostrarErrorTabla($("tbody"), err, cargarAulas);
   }
-  llenarColegios();
-  pintar();
+}
+
+async function cargarColegios() {
+  try {
+    estado.colegios = await apiGet('/colegios');
+    llenarColegios();
+  } catch (err) {
+    console.error("Error al cargar colegios:", err);
+  }
+}
+
+(async function iniciar() {
+  mostrarSkeleton($("tbody"), 5);
+  $("resumen").textContent = "Cargando datos...";
+  await Promise.all([cargarColegios(), cargarAulas()]);
 })();
+
+// PERMISOS
+aplicarSoloLectura(esAdmin(), ["btnNueva"]);

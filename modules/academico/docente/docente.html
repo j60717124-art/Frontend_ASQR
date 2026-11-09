@@ -17,7 +17,9 @@
         <p class="acc-sub" id="resumen">Cargando docentes…</p>
       </div>
       <button class="btn btn--primary" type="button" id="btnNuevo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
         Nuevo docente
       </button>
     </header>
@@ -25,7 +27,10 @@
     <section class="panel">
       <div class="toolbar">
         <label class="field-search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="m20 20-3.5-3.5"/>
+          </svg>
           <input type="search" id="fBuscar" placeholder="Buscar por nombre, CI, teléfono o usuario" autocomplete="off" aria-label="Buscar docentes">
         </label>
       </div>
@@ -66,7 +71,9 @@
       <header class="modal__head">
         <h2 id="dlgTitulo">Nuevo docente</h2>
         <button class="icon-btn" type="button" data-cerrar aria-label="Cerrar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6 6 18"/>
+          </svg>
         </button>
       </header>
 
@@ -88,23 +95,42 @@
 
           <div class="f">
             <label for="ci">Cédula de identidad</label>
-            <input class="input" id="ci" maxlength="10" autocomplete="off" placeholder="Ej.: 8456123" required>
+            <input class="input" id="ci" maxlength="13" autocomplete="off" placeholder="Ej.: 8456123" required>
             <small class="err" data-err="ci"></small>
           </div>
 
           <div class="f">
             <label for="telefono">Teléfono</label>
-            <input class="input" id="telefono" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="8 dígitos, ej.: 71234567">
+            <input class="input" id="telefono" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="7 u 8 dígitos, ej.: 71234567">
             <small class="err" data-err="telefono"></small>
           </div>
 
-          <div class="f f--full">
-            <label for="cuenta_idcuenta">Cuenta de acceso</label>
-            <select class="select" id="cuenta_idcuenta" required>
-              <option value="">Selecciona una cuenta</option>
+          <div class="f">
+            <label for="n_usuario">Nombre de usuario</label>
+            <input class="input" id="n_usuario" maxlength="60" autocomplete="off" placeholder="Ej.: jperez" required>
+            <small class="err" data-err="n_usuario"></small>
+          </div>
+
+          <div class="f">
+            <label for="correo">Correo electrónico</label>
+            <input class="input" id="correo" type="email" maxlength="80" autocomplete="off" placeholder="docente@correo.com" required>
+            <small class="err" data-err="correo"></small>
+          </div>
+
+          <div class="f">
+            <label for="clave">Contraseña</label>
+            <input class="input" id="clave" type="password" maxlength="255" autocomplete="new-password">
+            <small class="hint" id="hintClave">Mínimo 8 caracteres, con al menos una letra y un número.</small>
+            <small class="err" data-err="clave"></small>
+          </div>
+
+          <div class="f">
+            <label for="estado">Estado de la cuenta</label>
+            <select class="select" id="estado" required>
+              <option>Activo</option>
+              <option>Inactivo</option>
             </select>
-            <small class="hint" id="hintCuenta">Solo aparecen las cuentas que aún no pertenecen a otro docente.</small>
-            <small class="err" data-err="cuenta_idcuenta"></small>
+            <small class="err" data-err="estado"></small>
           </div>
 
           <div class="f f--full">
@@ -133,8 +159,9 @@
     </footer>
   </dialog>
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
+  <script src="/connection/config.js"></script>
+  <script src="/connection/api.js"></script>
+  <script src="/shared/js/ui.js"></script>
   <script src="/shared/js/menu.js"></script>
   <script src="docente.js"></script>
 </body>

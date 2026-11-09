@@ -3,258 +3,175 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Inicio · Sistema de Asistencia QR</title>
+  <title>Dashboard · Sistema de Asistencia QR</title>
   <link rel="stylesheet" href="/shared/css/colors.css">
   <link rel="stylesheet" href="/shared/css/menu.css">
   <link rel="stylesheet" href="inicio.css">
 </head>
 <body>
-  <main class="dashboard">
-    <!--  ENCABEZADO  -->
-    <header class="dash-header">
-      <div class="dash-header__text">
-        <span class="dash-eyebrow" id="fechaHoy">Cargando fecha…</span>
-        <h1 class="dash-title">
-          Hola, <span class="dash-title__accent">Administrador</span> 👋
-        </h1>
-        <p class="dash-subtitle">
-          Aquí tienes el resumen de asistencia del día en tiempo real.
-        </p>
+  <main class="dash">
+    <header class="dash-head">
+      <div>
+        <h1 class="dash-title">Panel de Control</h1>
+        <p class="dash-sub" id="bienvenida">Cargando información…</p>
       </div>
-
-      <div class="dash-header__actions">
-        <button class="btn btn--ghost" type="button">
-          <span>📅</span> Últimos 7 días
-        </button>
-        <button class="btn btn--primary" type="button">
-          <span>📷</span> Escanear QR
-        </button>
+      <div class="dash-date">
+        <strong id="reloj">--:--:--</strong>
+        <span id="fechaHoy"></span>
       </div>
     </header>
 
-    <!-- TARJETAS KPI -->
-    <section class="kpi-grid">
-
-      <article class="kpi-card">
-        <div class="kpi-card__icon kpi-card__icon--success">✓</div>
-        <div class="kpi-card__body">
-          <span class="kpi-card__label">Presentes hoy</span>
-          <strong class="kpi-card__value">412</strong>
-          <span class="kpi-card__delta kpi-card__delta--up">▲ 4.2% vs ayer</span>
+    <!-- TARJETAS DE RESUMEN -->
+    <section class="stats-grid">
+      <article class="stat-card">
+        <div class="stat-card__icon" style="background: var(--accent-soft); color: var(--accent);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__label">Estudiantes</span>
+          <strong class="stat-card__value" id="statEstudiantes">0</strong>
+          <span class="stat-card__note" id="statEstudiantesNota">Cargando…</span>
         </div>
       </article>
 
-      <article class="kpi-card">
-        <div class="kpi-card__icon kpi-card__icon--danger">✕</div>
-        <div class="kpi-card__body">
-          <span class="kpi-card__label">Ausentes</span>
-          <strong class="kpi-card__value">38</strong>
-          <span class="kpi-card__delta kpi-card__delta--down">▼ 1.1% vs ayer</span>
+      <article class="stat-card">
+        <div class="stat-card__icon" style="background: var(--success-soft); color: var(--success);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__label">Docentes</span>
+          <strong class="stat-card__value" id="statDocentes">0</strong>
+          <span class="stat-card__note" id="statDocentesNota">Cargando…</span>
         </div>
       </article>
 
-      <article class="kpi-card">
-        <div class="kpi-card__icon kpi-card__icon--accent">⏱</div>
-        <div class="kpi-card__body">
-          <span class="kpi-card__label">Tardanzas</span>
-          <strong class="kpi-card__value">17</strong>
-          <span class="kpi-card__delta">Sin cambios</span>
+      <article class="stat-card">
+        <div class="stat-card__icon" style="background: color-mix(in srgb, var(--brand-label) 18%, transparent); color: var(--brand-label);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18"/>
+          </svg>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__label">Asistencias hoy</span>
+          <strong class="stat-card__value" id="statAsistencias">0</strong>
+          <span class="stat-card__note" id="statAsistenciasNota">Cargando…</span>
         </div>
       </article>
 
-      <article class="kpi-card">
-        <div class="kpi-card__icon kpi-card__icon--brand">%</div>
-        <div class="kpi-card__body">
-          <span class="kpi-card__label">Asistencia global</span>
-          <strong class="kpi-card__value">91.5%</strong>
-          <span class="kpi-card__delta kpi-card__delta--up">▲ 2.8% esta semana</span>
+      <article class="stat-card">
+        <div class="stat-card__icon" style="background: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 8v4M12 16h.01"/>
+          </svg>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__label">Rechazados hoy</span>
+          <strong class="stat-card__value" id="statRechazados">0</strong>
+          <span class="stat-card__note" id="statRechazadosNota">Cargando…</span>
         </div>
       </article>
-
     </section>
 
-    <!-- GRID PRINCIPAL -->
-    <section class="dash-grid">
-
-      <!-- Gráfico -->
-      <article class="panel panel--chart">
-        <header class="panel__head">
-          <div>
-            <h2 class="panel__title">Asistencia semanal</h2>
-            <p class="panel__subtitle">Porcentaje de presentes por día</p>
-          </div>
-          <div class="panel__legend">
-            <span class="legend-dot legend-dot--accent"></span> Presentes
-            <span class="legend-dot legend-dot--success"></span> Meta 95%
-          </div>
+    <!-- GRÁFICOS -->
+    <section class="charts-grid">
+      <article class="chart-card">
+        <header class="chart-head">
+          <h2>Asistencia docente · últimos 7 días</h2>
+          <span class="chart-badge">Docentes</span>
         </header>
-
-        <div class="chart" aria-hidden="true">
-          <div class="chart__bars">
-            <div class="bar" style="--h: 82%"><span>Lun</span></div>
-            <div class="bar" style="--h: 88%"><span>Mar</span></div>
-            <div class="bar" style="--h: 76%"><span>Mié</span></div>
-            <div class="bar" style="--h: 92%"><span>Jue</span></div>
-            <div class="bar bar--today" style="--h: 91%"><span>Vie</span></div>
-            <div class="bar" style="--h: 60%"><span>Sáb</span></div>
-            <div class="bar" style="--h: 40%"><span>Dom</span></div>
-          </div>
-          <div class="chart__target" style="--target: 95%">
-            <span>Meta 95%</span>
-          </div>
+        <div class="chart-body">
+          <canvas id="chartSemana"></canvas>
         </div>
       </article>
 
-      <!-- Accesos rápidos -->
-      <article class="panel panel--quick">
-        <header class="panel__head">
-          <h2 class="panel__title">Accesos rápidos</h2>
+      <article class="chart-card">
+        <header class="chart-head">
+          <h2>Distribución de estados</h2>
+          <span class="chart-badge">Hoy</span>
         </header>
-
-        <div class="quick-grid">
-          <a href="qr-estudiante.html" class="quick-item">
-            <span class="quick-item__icon">🎫</span>
-            <span class="quick-item__label">Registrar entrada</span>
-          </a>
-          <a href="asistencia-docente.html" class="quick-item">
-            <span class="quick-item__icon">👩‍🏫</span>
-            <span class="quick-item__label">Asistencia docente</span>
-          </a>
-          <a href="estudiantes.html" class="quick-item">
-            <span class="quick-item__icon">🎓</span>
-            <span class="quick-item__label">Estudiantes</span>
-          </a>
-          <a href="horarios.html" class="quick-item">
-            <span class="quick-item__icon">🗓</span>
-            <span class="quick-item__label">Horarios</span>
-          </a>
-          <a href="qr-institucional.html" class="quick-item">
-            <span class="quick-item__icon">🏫</span>
-            <span class="quick-item__label">QR institucional</span>
-          </a>
-          <a href="configuracion-geocerca.html" class="quick-item">
-            <span class="quick-item__icon">📍</span>
-            <span class="quick-item__label">Geocerca</span>
-          </a>
+        <div class="chart-body">
+          <canvas id="chartEstados"></canvas>
         </div>
       </article>
 
+      <article class="chart-card chart-card--wide">
+        <header class="chart-head">
+          <h2>Horarios por materia</h2>
+          <span class="chart-badge">Total</span>
+        </header>
+        <div class="chart-body">
+          <canvas id="chartMaterias"></canvas>
+        </div>
+      </article>
     </section>
 
-    <!-- SEGUNDA FILA -->
-    <section class="dash-grid dash-grid--2">
-
-      <!-- Últimos registros -->
-      <article class="panel">
-        <header class="panel__head">
-          <div>
-            <h2 class="panel__title">Últimos registros QR</h2>
-            <p class="panel__subtitle">Actualizado hace 1 minuto</p>
-          </div>
-          <a href="#" class="panel__link">Ver todo →</a>
-        </header>
-
-        <ul class="activity">
-          <li class="activity__item">
-            <div class="activity__avatar activity__avatar--success">MG</div>
-            <div class="activity__info">
-              <strong>María González</strong>
-              <span>4° Medio A · Entrada 07:52</span>
-            </div>
-            <span class="badge badge--success">Presente</span>
-          </li>
-          <li class="activity__item">
-            <div class="activity__avatar activity__avatar--accent">JP</div>
-            <div class="activity__info">
-              <strong>Javier Pérez</strong>
-              <span>3° Medio B · Entrada 07:58</span>
-            </div>
-            <span class="badge badge--success">Presente</span>
-          </li>
-          <li class="activity__item">
-            <div class="activity__avatar activity__avatar--danger">LR</div>
-            <div class="activity__info">
-              <strong>Lucía Ramírez</strong>
-              <span>2° Medio A · Entrada 08:14</span>
-            </div>
-            <span class="badge badge--warning">Tardanza</span>
-          </li>
-          <li class="activity__item">
-            <div class="activity__avatar activity__avatar--success">CT</div>
-            <div class="activity__info">
-              <strong>Carlos Torres</strong>
-              <span>1° Medio C · Entrada 07:45</span>
-            </div>
-            <span class="badge badge--success">Presente</span>
-          </li>
-          <li class="activity__item">
-            <div class="activity__avatar activity__avatar--danger">SA</div>
-            <div class="activity__info">
-              <strong>Sofía Aguilar</strong>
-              <span>5° Medio A · Sin registro</span>
-            </div>
-            <span class="badge badge--danger">Ausente</span>
-          </li>
-        </ul>
-      </article>
-
-      <!-- Estado del sistema -->
-      <article class="panel">
-        <header class="panel__head">
-          <div>
-            <h2 class="panel__title">Estado del sistema</h2>
-            <p class="panel__subtitle">Monitoreo en vivo</p>
-          </div>
-        </header>
-
-        <ul class="status-list">
-          <li class="status-item">
-            <span class="status-dot status-dot--ok"></span>
-            <div>
-              <strong>Lector QR principal</strong>
-              <span>Entrada norte · En línea</span>
-            </div>
-            <span class="badge badge--success">OK</span>
-          </li>
-          <li class="status-item">
-            <span class="status-dot status-dot--ok"></span>
-            <div>
-              <strong>Lector QR secundario</strong>
-              <span>Entrada sur · En línea</span>
-            </div>
-            <span class="badge badge--success">OK</span>
-          </li>
-          <li class="status-item">
-            <span class="status-dot status-dot--warning"></span>
-            <div>
-              <strong>Sincronización</strong>
-              <span>Última sync hace 3 min</span>
-            </div>
-            <span class="badge badge--warning">Revisar</span>
-          </li>
-          <li class="status-item">
-            <span class="status-dot status-dot--ok"></span>
-            <div>
-              <strong>Geocerca institucional</strong>
-              <span>Radio 120 m · Activa</span>
-            </div>
-            <span class="badge badge--success">OK</span>
-          </li>
-        </ul>
-      </article>
-
+    <!-- ACCESOS RÁPIDOS -->
+    <section class="quick-actions">
+      <h2>Accesos rápidos</h2>
+      <div class="quick-grid">
+        <a href="/modules/gestion/ast_docente/astdocente.html" class="quick-card" data-roles="Administrador,Direccion">
+          <span class="quick-icon" style="background: var(--accent-soft); color: var(--accent);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/>
+              <rect x="8" y="8" width="3" height="3"/>
+              <rect x="13" y="8" width="3" height="3"/>
+              <rect x="8" y="13" width="3" height="3"/>
+            </svg>
+          </span>
+          <strong>Asistencia docente</strong>
+          <span>Ver registros</span>
+        </a>
+        <a href="/modules/gestion/qr_institucional/qr_institucional.html" class="quick-card" data-roles="Administrador,Direccion">
+          <span class="quick-icon" style="background: var(--success-soft); color: var(--success);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M9 9h6v6H9z"/>
+            </svg>
+          </span>
+          <strong>QR Institucional</strong>
+          <span>Pantalla en vivo</span>
+        </a>
+        <a href="/modules/reportes/reportes.html" class="quick-card">
+          <span class="quick-icon" style="background: color-mix(in srgb, var(--brand-label) 18%, transparent); color: var(--brand-label);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/>
+            </svg>
+          </span>
+          <strong>Reportes</strong>
+          <span>PDF y Excel</span>
+        </a>
+        <a href="/modules/configuracion/geocerca/geocerca.html" class="quick-card" data-roles="Administrador,Direccion">
+          <span class="quick-icon" style="background: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/>
+              <circle cx="12" cy="9" r="2.5"/>
+            </svg>
+          </span>
+          <strong>Geocerca</strong>
+          <span>Configurar ubicación</span>
+        </a>
+      </div>
     </section>
-
   </main>
 
+  <!-- Librerías -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <script src="/connection/config.js"></script>
+  <script src="/connection/api.js"></script>
+  <script src="/shared/js/ui.js"></script>
   <script src="/shared/js/menu.js"></script>
-  <script>
-    // Fecha en español
-    const fecha = new Date();
-    const opciones = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-    const texto = fecha.toLocaleDateString('es-ES', opciones);
-    document.getElementById('fechaHoy').textContent =
-      texto.charAt(0).toUpperCase() + texto.slice(1);
-  </script>
+  <script src="inicio.js"></script>
 </body>
 </html>

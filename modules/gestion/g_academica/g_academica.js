@@ -1,80 +1,16 @@
-/* =========================================================
-   MÓDULO · GESTIÓN ACADÉMICA
-   Tabla: gestion_academica (idgestion_academica, nombre varchar(60),
-          fecha_inicio date, fecha_fin date)
-   ========================================================= */
-
-/* ---------- CAPA DE DATOS ----------
-   Ahora funciona en modo demostración (localStorage).
-   Para conectarlo a tu backend, pon tu ruta en API_URL:
-     GET    {API_URL}/gestiones
-     POST   {API_URL}/gestiones
-     PUT    {API_URL}/gestiones/:id
-     DELETE {API_URL}/gestiones/:id   (409 si tiene registros asociados) */
-const API_URL = ""; // ej.: "/api"
-
-const GESTIONES_DEMO = [
-  { idgestion_academica: 1, nombre: "Gestión 2025", fecha_inicio: "2025-02-03", fecha_fin: "2025-12-05" },
-  { idgestion_academica: 2, nombre: "Gestión 2026", fecha_inicio: "2026-02-02", fecha_fin: "2026-12-04" },
-  { idgestion_academica: 3, nombre: "Gestión 2027", fecha_inicio: "2027-02-01", fecha_fin: "2027-12-03" }
-];
+// MÓDULO · GESTIÓN ACADÉMICA
 
 const estado = { lista: [], pagina: 1 };
 const POR_PAGINA = 10;
 
-const api = {
-  async listar() {
-    if (API_URL) return (await fetch(`${API_URL}/gestiones`)).json();
-    try {
-      const g = JSON.parse(localStorage.getItem("gestiones_demo"));
-      if (Array.isArray(g)) return g;
-    } catch (e) {}
-    return GESTIONES_DEMO.slice();
-  },
-  async guardar(ges) {
-    if (API_URL) {
-      const nueva = !ges.idgestion_academica;
-      const r = await fetch(`${API_URL}/gestiones${nueva ? "" : "/" + ges.idgestion_academica}`, {
-        method: nueva ? "POST" : "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(ges)
-      });
-      if (!r.ok) throw new Error("guardar");
-      return r.json();
-    }
-    if (!ges.idgestion_academica) {
-      ges.idgestion_academica = Math.max(0, ...estado.lista.map(x => x.idgestion_academica)) + 1;
-      estado.lista.push(ges);
-    } else {
-      const i = estado.lista.findIndex(x => x.idgestion_academica === ges.idgestion_academica);
-      estado.lista[i] = ges;
-    }
-    localStorage.setItem("gestiones_demo", JSON.stringify(estado.lista));
-    return ges;
-  },
-  async eliminar(id) {
-    if (API_URL) {
-      const r = await fetch(`${API_URL}/gestiones/${id}`, { method: "DELETE" });
-      if (r.status === 409) throw new Error("en_uso");
-      if (!r.ok) throw new Error("eliminar");
-      return;
-    }
-    estado.lista = estado.lista.filter(x => x.idgestion_academica !== id);
-    localStorage.setItem("gestiones_demo", JSON.stringify(estado.lista));
-  }
-};
-
-/* ---------- UTILIDADES ---------- */
+// UTILIDADES
 const $ = (id) => document.getElementById(id);
 const escapar = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const normalizar = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const limpiarEspacios = (s) => s.trim().replace(/\s+/g, " ");
-
-const hoyISO = () => new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD en hora local
+const hoyISO = () => new Date().toLocaleDateString("en-CA");
 const fechaLocal = (iso) => { const [y, m, d] = iso.split("-").map(Number); return new Date(y, m - 1, d); };
 const fmtFecha = (iso) => fechaLocal(iso).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
-
-// Días entre dos fechas, contando ambos extremos
 const diasEntre = (a, b) => Math.round((fechaLocal(b) - fechaLocal(a)) / 864e5) + 1;
 
 function fmtDuracion(inicio, fin) {
@@ -90,15 +26,6 @@ function estadoDe(g) {
   return "En curso";
 }
 
-let toastTimer;
-function aviso(msg) {
-  const t = $("toast");
-  t.textContent = msg;
-  t.classList.add("is-show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("is-show"), 2800);
-}
-
 const ICO = {
   edit: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   del: '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/>',
@@ -106,13 +33,13 @@ const ICO = {
 };
 const icono = (n) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[n]}</svg>`;
 
-/* ---------- LISTADO ---------- */
+// LISTADO
 function filtradas() {
   const q = normalizar($("fBuscar").value.trim());
   const est = $("fEstado").value;
   return estado.lista
     .filter(g => (!q || normalizar(g.nombre).includes(q)) && (!est || estadoDe(g) === est))
-    .sort((a, b) => b.fecha_inicio.localeCompare(a.fecha_inicio)); // la más reciente primero
+    .sort((a, b) => b.fecha_inicio.localeCompare(a.fecha_inicio));
 }
 
 function insignia(g) {
@@ -121,7 +48,6 @@ function insignia(g) {
   return `<span class="badge badge--${clase}">${e}</span>`;
 }
 
-// En las gestiones en curso se muestra cuánto del periodo ya transcurrió
 function progreso(g) {
   if (estadoDe(g) !== "En curso") return "";
   const total = diasEntre(g.fecha_inicio, g.fecha_fin);
@@ -170,13 +96,15 @@ function pintar() {
     (actual ? ` · En curso: ${actual.nombre}` : total ? " · Ninguna en curso" : "");
 }
 
-/* ---------- FORMULARIO ---------- */
+// FORMULARIO
 const dlg = $("dlgGestion");
 const form = $("formGestion");
 
+// Errores del backend que se muestran junto al campo correspondiente
+const REGLAS_ERROR = [[/nombre de la gesti/i, "nombre"], [/fecha de fin/i, "fecha_fin"], [/fecha de inicio/i, "fecha_inicio"]];
+
 function limpiarErrores() {
-  form.querySelectorAll(".err").forEach(e => (e.textContent = ""));
-  form.querySelectorAll(".is-invalid").forEach(e => e.classList.remove("is-invalid"));
+  limpiarErroresFormulario(form);
 }
 
 function actualizarDuracion() {
@@ -206,8 +134,7 @@ function abrirFormulario(ges) {
 }
 
 function marcarError(campo, msg) {
-  form.querySelector(`[data-err="${campo}"]`).textContent = msg;
-  $(campo).classList.add("is-invalid");
+  marcarErrorCampo(form, campo, msg);
 }
 
 function validar() {
@@ -228,7 +155,6 @@ function validar() {
   if (ini && fin) {
     if (fin <= ini) { marcarError("fecha_fin", "La fecha de fin debe ser posterior a la de inicio."); ok = false; }
     else {
-      // Las gestiones no deben cruzarse entre sí
       const cruce = estado.lista.find(g => g.idgestion_academica !== id && ini <= g.fecha_fin && g.fecha_inicio <= fin);
       if (cruce) { marcarError("fecha_inicio", `Estas fechas se cruzan con «${cruce.nombre}» (${fmtFecha(cruce.fecha_inicio)} – ${fmtFecha(cruce.fecha_fin)}).`); ok = false; }
     }
@@ -238,33 +164,40 @@ function validar() {
 
 ["fecha_inicio", "fecha_fin"].forEach(id => $(id).addEventListener("input", actualizarDuracion));
 
+// GUARDAR GESTIÓN
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!validar()) { form.querySelector(".is-invalid")?.focus(); return; }
 
-  const ges = {
-    idgestion_academica: Number($("idgestion_academica").value) || null,
+  const id = $("idgestion_academica").value;
+  const editando = !!id;
+  const payload = {
     nombre: limpiarEspacios($("nombre").value),
     fecha_inicio: $("fecha_inicio").value,
     fecha_fin: $("fecha_fin").value
   };
-  const editando = !!ges.idgestion_academica;
 
-  $("btnGuardar").disabled = true;
+  setCargando($("btnGuardar"), true, "Guardando…");
   try {
-    await api.guardar(ges);
-    if (API_URL) estado.lista = await api.listar();
+    if (editando) {
+      await apiPut(`/gestiones/${id}`, payload);
+      mostrarExito("Gestión actualizada correctamente");
+    } else {
+      await apiPost(`/gestiones`, payload);
+      mostrarExito("Gestión creada correctamente");
+    }
+
+    await cargarGestiones();
     dlg.close();
-    pintar();
-    aviso(editando ? "Gestión actualizada" : "Gestión creada");
+
   } catch (err) {
-    aviso("No se pudo guardar la gestión. Intenta de nuevo.");
+    errorFormulario(form, err, REGLAS_ERROR, "No se pudo guardar la gestión");
   } finally {
-    $("btnGuardar").disabled = false;
+    setCargando($("btnGuardar"), false);
   }
 });
 
-/* ---------- ACCIONES DE FILA ---------- */
+// ACCIONES DE FILA
 let idEliminar = null;
 
 $("tbody").addEventListener("click", (e) => {
@@ -274,6 +207,7 @@ $("tbody").addEventListener("click", (e) => {
   if (!ges) return;
 
   if (btn.dataset.accion === "editar") abrirFormulario(ges);
+
   if (btn.dataset.accion === "eliminar") {
     idEliminar = ges.idgestion_academica;
     $("delTexto").textContent = `Se eliminará «${ges.nombre}». Esta acción no se puede deshacer.`;
@@ -282,21 +216,22 @@ $("tbody").addEventListener("click", (e) => {
 });
 
 $("btnConfirmarEliminar").addEventListener("click", async () => {
+  const btnDel = $("btnConfirmarEliminar");
+  setCargando(btnDel, true, "Eliminando…");
   try {
-    await api.eliminar(idEliminar);
-    if (API_URL) estado.lista = await api.listar();
+    await apiDelete(`/gestiones/${idEliminar}`);
+    await cargarGestiones();
     $("dlgEliminar").close();
-    pintar();
-    aviso("Gestión eliminada");
+    mostrarExito("Gestión eliminada correctamente");
   } catch (err) {
     $("dlgEliminar").close();
-    aviso(err.message === "en_uso"
-      ? "No se puede eliminar: la gestión tiene registros asociados."
-      : "No se pudo eliminar la gestión. Intenta de nuevo.");
+    mostrarError(err, "No se puede eliminar: la gestión tiene registros asociados.");
+  } finally {
+    setCargando(btnDel, false);
   }
 });
 
-/* ---------- EVENTOS GENERALES ---------- */
+// EVENTOS GENERALES
 $("btnNueva").addEventListener("click", () => abrirFormulario(null));
 ["fBuscar", "fEstado"].forEach(id => $(id).addEventListener("input", () => { estado.pagina = 1; pintar(); }));
 $("btnPrev").addEventListener("click", () => { estado.pagina--; pintar(); });
@@ -305,13 +240,23 @@ $("btnNext").addEventListener("click", () => { estado.pagina++; pintar(); });
 document.querySelectorAll("[data-cerrar]").forEach(b => b.addEventListener("click", () => b.closest("dialog").close()));
 document.querySelectorAll("dialog").forEach(d => d.addEventListener("mousedown", (e) => { if (e.target === d) d.close(); }));
 
-/* ---------- INICIO ---------- */
-(async function iniciar() {
+// CARGA DE DATOS DESDE EL BACKEND
+async function cargarGestiones() {
   try {
-    estado.lista = await api.listar();
+    estado.lista = await apiGet('/gestiones');
+    pintar();
   } catch (err) {
-    $("resumen").textContent = "No se pudieron cargar las gestiones.";
-    return;
+    $("resumen").textContent = "Error al cargar las gestiones.";
+    mostrarError(err, "Error al cargar las gestiones.");
+    mostrarErrorTabla($("tbody"), err, cargarGestiones);
   }
-  pintar();
+}
+
+(async function iniciar() {
+  mostrarSkeleton($("tbody"), 5);
+  $("resumen").textContent = "Cargando gestiones...";
+  await cargarGestiones();
 })();
+
+// PERMISOS
+aplicarSoloLectura(esAdmin(), ["btnNueva"]);

@@ -1,74 +1,13 @@
-/* MÓDULO · ROLES */
-
-const API_URL = ""; // ej.: "/api"
-
-const ROLES_DEMO = [
-  { idrol: 1, nombre_rol: "Administrador", descripcion_rol: "Acceso total al sistema y a la configuración." },
-  { idrol: 2, nombre_rol: "Director", descripcion_rol: "Consulta reportes y gestiona la asistencia docente." },
-  { idrol: 3, nombre_rol: "Docente", descripcion_rol: "Registra y consulta la asistencia de sus cursos." },
-  { idrol: 4, nombre_rol: "Secretaría", descripcion_rol: "Gestiona estudiantes, horarios y asignaciones." },
-  { idrol: 5, nombre_rol: "Portería", descripcion_rol: "Escanea el QR de entrada y salida." }
-];
+/* MÓDULO ROLES */
 
 const estado = { roles: [] };
 
-const api = {
-  async listar() {
-    if (API_URL) return (await fetch(`${API_URL}/roles`)).json();
-    try {
-      const g = JSON.parse(localStorage.getItem("roles_demo"));
-      if (Array.isArray(g)) return g;
-    } catch (e) {}
-    return ROLES_DEMO.slice();
-  },
-  async guardar(rol) {
-    if (API_URL) {
-      const nuevo = !rol.idrol;
-      const r = await fetch(`${API_URL}/roles${nuevo ? "" : "/" + rol.idrol}`, {
-        method: nuevo ? "POST" : "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(rol)
-      });
-      if (!r.ok) throw new Error("guardar");
-      return r.json();
-    }
-    if (!rol.idrol) {
-      rol.idrol = Math.max(0, ...estado.roles.map(x => x.idrol)) + 1;
-      estado.roles.push(rol);
-    } else {
-      const i = estado.roles.findIndex(x => x.idrol === rol.idrol);
-      estado.roles[i] = rol;
-    }
-    localStorage.setItem("roles_demo", JSON.stringify(estado.roles));
-    return rol;
-  },
-  async eliminar(id) {
-    if (API_URL) {
-      const r = await fetch(`${API_URL}/roles/${id}`, { method: "DELETE" });
-      if (r.status === 409) throw new Error("en_uso");
-      if (!r.ok) throw new Error("eliminar");
-      return;
-    }
-    estado.roles = estado.roles.filter(x => x.idrol !== id);
-    localStorage.setItem("roles_demo", JSON.stringify(estado.roles));
-  }
-};
-
-/* UTILIDADES */
+// UTILIDADES
 const $ = (id) => document.getElementById(id);
 const escapar = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const normalizar = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-let toastTimer;
-function aviso(msg) {
-  const t = $("toast");
-  t.textContent = msg;
-  t.classList.add("is-show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("is-show"), 2800);
-}
-
-/* LISTADO */
+// LISTADO
 const ICO = {
   role: '<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/>',
   edit: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
@@ -83,7 +22,6 @@ function pintar() {
 
   $("tbody").innerHTML = lista.map(r => `
     <tr>
-      <td class="td-id muted">${r.idrol}</td>
       <td>
         <div class="role-name">
           <span class="role-name__ico">${icono("role")}</span>
@@ -103,9 +41,12 @@ function pintar() {
   $("resumen").textContent = `${n} ${n === 1 ? "rol registrado" : "roles registrados"}`;
 }
 
-/* FORMULARIO */
+// FORMULARIOS
 const dlg = $("dlgRol");
 const form = $("formRol");
+
+// Errores del backend que se muestran junto al campo correspondiente
+const REGLAS_ERROR = [[/nombre del rol|rol con ese nombre/i, "nombre_rol"], [/descripci/i, "descripcion_rol"]];
 
 function contadores() {
   $("cntNombre").textContent = `${$("nombre_rol").value.length}/30`;
@@ -113,8 +54,7 @@ function contadores() {
 }
 
 function limpiarErrores() {
-  form.querySelectorAll(".err").forEach(e => (e.textContent = ""));
-  form.querySelectorAll(".is-invalid").forEach(e => e.classList.remove("is-invalid"));
+  limpiarErroresFormulario(form);
 }
 
 function abrirFormulario(rol) {
@@ -131,18 +71,17 @@ function abrirFormulario(rol) {
 }
 
 function marcarError(campo, msg) {
-  form.querySelector(`[data-err="${campo}"]`).textContent = msg;
-  $(campo).classList.add("is-invalid");
+  marcarErrorCampo(form, campo, msg);
 }
 
 function validar() {
   limpiarErrores();
   let ok = true;
-  const id = Number($("idrol").value) || null;
+  const id = $("idrol").value ? String($("idrol").value) : null;
   const nombre = $("nombre_rol").value.trim();
 
   if (nombre.length < 3) { marcarError("nombre_rol", "Escribe al menos 3 caracteres."); ok = false; }
-  else if (estado.roles.some(r => r.idrol !== id && normalizar(r.nombre_rol) === normalizar(nombre))) {
+  else if (estado.roles.some(r => String(r.idrol) !== id && normalizar(r.nombre_rol) === normalizar(nombre))) {
     marcarError("nombre_rol", "Ya existe un rol con ese nombre."); ok = false;
   }
   return ok;
@@ -151,41 +90,55 @@ function validar() {
 $("nombre_rol").addEventListener("input", contadores);
 $("descripcion_rol").addEventListener("input", contadores);
 
+// GUARDAR ROL
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!validar()) { form.querySelector(".is-invalid")?.focus(); return; }
 
-  const rol = {
-    idrol: Number($("idrol").value) || null,
+  const id = $("idrol").value;
+  const editando = !!id;
+
+  const payload = {
     nombre_rol: $("nombre_rol").value.trim(),
     descripcion_rol: $("descripcion_rol").value.trim() || null
   };
-  const editando = !!rol.idrol;
 
-  $("btnGuardar").disabled = true;
+  setCargando($("btnGuardar"), true, "Guardando…");
   try {
-    await api.guardar(rol);
-    if (API_URL) estado.roles = await api.listar();
+    if (editando) {
+      await apiPut(`/roles/${id}`, payload);
+      mostrarExito("Rol actualizado correctamente");
+    } else {
+      await apiPost(`/roles`, payload);
+      mostrarExito("Rol creado correctamente");
+    }
+
+    await cargarRoles(); // Recargar lista
     dlg.close();
-    pintar();
-    aviso(editando ? "Rol actualizado" : "Rol creado");
+
   } catch (err) {
-    aviso("No se pudo guardar el rol. Intenta de nuevo.");
+    errorFormulario(form, err, REGLAS_ERROR, "No se pudo guardar el rol");
   } finally {
-    $("btnGuardar").disabled = false;
+    setCargando($("btnGuardar"), false);
   }
 });
 
-/* ACCIONES DE FILA */
+// ACCIONES DE FILA
 let idEliminar = null;
 
 $("tbody").addEventListener("click", (e) => {
   const btn = e.target.closest("[data-accion]");
   if (!btn) return;
-  const rol = estado.roles.find(r => r.idrol === Number(btn.dataset.id));
-  if (!rol) return;
+
+  const id = String(btn.dataset.id);
+  const rol = estado.roles.find(r => String(r.idrol) === id);
+  if (!rol) {
+    console.warn("Rol no encontrado para id:", id, "roles:", estado.roles);
+    return;
+  }
 
   if (btn.dataset.accion === "editar") abrirFormulario(rol);
+
   if (btn.dataset.accion === "eliminar") {
     idEliminar = rol.idrol;
     $("delTexto").textContent = `Se eliminará el rol «${rol.nombre_rol}». Esta acción no se puede deshacer.`;
@@ -194,34 +147,46 @@ $("tbody").addEventListener("click", (e) => {
 });
 
 $("btnConfirmarEliminar").addEventListener("click", async () => {
+  const btnDel = $("btnConfirmarEliminar");
+  setCargando(btnDel, true, "Eliminando…");
   try {
-    await api.eliminar(idEliminar);
-    if (API_URL) estado.roles = await api.listar();
+    await apiDelete(`/roles/${idEliminar}`);
+    await cargarRoles(); // Recargar lista
     $("dlgEliminar").close();
-    pintar();
-    aviso("Rol eliminado");
+    mostrarExito("Rol eliminado correctamente");
   } catch (err) {
     $("dlgEliminar").close();
-    aviso(err.message === "en_uso"
-      ? "No se puede eliminar: hay cuentas que usan este rol."
-      : "No se pudo eliminar el rol. Intenta de nuevo.");
+    mostrarError(err, "No se puede eliminar: hay cuentas usando este rol.");
+  } finally {
+    setCargando(btnDel, false);
   }
 });
 
-/* EVENTOS GENERALES */
+// EVENTOS GENERALES
 $("btnNuevo").addEventListener("click", () => abrirFormulario(null));
 $("fBuscar").addEventListener("input", pintar);
 
 document.querySelectorAll("[data-cerrar]").forEach(b => b.addEventListener("click", () => b.closest("dialog").close()));
 document.querySelectorAll("dialog").forEach(d => d.addEventListener("mousedown", (e) => { if (e.target === d) d.close(); }));
 
-/* INICIO */
-(async function iniciar() {
+// INICIO Y CARGA DE DATOS
+async function cargarRoles() {
   try {
-    estado.roles = await api.listar();
+    const data = await apiGet('/roles');
+    estado.roles = Array.isArray(data) ? data : (data?.roles ?? data?.data ?? []);
+    pintar();
   } catch (err) {
-    $("resumen").textContent = "No se pudieron cargar los roles.";
-    return;
+    $("resumen").textContent = "Error al cargar roles.";
+    mostrarError(err, "Error al cargar roles.");
+    mostrarErrorTabla($("tbody"), err, cargarRoles);
   }
-  pintar();
+}
+
+(async function iniciar() {
+  mostrarSkeleton($("tbody"), 5);
+  $("resumen").textContent = "Cargando roles...";
+  await cargarRoles();
 })();
+
+// PERMISOS
+aplicarSoloLectura(esAdmin(), ["btnNuevo"]);

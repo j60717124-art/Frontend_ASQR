@@ -1,8 +1,6 @@
-/* CONFIGURACIÓN · GEOCERCA*/
+/* CONFIGURACIÓN · GEOCERCA (Conectado al Backend) */
 
-const API_URL = ""; // ej.: "/api"
-
-// Valores iniciales mientras no exista una configuración guardada
+// Valores iniciales mientras no exista una configuración guardada (el backend los crea si no existen)
 const DEFAULTS = {
   latitud_referencia: -17.3935,
   longitud_referencia: -66.157,
@@ -22,44 +20,10 @@ const normalizarRegistro = (r) => ({
   actualizado_en: r.actualizado_en ?? null
 });
 
-const api = {
-  async obtener() {
-    if (API_URL) {
-      const r = await fetch(`${API_URL}/configuracion-geocerca`);
-      if (r.status === 404) return null;
-      if (!r.ok) throw new Error("obtener");
-      const d = await r.json();
-      return d ? normalizarRegistro(d) : null;
-    }
-    try {
-      const g = JSON.parse(localStorage.getItem("geocerca_demo"));
-      if (g && typeof g === "object") return normalizarRegistro(g);
-    } catch (e) {}
-    return null;
-  },
-  async guardar(cfg) {
-    if (API_URL) {
-      const r = await fetch(`${API_URL}/configuracion-geocerca`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cfg)
-      });
-      if (!r.ok) throw new Error("guardar");
-      return normalizarRegistro(await r.json());
-    }
-    const registro = normalizarRegistro({ ...cfg, idconfiguracion_geocerca: 1, actualizado_en: new Date().toISOString() });
-    localStorage.setItem("geocerca_demo", JSON.stringify(registro));
-    return registro;
-  }
-};
-
 /* UTILIDADES */
 const $ = (id) => document.getElementById(id);
-const estado = { guardado: null };
-
-const fmtFechaHora = (iso) => new Date(iso).toLocaleString("es-ES", {
-  day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
-});
+const estado = { guardado: null, errorCarga: false };
+const fmtFechaHora = formatearFechaHora;
 
 function fmtDuracion(s) {
   if (!Number.isFinite(s)) return "—";
@@ -68,22 +32,11 @@ function fmtDuracion(s) {
   return r ? `${m} min ${r} s` : `${m} min`;
 }
 const fmtMetros = (m) => (m >= 1000 ? `${(m / 1000).toLocaleString("es-ES", { maximumFractionDigits: 2 })} km` : `${m} m`);
-
-let toastTimer;
-function aviso(msg) {
-  const t = $("toast");
-  t.textContent = msg;
-  t.classList.add("is-show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("is-show"), 2800);
-}
-
 function parseCoord(txt) {
   const v = String(txt).trim().replace(",", ".");
   return /^-?\d+(\.\d+)?$/.test(v) ? Number(v) : NaN;
 }
 const parseEntero = (txt) => (/^\d+$/.test(String(txt).trim()) ? Number(txt) : NaN);
-
 const leer = () => ({
   lat: parseCoord($("latitud_referencia").value),
   lon: parseCoord($("longitud_referencia").value),
@@ -93,8 +46,8 @@ const leer = () => ({
 
 const latValida = (v) => Number.isFinite(v) && v >= -90 && v <= 90;
 const lonValida = (v) => Number.isFinite(v) && v >= -180 && v <= 180;
-const radioValido = (v) => Number.isInteger(v) && v >= 10 && v <= 5000;
-const intervaloValido = (v) => Number.isInteger(v) && v >= 5 && v <= 3600;
+const radioValido = (v) => Number.isInteger(v) && v >= 5 && v <= 2000;
+const intervaloValido = (v) => Number.isInteger(v) && v >= 10 && v <= 3600;
 
 /* MAPA (Leaflet) */
 let mapa = null, marcador = null, circulo = null;
@@ -113,7 +66,7 @@ function iniciarMapa(lat, lon, radio) {
   }).addTo(mapa);
   let avisado = false;
   teselas.on("tileerror", () => {
-    if (!avisado) { avisado = true; aviso("Algunas partes del mapa no se pudieron cargar."); }
+    if (!avisado) { avisado = true; mostrarAviso("Algunas partes del mapa no se pudieron cargar. Revisa tu conexión."); }
   });
 
   const icono = L.divIcon({
@@ -140,7 +93,7 @@ function iniciarMapa(lat, lon, radio) {
   encuadrar(false);
   setTimeout(() => mapa.invalidateSize(), 150);
 
-  // Recolorear el círculo cuando cambia el tema (data-theme o preferencia del sistema)
+  // Recolorear el círculo cuando cambia el tema
   const recolorear = () => circulo.setStyle({ color: colorAcento(), fillColor: colorAcento() });
   new MutationObserver(recolorear).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", recolorear);
@@ -251,7 +204,7 @@ function refrescar() {
   else if (cambios) { pill.classList.add("pill--dirty"); $("pillText").textContent = "Cambios sin guardar"; }
   else { pill.classList.add("pill--ok"); $("pillText").textContent = "Configuración guardada"; }
 
-  $("btnGuardar").disabled = !!estado.guardado && !cambios;
+  $("btnGuardar").disabled = estado.errorCarga || (!!estado.guardado && !cambios);
   $("btnRestablecer").disabled = !cambios;
   $("actualizado").textContent = estado.guardado?.actualizado_en
     ? `Última actualización: ${fmtFechaHora(estado.guardado.actualizado_en)}`
@@ -269,15 +222,15 @@ function aplicarValores(v) {
   refrescar();
 }
 
-/* VALIDACIÓN Y GUARDADO */
+/* VALIDACIÓN Y GUARDADO (CONECTADO AL BACKEND) */
 function validar() {
   ["latitud_referencia", "longitud_referencia", "radio_metros", "intervalo_rotacion_segundos"].forEach(limpiarError);
   const { lat, lon, radio, intervalo } = leer();
   let ok = true;
   if (!latValida(lat)) { marcarError("latitud_referencia", "Escribe una latitud entre -90 y 90."); ok = false; }
   if (!lonValida(lon)) { marcarError("longitud_referencia", "Escribe una longitud entre -180 y 180."); ok = false; }
-  if (!radioValido(radio)) { marcarError("radio_metros", "El radio debe ser un número entero entre 10 y 5000 metros."); ok = false; }
-  if (!intervaloValido(intervalo)) { marcarError("intervalo_rotacion_segundos", "El intervalo debe ser un entero entre 5 y 3600 segundos."); ok = false; }
+  if (!radioValido(radio)) { marcarError("radio_metros", "El radio debe ser un número entero entre 5 y 2000 metros."); ok = false; }
+  if (!intervaloValido(intervalo)) { marcarError("intervalo_rotacion_segundos", "El intervalo debe ser un entero entre 10 y 3600 segundos."); ok = false; }
   return ok;
 }
 
@@ -287,27 +240,29 @@ $("form").addEventListener("submit", async (e) => {
 
   const { lat, lon, radio, intervalo } = leer();
   const cfg = {
-    idconfiguracion_geocerca: estado.guardado?.idconfiguracion_geocerca ?? null,
     latitud_referencia: Number(lat.toFixed(7)),
     longitud_referencia: Number(lon.toFixed(7)),
     radio_metros: radio,
     intervalo_rotacion_segundos: intervalo
   };
 
-  $("btnGuardar").disabled = true;
+  setCargando($("btnGuardar"), true, "Guardando…");
   try {
-    estado.guardado = await api.guardar(cfg);
+    const respuesta = await apiPut('/configuracion-geocerca', cfg);
+    estado.guardado = normalizarRegistro(respuesta);
     aplicarValores(estado.guardado);
-    aviso("Configuración guardada");
+    mostrarExito("Configuración guardada correctamente");
   } catch (err) {
-    aviso("No se pudo guardar la configuración. Intenta de nuevo.");
+    mostrarError(err, "No se pudo guardar la configuración.");
+  } finally {
+    setCargando($("btnGuardar"), false);
     refrescar();
   }
 });
 
 $("btnRestablecer").addEventListener("click", () => {
   aplicarValores(estado.guardado ?? DEFAULTS);
-  aviso(estado.guardado ? "Se restauraron los valores guardados" : "Se restauraron los valores iniciales");
+  mostrarInfo(estado.guardado ? "Se restauraron los valores guardados" : "Se restauraron los valores iniciales");
 });
 
 /* EVENTOS */
@@ -345,7 +300,7 @@ crearChips($("chipsRadio"), RADIOS, (v) => `${v} m`, (v) => fijarRadio(v, { encu
 crearChips($("chipsIntervalo"), INTERVALOS, fmtDuracion, fijarIntervalo);
 
 $("btnUbicacion").addEventListener("click", () => {
-  if (!navigator.geolocation) { aviso("Tu navegador no permite obtener la ubicación."); return; }
+  if (!navigator.geolocation) { mostrarError("Tu navegador no permite obtener la ubicación."); return; }
   const btn = $("btnUbicacion");
   const textoOriginal = btn.innerHTML;
   btn.disabled = true;
@@ -354,24 +309,40 @@ $("btnUbicacion").addEventListener("click", () => {
     (pos) => {
       fijarCoordenadas(pos.coords.latitude, pos.coords.longitude, { mover: true });
       btn.disabled = false; btn.innerHTML = textoOriginal;
-      aviso("Ubicación actual aplicada");
+      mostrarExito("Ubicación actual aplicada");
     },
     (err) => {
       btn.disabled = false; btn.innerHTML = textoOriginal;
-      aviso(err.code === 1 ? "Permite el acceso a tu ubicación en el navegador." : "No se pudo obtener tu ubicación.");
+      mostrarError(err.code === 1 ? "Permite el acceso a tu ubicación en el navegador para usar esta opción." : err.code === 3 ? "Se agotó el tiempo para obtener tu ubicación. Intenta de nuevo." : "No se pudo obtener tu ubicación.");
     },
     { enableHighAccuracy: true, timeout: 10000 }
   );
 });
 
-/* INICIO */
-(async function iniciar() {
+/* INICIO Y CARGA DE DATOS DESDE EL BACKEND */
+async function cargarConfiguracion() {
   try {
-    estado.guardado = await api.obtener();
+    const datos = await apiGet('/configuracion-geocerca');
+    if (datos) {
+      estado.guardado = normalizarRegistro(datos);
+    } else {
+      estado.guardado = null;
+    }
   } catch (err) {
-    aviso("No se pudo cargar la configuración guardada.");
+    estado.errorCarga = true;
+    mostrarError(err, "No se pudo cargar la configuración guardada. Recarga la página antes de guardar cambios.");
   }
+
   const inicial = estado.guardado ?? DEFAULTS;
   iniciarMapa(inicial.latitud_referencia, inicial.longitud_referencia, inicial.radio_metros);
   aplicarValores(inicial);
+}
+
+(async function iniciar() {
+  await conLoader(cargarConfiguracion, "Cargando configuración…");
+  refrescar();
 })();
+
+//  PERMISOS
+aplicarSoloLectura(esAdmin(), []);
+if (!esAdmin()) { $("btnGuardar").hidden = true; $("btnRestablecer").hidden = true; }

@@ -1,4 +1,4 @@
-/* Barra superior a todo el ancho + pelotita + buscador */
+/* shared/js/menu.js */
 
 const ICONS = {
   home: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
@@ -11,21 +11,32 @@ const ICONS = {
   moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
   logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
   search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
-  qr: '<path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="8" y="8" width="3" height="3" rx=".5"/><rect x="13" y="8" width="3" height="3" rx=".5"/><rect x="8" y="13" width="3" height="3" rx=".5"/><path d="M14 14h1M17 13v1M13 17h1M17 17h1"/>'
+  qr: '<path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="8" y="8" width="3" height="3" rx=".5"/><rect x="13" y="8" width="3" height="3" rx=".5"/><rect x="8" y="13" width="3" height="3" rx=".5"/><path d="M14 14h1M17 13v1M13 17h1M17 17h1"/>',
+  users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>' // Icono para estudiantes
 };
 
 function svg(name) {
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
 }
 
-const menuItems = [
-  { title: "Inicio", icon: "home", link: "/modules/inicio/dashboard/inicio.html" },
+// CONFIGURACIÓN DEL MENÚ POR ROLES (alineada con los permisos reales del backend)
+const MENU_ADMIN = ["Administrador", "Direccion"];
+const MENU_STAFF = ["Administrador", "Direccion", "Secretaria"];
+
+const menuItemsCompleto = [
+  {
+    title: "Inicio",
+    icon: "home",
+    link: "/modules/inicio/dashboard/inicio.html",
+    roles: MENU_STAFF
+  },
   {
     title: "Académico",
     icon: "academic",
+    roles: MENU_STAFF,
     submenu: [
       { title: "Estudiantes", link: "/modules/academico/estudiante/estudiante.html" },
-      { title: "Docentes", link: "/modules/academico/docente/docente.html" },
+      { title: "Docentes", link: "/modules/academico/docente/docente.html", roles: MENU_ADMIN },
       { title: "Materias", link: "/modules/academico/materia/materia.html" },
       { title: "Niveles", link: "/modules/academico/nivel/nivel.html" },
       { title: "Cursos", link: "/modules/academico/curso/curso.html" },
@@ -37,16 +48,19 @@ const menuItems = [
   {
     title: "Gestión",
     icon: "manage",
+    roles: MENU_STAFF,
     submenu: [
       { title: "Gestión académica", link: "/modules/gestion/g_academica/g_academica.html" },
-      { title: "Asistencia docente", link: "/modules/gestion/ast_docente/astdocente.html" },
+      { title: "Asistencia docente", link: "/modules/gestion/ast_docente/astdocente.html", roles: MENU_ADMIN },
       { title: "QR Estudiante", link: "/modules/gestion/qr_estudiante/qr_estudiante.html" },
-      { title: "QR Institucional", link: "/modules/gestion/qr_institucional/qr_institucional.html" }
+      { title: "QR Institucional", link: "/modules/gestion/qr_institucional/qr_institucional.html", roles: MENU_ADMIN },
+      { title: "Reportes", link: "/modules/reportes/reportes.html" }
     ]
   },
   {
     title: "Institución",
     icon: "building",
+    roles: MENU_ADMIN,
     submenu: [
       { title: "Colegio", link: "/modules/institucion/colegio/colegio.html" },
       { title: "Aulas", link: "/modules/institucion/aulas/aulas.html" }
@@ -55,6 +69,7 @@ const menuItems = [
   {
     title: "Seguridad",
     icon: "shield",
+    roles: MENU_ADMIN,
     submenu: [
       { title: "Cuentas", link: "/modules/seguridad/cuentas/cuenta.html" },
       { title: "Roles", link: "/modules/seguridad/roles/rol.html" }
@@ -63,16 +78,74 @@ const menuItems = [
   {
     title: "Configuración",
     icon: "settings",
+    roles: MENU_ADMIN,
     submenu: [
       { title: "Geocerca", link: "/modules/configuracion/geocerca/geocerca.html" }
     ]
   },
+  // Sección específica para Docentes
   {
-    title: "Scaner",icon: "qr",link: "/modules/escaner_qr/escaner_qr.html"
+    title: "Mis Clases",
+    icon: "users",
+    roles: ["Docente"],
+    submenu: [
+      { title: "Escanear QR", link: "/modules/escaner_qr/escaner_qr.html" },
+      { title: "Lista de Estudiantes", link: "/modules/academico/estudiante/estudiante.html" }
+    ]
   }
 ];
 
+const rolCoincide = (roles, rol) => !roles || roles.some(r => r.toLowerCase() === String(rol).toLowerCase());
+
+// Menú filtrado según el rol (también filtra los submenús)
+function obtenerMenuPorRol() {
+  const rol = sessionStorage.getItem('tipoCuenta') || 'Invitado';
+  return menuItemsCompleto
+    .filter(item => rolCoincide(item.roles, rol))
+    .map(item => item.submenu
+      ? { ...item, submenu: item.submenu.filter(s => rolCoincide(s.roles || item.roles, rol)) }
+      : item)
+    .filter(item => !item.submenu || item.submenu.length > 0);
+}
+
+function paginaPermitidaParaRol() {
+  const rol = sessionStorage.getItem('tipoCuenta') || 'Invitado';
+  const ruta = window.location.pathname;
+  let encontrada = false;
+  let permitida = false;
+  menuItemsCompleto.forEach(item => {
+    const enlaces = item.submenu
+      ? item.submenu.map(s => ({ link: s.link, roles: s.roles || item.roles }))
+      : [{ link: item.link, roles: item.roles }];
+    enlaces.forEach(e => {
+      if (e.link === ruta) {
+        encontrada = true;
+        if (rolCoincide(e.roles, rol)) permitida = true;
+      }
+    });
+  });
+  return !encontrada || permitida;
+}
+
 function crearMenu() {
+  // Sin sesión vigente: al login con un aviso
+  if (typeof sesionVigente === 'function' ? !sesionVigente() : !sessionStorage.getItem('tokenSesion')) {
+    if (typeof manejarSesionVencida === 'function') {
+      manejarSesionVencida(sessionStorage.getItem('tokenSesion') ? 'Tu sesión expiró. Vuelve a iniciar sesión.' : 'Inicia sesión para continuar.');
+    } else {
+      window.location.replace('/modules/login/login.html');
+    }
+    return;
+  }
+
+  // Rol sin permiso para esta página: se redirige a su inicio
+  if (!paginaPermitidaParaRol()) {
+    if (typeof dejarMensajePendiente === 'function') dejarMensajePendiente('No tienes permiso para abrir esa sección.', 'warning');
+    window.__redirigiendo = true;
+    window.location.replace(typeof rutaInicioPorRol === 'function' ? rutaInicioPorRol() : '/modules/inicio/dashboard/inicio.html');
+    return;
+  }
+
   const header = document.createElement("header");
   header.className = "topnav";
   header.id = "topnav";
@@ -83,7 +156,7 @@ function crearMenu() {
         <span class="topnav__ball-core" id="ballCore"></span>
       </span>
 
-      <a class="topnav__brand" href="/modules/inicio/dashboard/inicio.html" aria-label="Sistema Académico">
+      <a class="topnav__brand" href="${typeof rutaInicioPorRol === 'function' ? rutaInicioPorRol() : '/modules/inicio/dashboard/inicio.html'}" aria-label="Sistema Académico">
         <span class="topnav__logo">A</span>
         <span class="topnav__brand-text">
           <strong>Sistema</strong>
@@ -96,7 +169,6 @@ function crearMenu() {
       <div class="topnav__right">
         <div class="topnav__search" id="navSearch">
           <button class="topnav__tool topnav__search-toggle" id="searchToggle" type="button" aria-label="Buscar" title="Buscar">${svg("search")}</button>
-
           <label class="topnav__search-box">
             ${svg("search")}
             <input class="topnav__search-input" id="searchInput" type="search"
@@ -104,7 +176,6 @@ function crearMenu() {
                    aria-label="Buscar páginas">
             <kbd>/</kbd>
           </label>
-
           <div class="topnav__results" id="searchResults" role="listbox"></div>
         </div>
 
@@ -122,22 +193,22 @@ function crearMenu() {
 
   document.body.prepend(header);
 
-  const nav = configurarNavegacion();
-  configurarBuscador(nav.cerrar);
+  // Aquí obtenemos el menú filtrado
+  const menuItems = obtenerMenuPorRol();
+  const nav = configurarNavegacion(menuItems);
+  configurarBuscador(nav.cerrar, menuItems);
   configurarTema();
   configurarCerrarSesion();
 }
 
 /*  Navegación + pelotita + submenús  */
-function configurarNavegacion() {
+function configurarNavegacion(menuItems) {
   const bar = document.getElementById("navBar");
   const list = document.getElementById("navItems");
   const ball = document.getElementById("navBall");
   const ballCore = document.getElementById("ballCore");
   const dropdown = document.getElementById("navDropdown");
-
   const paginaActual = window.location.pathname.split("/").pop() || "inicio.html";
-
   const items = [];
   let restIndex = 0;
   let currentIndex = 0;
@@ -188,6 +259,7 @@ function configurarNavegacion() {
 
   /*  Pelotita  */
   function moverPelota(i) {
+    if (!items[i]) return;
     const barRect = bar.getBoundingClientRect();
     const r = items[i].li.getBoundingClientRect();
     ball.style.transform = `translateX(${r.left + r.width / 2 - barRect.left}px)`;
@@ -309,17 +381,16 @@ function configurarNavegacion() {
 }
 
 /*  Buscador  */
-function configurarBuscador(cerrarNav) {
+function configurarBuscador(cerrarNav, menuItems) {
   const bar = document.getElementById("navBar");
   const wrapper = document.getElementById("navSearch");
   const input = document.getElementById("searchInput");
   const results = document.getElementById("searchResults");
   const toggle = document.getElementById("searchToggle");
-
   const normalizar = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   const escapar = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-  // Índice de todas las páginas del menú
+  // Índice de todas las páginas del menú (solo las que el usuario puede ver)
   const indice = [];
   menuItems.forEach((m) => {
     if (m.submenu) {
@@ -370,7 +441,6 @@ function configurarBuscador(cerrarNav) {
   }
 
   function enfocar() {
-    // En móvil, primero se muestra el panel del buscador
     if (toggle.offsetParent !== null) bar.classList.add("is-search-open");
     input.focus();
   }
@@ -405,7 +475,6 @@ function configurarBuscador(cerrarNav) {
     else enfocar();
   });
 
-  // Atajos: "/" o Ctrl/Cmd + K
   document.addEventListener("keydown", (e) => {
     const escribiendo = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName) || document.activeElement?.isContentEditable;
     if ((e.key === "/" && !escribiendo) || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k")) {
@@ -418,7 +487,6 @@ function configurarBuscador(cerrarNav) {
     if (!wrapper.contains(e.target)) cerrarBuscador();
   });
 
-  // Si se abre un submenú, se cierra el buscador
   document.addEventListener("nav:open", cerrarBuscador);
 }
 
@@ -426,7 +494,6 @@ function configurarBuscador(cerrarNav) {
 function configurarTema() {
   const themeButton = document.getElementById("themeButton");
   const root = document.documentElement;
-
   let temaGuardado = null;
   try { temaGuardado = localStorage.getItem("theme"); } catch (e) {}
 
@@ -451,8 +518,8 @@ function configurarTema() {
 /*  Cerrar sesión  */
 function configurarCerrarSesion() {
   document.getElementById("logoutButton").addEventListener("click", () => {
-     // CORRECCIÓN: Ruta absoluta a la raíz para el archivo de bienvenida/login
-     window.location.href = "/bienvenida.html";
+    if (typeof apiLogout === 'function') apiLogout();
+    else { sessionStorage.clear(); window.location.replace("/modules/login/login.html"); }
   });
 }
 

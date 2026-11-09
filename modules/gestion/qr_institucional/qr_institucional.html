@@ -23,10 +23,15 @@
       <div class="hero__floor" aria-hidden="true"></div>
 
       <div class="hero__bar">
-        <span class="live" id="live"><i></i><b id="liveText">EN VIVO</b></span>
+        <span class="live" id="live">
+          <i></i>
+          <b id="liveText">EN VIVO</b>
+        </span>
         <span class="hero__bar-text">Cambia cada <b id="txtIntervalo">5</b> segundos</span>
         <button class="hero__fs" type="button" id="btnFs" aria-label="Pantalla completa" title="Pantalla completa">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>
+          </svg>
         </button>
       </div>
 
@@ -110,10 +115,11 @@
     </section>
   </main>
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
   <!-- Generador de QR. Para no depender de internet, descarga el archivo y colócalo en /shared/js/ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <script src="/connection/config.js"></script>
+  <script src="/connection/api.js"></script>
+  <script src="/shared/js/ui.js"></script>
   <script src="/shared/js/menu.js"></script>
   <script src="qr_institucional.js"></script>
 </body>

@@ -14,7 +14,7 @@
     <header class="scan-head">
       <div>
         <h1 class="scan-title">Escáner QR</h1>
-        <p class="scan-sub">Escanea la tarjeta del estudiante para registrar su asistencia.</p>
+        <p class="scan-sub" id="scanSub">Selecciona una materia y escanea la tarjeta del estudiante.</p>
       </div>
       <div class="clock" aria-live="off">
         <strong id="reloj">--:--:--</strong>
@@ -22,27 +22,37 @@
       </div>
     </header>
 
-    <div class="scan-grid">
+    <section class="card" style="padding: 16px 22px;">
+      <label for="selectHorario" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px;">
+        Materia / Horario a registrar:
+      </label>
+      <select class="input" id="selectHorario" style="width: 100%; height: 44px;">
+        <option value="">Cargando horarios...</option>
+      </select>
+    </section>
 
+    <div class="scan-grid">
       <!-- CÁMARA -->
       <section class="card cam" aria-label="Cámara">
         <div class="viewport" id="viewport" data-state="idle">
           <video id="video" playsinline muted></video>
           <canvas id="canvas" hidden></canvas>
-
           <div class="frame" aria-hidden="true"><i></i><i></i><i></i><i></i><span class="beam"></span></div>
           <div class="chip-status"><i></i><span id="chipTexto">Cámara apagada</span></div>
           <div class="flash" id="flash" aria-hidden="true"></div>
-
           <div class="cam-msg" id="camIdle">
-            <span class="cam-msg__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a2 2 0 0 1 2-2h1.5l1.2-1.8a1 1 0 0 1 .8-.4h5a1 1 0 0 1 .8.4L16.5 6H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.5"/></svg></span>
+            <span class="cam-msg__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                <path d="M4 8a2 2 0 0 1 2-2h1.5l1.2-1.8a1 1 0 0 1 .8-.4h5a1 1 0 0 1 .8.4L16.5 6H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/>
+                <circle cx="12" cy="12.5" r="3.5"/>
+              </svg>
+            </span>
             <h2>Activa la cámara</h2>
-            <p>El navegador te pedirá permiso. El video se procesa en este dispositivo y no se guarda.</p>
+            <p>El navegador te pedirá permiso. El video se procesa en este dispositivo.</p>
             <button class="btn btn--primary" type="button" id="btnActivar">Activar cámara</button>
           </div>
-
           <div class="cam-msg" id="camError" hidden>
-            <span class="cam-msg__ico cam-msg__ico--err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
+            <span class="cam-msg__ico cam-msg__ico--err">!</span>
             <h2 id="errTitulo">No se pudo usar la cámara</h2>
             <p id="errTexto"></p>
             <button class="btn btn--primary" type="button" id="btnReintentar">Reintentar</button>
@@ -50,40 +60,31 @@
         </div>
 
         <div class="controls">
-          <button class="btn btn--ghost" type="button" id="btnApagar" hidden>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
-            Detener cámara
-          </button>
-          <button class="tool" type="button" id="btnGirar" hidden title="Cambiar de cámara" aria-label="Cambiar de cámara">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 8h-3.5L15 5.5H9L7.5 8H4a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1z"/><path d="M9.5 13.5a2.5 2.5 0 0 1 4.3-1.7M14.5 13.5a2.5 2.5 0 0 1-4.3 1.7"/></svg>
-          </button>
-          <button class="tool" type="button" id="btnLuz" hidden aria-pressed="false" title="Linterna" aria-label="Linterna">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21h6M10 17h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>
-          </button>
-          <button class="tool" type="button" id="btnSonido" aria-pressed="true" title="Sonido" aria-label="Sonido">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4zM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
-          </button>
+          <button class="btn btn--ghost" type="button" id="btnApagar" hidden>Detener cámara</button>
+          <button class="tool" type="button" id="btnGirar" hidden title="Cambiar cámara">🔄</button>
+          <button class="tool" type="button" id="btnSonido" aria-pressed="true" title="Sonido">🔊</button>
         </div>
       </section>
 
-      <!-- RESULTADO Y REGISTRO MANUAL -->
+      <!-- RESULTADO -->
       <aside class="side">
         <section class="card result" id="resultado" data-estado="idle" aria-live="polite">
           <div class="result__top">
-            <span class="result__ico" id="resIcono"></span>
+            <span class="result__ico" id="resIcono">⌛</span>
             <div>
               <h2 id="resTitulo">Esperando escaneo</h2>
-              <p id="resMensaje">Acerca la tarjeta del estudiante al marco de la cámara.</p>
+              <p id="resMensaje">Primero selecciona una materia, luego escanea.</p>
             </div>
           </div>
           <div class="result__who" id="resEstudiante" hidden></div>
         </section>
 
+        <!-- Registro Manual -->
         <section class="card manual">
           <h3>Registro manual</h3>
-          <p>Si la tarjeta no se puede leer, escribe el CI del estudiante o el código del QR.</p>
+          <p>Si el carnet está dañado, escribe el CI del estudiante.</p>
           <form class="manual__form" id="formManual" autocomplete="off">
-            <input class="input" id="manualCodigo" placeholder="CI o código" aria-label="CI o código del QR" required>
+            <input class="input" id="manualCodigo" placeholder="CI del estudiante" required>
             <button class="btn btn--primary" type="submit">Registrar</button>
           </form>
         </section>
@@ -98,20 +99,19 @@
           <p id="logResumen">Aún no hay registros.</p>
         </div>
         <div class="log__stats">
-          <span class="badge badge--ok" id="stOk">0 aceptados</span>
+          <span class="badge badge--ok" id="stOk">0 presentes</span>
           <span class="badge badge--out" id="stNo">0 rechazados</span>
         </div>
       </header>
       <ul class="log__list" id="logLista"></ul>
-      <div class="log__empty" id="logVacio">Los registros aparecerán aquí a medida que escanees tarjetas.</div>
+      <div class="log__empty" id="logVacio">Los registros aparecerán aquí.</div>
     </section>
   </main>
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-  <!-- Lector de QR de respaldo para navegadores sin BarcodeDetector (Safari, Firefox).
-       Para no depender de internet, descarga el archivo y colócalo en /shared/js/ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+  <script src="/connection/config.js"></script>
+  <script src="/connection/api.js"></script>
+  <script src="/shared/js/ui.js"></script>
   <script src="/shared/js/menu.js"></script>
   <script src="escaner_qr.js"></script>
 </body>

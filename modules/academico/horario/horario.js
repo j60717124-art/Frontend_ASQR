@@ -1,74 +1,8 @@
-/* =========================================================
-   MÓDULO · HORARIO (+ horario_estudiante)
-   Tabla: horario (idhorario, dia varchar(10), hora_inicio time, hora_fin time,
-          docente_iddocente, materia_idmateria, aula_idaula)
-   Tabla: horario_estudiante (idhorario_estudiante, horario_idhorario,
-          estudiante_idestudiante)  → qué estudiantes asisten a cada horario
-   ========================================================= */
-
-/* ---------- CAPA DE DATOS ----------
-   Ahora funciona en modo demostración (localStorage).
-   Para conectarlo a tu backend, pon tu ruta en API_URL:
-     GET    {API_URL}/horarios
-     POST   {API_URL}/horarios
-     PUT    {API_URL}/horarios/:id
-     DELETE {API_URL}/horarios/:id        (el servidor debe borrar también sus horario_estudiante)
-     GET    {API_URL}/horario-estudiantes
-     POST   {API_URL}/horario-estudiantes  body: { horario_idhorario, estudiante_idestudiante }
-     DELETE {API_URL}/horario-estudiantes/:id
-     GET    {API_URL}/docentes   (iddocente, nombres, apellidos)
-     GET    {API_URL}/materias   (idmateria, nombre_materia)
-     GET    {API_URL}/aulas      (idaula, nombre)
-     GET    {API_URL}/estudiantes (idestudiante, nombres, apellidos, ci, estado_estudiante)
-   Las horas se envían como "HH:MM:SS" (columna time). */
-const API_URL = ""; // ej.: "/api"
-
-const DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-
-const DOCENTES_DEMO = [
-  { iddocente: 1, nombres: "María Fernanda", apellidos: "González Rojas" },
-  { iddocente: 2, nombres: "Carmen", apellidos: "Mendoza Flores" }
-];
-const MATERIAS_DEMO = [
-  { idmateria: 1, nombre_materia: "Matemática" },
-  { idmateria: 2, nombre_materia: "Lenguaje y Comunicación" },
-  { idmateria: 3, nombre_materia: "Ciencias Naturales" },
-  { idmateria: 4, nombre_materia: "Ciencias Sociales" }
-];
-const AULAS_DEMO = [
-  { idaula: 1, nombre: "Aula 101" },
-  { idaula: 2, nombre: "Aula 102" },
-  { idaula: 3, nombre: "Aula 201" },
-  { idaula: 4, nombre: "Laboratorio de Computación" },
-  { idaula: 5, nombre: "Sala de Música" }
-];
-const ESTUDIANTES_DEMO = [
-  { idestudiante: 1, nombres: "María Fernanda", apellidos: "González Rojas", ci: "8456123", estado_estudiante: "Activo" },
-  { idestudiante: 2, nombres: "Javier", apellidos: "Pérez Mamani", ci: "9123456", estado_estudiante: "Activo" },
-  { idestudiante: 3, nombres: "Lucía", apellidos: "Ramírez Quispe", ci: "7894561", estado_estudiante: "Activo" },
-  { idestudiante: 4, nombres: "Carlos Andrés", apellidos: "Torres Vargas", ci: "10234567", estado_estudiante: "Inactivo" },
-  { idestudiante: 5, nombres: "Sofía", apellidos: "Aguilar Choque", ci: "6543210", estado_estudiante: "Retirado" }
-];
-
-const HORARIOS_DEMO = [
-  { idhorario: 1, dia: "Lunes", hora_inicio: "08:00:00", hora_fin: "09:30:00", docente_iddocente: 1, materia_idmateria: 1, aula_idaula: 1 },
-  { idhorario: 2, dia: "Lunes", hora_inicio: "09:45:00", hora_fin: "11:15:00", docente_iddocente: 2, materia_idmateria: 2, aula_idaula: 2 },
-  { idhorario: 3, dia: "Martes", hora_inicio: "08:00:00", hora_fin: "09:30:00", docente_iddocente: 1, materia_idmateria: 1, aula_idaula: 1 },
-  { idhorario: 4, dia: "Martes", hora_inicio: "09:45:00", hora_fin: "11:15:00", docente_iddocente: 2, materia_idmateria: 3, aula_idaula: 3 },
-  { idhorario: 5, dia: "Miércoles", hora_inicio: "08:00:00", hora_fin: "09:30:00", docente_iddocente: 2, materia_idmateria: 2, aula_idaula: 2 },
-  { idhorario: 6, dia: "Miércoles", hora_inicio: "10:00:00", hora_fin: "11:30:00", docente_iddocente: 1, materia_idmateria: 4, aula_idaula: 4 },
-  { idhorario: 7, dia: "Jueves", hora_inicio: "08:00:00", hora_fin: "09:30:00", docente_iddocente: 1, materia_idmateria: 1, aula_idaula: 1 },
-  { idhorario: 8, dia: "Viernes", hora_inicio: "08:00:00", hora_fin: "09:30:00", docente_iddocente: 2, materia_idmateria: 3, aula_idaula: 3 }
-];
-const ASIGNACIONES_DEMO = [
-  { idhorario_estudiante: 1, horario_idhorario: 1, estudiante_idestudiante: 1 },
-  { idhorario_estudiante: 2, horario_idhorario: 1, estudiante_idestudiante: 2 },
-  { idhorario_estudiante: 3, horario_idhorario: 1, estudiante_idestudiante: 3 },
-  { idhorario_estudiante: 4, horario_idhorario: 2, estudiante_idestudiante: 1 },
-  { idhorario_estudiante: 5, horario_idhorario: 2, estudiante_idestudiante: 2 },
-  { idhorario_estudiante: 6, horario_idhorario: 3, estudiante_idestudiante: 1 }
-];
-
+//MÓDULO · HORARIO
+// El backend guarda el día en MAYÚSCULAS y sin tilde (LUNES … SABADO); aquí se traduce solo para mostrarlo
+const DIAS = ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"];
+const ETIQUETA_DIA = { LUNES: "Lunes", MARTES: "Martes", MIERCOLES: "Miércoles", JUEVES: "Jueves", VIERNES: "Viernes", SABADO: "Sábado" };
+const nombreDia = (d) => ETIQUETA_DIA[d] ?? d;
 const estado = {
   horarios: [], asignaciones: [], docentes: [], materias: [], aulas: [], estudiantes: [],
   pagina: 1, vista: "lista",
@@ -76,118 +10,30 @@ const estado = {
 };
 const POR_PAGINA = 10;
 
-const leerLocal = (clave, defecto) => {
-  try {
-    const g = JSON.parse(localStorage.getItem(clave));
-    if (Array.isArray(g)) return g;
-  } catch (e) {}
-  return defecto.slice();
-};
-const guardarLocal = () => {
-  localStorage.setItem("horarios_demo", JSON.stringify(estado.horarios));
-  localStorage.setItem("horario_estudiante_demo", JSON.stringify(estado.asignaciones));
-};
-
-const api = {
-  async horarios() { return API_URL ? (await fetch(`${API_URL}/horarios`)).json() : leerLocal("horarios_demo", HORARIOS_DEMO); },
-  async asignaciones() { return API_URL ? (await fetch(`${API_URL}/horario-estudiantes`)).json() : leerLocal("horario_estudiante_demo", ASIGNACIONES_DEMO); },
-  async docentes() { return API_URL ? (await fetch(`${API_URL}/docentes`)).json() : leerLocal("docentes_demo", DOCENTES_DEMO); },
-  async materias() { return API_URL ? (await fetch(`${API_URL}/materias`)).json() : leerLocal("materias_demo", MATERIAS_DEMO); },
-  async aulas() { return API_URL ? (await fetch(`${API_URL}/aulas`)).json() : leerLocal("aulas_demo", AULAS_DEMO); },
-  async estudiantes() { return API_URL ? (await fetch(`${API_URL}/estudiantes`)).json() : leerLocal("estudiantes_demo", ESTUDIANTES_DEMO); },
-
-  async guardar(h) {
-    if (API_URL) {
-      const nuevo = !h.idhorario;
-      const r = await fetch(`${API_URL}/horarios${nuevo ? "" : "/" + h.idhorario}`, {
-        method: nuevo ? "POST" : "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(h)
-      });
-      if (!r.ok) throw new Error("guardar");
-      return r.json();
-    }
-    if (!h.idhorario) {
-      h.idhorario = Math.max(0, ...estado.horarios.map(x => x.idhorario)) + 1;
-      estado.horarios.push(h);
-    } else {
-      estado.horarios[estado.horarios.findIndex(x => x.idhorario === h.idhorario)] = h;
-    }
-    guardarLocal();
-    return h;
-  },
-  async eliminar(id) {
-    if (API_URL) {
-      const r = await fetch(`${API_URL}/horarios/${id}`, { method: "DELETE" });
-      if (r.status === 409) throw new Error("en_uso");
-      if (!r.ok) throw new Error("eliminar");
-      return;
-    }
-    estado.horarios = estado.horarios.filter(x => x.idhorario !== id);
-    estado.asignaciones = estado.asignaciones.filter(x => x.horario_idhorario !== id);
-    guardarLocal();
-  },
-  async asignar(idHorario, idEstudiante) {
-    if (API_URL) {
-      const r = await fetch(`${API_URL}/horario-estudiantes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ horario_idhorario: idHorario, estudiante_idestudiante: idEstudiante })
-      });
-      if (!r.ok) throw new Error("asignar");
-      return r.json();
-    }
-    const nuevo = {
-      idhorario_estudiante: Math.max(0, ...estado.asignaciones.map(x => x.idhorario_estudiante)) + 1,
-      horario_idhorario: idHorario,
-      estudiante_idestudiante: idEstudiante
-    };
-    estado.asignaciones.push(nuevo);
-    guardarLocal();
-    return nuevo;
-  },
-  async quitar(idAsignacion) {
-    if (API_URL) {
-      const r = await fetch(`${API_URL}/horario-estudiantes/${idAsignacion}`, { method: "DELETE" });
-      if (!r.ok) throw new Error("quitar");
-      return;
-    }
-    estado.asignaciones = estado.asignaciones.filter(x => x.idhorario_estudiante !== idAsignacion);
-    guardarLocal();
-  }
-};
-
-/* ---------- UTILIDADES ---------- */
+// UTILIDADES
 const $ = (id) => document.getElementById(id);
 const escapar = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const normalizar = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
 const hhmm = (t) => String(t).slice(0, 5);
 const aSQL = (t) => (String(t).length === 5 ? `${t}:00` : String(t));
 const rango = (h) => `${hhmm(h.hora_inicio)} – ${hhmm(h.hora_fin)}`;
-
 const docente = (id) => estado.docentes.find(d => d.iddocente === id);
 const materia = (id) => estado.materias.find(m => m.idmateria === id);
 const aula = (id) => estado.aulas.find(a => a.idaula === id);
 const estudiante = (id) => estado.estudiantes.find(e => e.idestudiante === id);
 const horario = (id) => estado.horarios.find(h => h.idhorario === id);
-
 const nombreDocente = (id) => { const d = docente(id); return d ? `${d.apellidos}, ${d.nombres}` : "Docente no encontrado"; };
 const nombreMateria = (id) => materia(id)?.nombre_materia ?? "Materia no encontrada";
 const nombreAula = (id) => aula(id)?.nombre ?? "Aula no encontrada";
+const docDe = (h) => h.docente_nombre || docDe(h);
+const matDe = (h) => h.nombre_materia || matDe(h);
+const aulaDe = (h) => h.aula_nombre || aulaDe(h);
 const nombreEst = (e) => `${e.apellidos}, ${e.nombres}`;
 const inicialesEst = (e) => (e.nombres.trim()[0] + e.apellidos.trim()[0]).toUpperCase();
-
-const etiqueta = (h) => `${nombreMateria(h.materia_idmateria)} · ${h.dia.slice(0, 3)} ${rango(h)}`;
-
-// Dos horarios se cruzan si son el mismo día y sus horas se pisan
-const solapan = (a, b) =>
-  a.dia === b.dia && aSQL(a.hora_inicio) < aSQL(b.hora_fin) && aSQL(b.hora_inicio) < aSQL(a.hora_fin);
-
+const etiqueta = (h) => `${matDe(h)} · ${nombreDia(h.dia).slice(0, 3)} ${rango(h)}`;
+const solapan = (a, b) => a.dia === b.dia && aSQL(a.hora_inicio) < aSQL(b.hora_fin) && aSQL(b.hora_inicio) < aSQL(a.hora_fin);
 const asignadosDe = (idHorario) => estado.asignaciones.filter(a => a.horario_idhorario === idHorario);
-const horariosDeEstudiante = (idEst) =>
-  estado.asignaciones.filter(a => a.estudiante_idestudiante === idEst).map(a => horario(a.horario_idhorario)).filter(Boolean);
-
+const horariosDeEstudiante = (idEst) => estado.asignaciones.filter(a => a.estudiante_idestudiante === idEst).map(a => horario(a.horario_idhorario)).filter(Boolean);
 const COLORES = ["var(--secondary-500)", "var(--tertiary-500)", "var(--cyan-500)", "var(--primary-500)", "var(--secondary-700)", "var(--tertiary-700)"];
 const colorMateria = (id) => COLORES[id % COLORES.length];
 const COLORES_AVATAR = [
@@ -197,15 +43,6 @@ const COLORES_AVATAR = [
   "linear-gradient(135deg, var(--primary-500), var(--primary-700))"
 ];
 
-let toastTimer;
-function aviso(msg) {
-  const t = $("toast");
-  t.textContent = msg;
-  t.classList.add("is-show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("is-show"), 3200);
-}
-
 const ICO = {
   edit: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   del: '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/>',
@@ -214,20 +51,20 @@ const ICO = {
 };
 const icono = (n) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[n]}</svg>`;
 
-/* ---------- FILTROS Y ORDEN ---------- */
+// FILTROS Y ORDEN
 function filtrados() {
   const q = normalizar($("fBuscar").value.trim());
   const dia = $("fDia").value, doc = $("fDocente").value, aul = $("fAula").value;
   return estado.horarios
     .filter(h =>
-      (!q || normalizar(`${nombreMateria(h.materia_idmateria)} ${nombreDocente(h.docente_iddocente)} ${nombreAula(h.aula_idaula)}`).includes(q)) &&
+      (!q || normalizar(`${matDe(h)} ${docDe(h)} ${aulaDe(h)}`).includes(q)) &&
       (!dia || h.dia === dia) &&
       (!doc || String(h.docente_iddocente) === doc) &&
       (!aul || String(h.aula_idaula) === aul))
     .sort((a, b) => DIAS.indexOf(a.dia) - DIAS.indexOf(b.dia) || aSQL(a.hora_inicio).localeCompare(aSQL(b.hora_inicio)));
 }
 
-/* ---------- VISTA LISTA ---------- */
+// VISTA LISTA
 function pintarLista(lista) {
   const paginas = Math.max(1, Math.ceil(lista.length / POR_PAGINA));
   estado.pagina = Math.min(estado.pagina, paginas);
@@ -240,17 +77,17 @@ function pintarLista(lista) {
     const n = asignadosDe(h.idhorario).length;
     return `
     <tr class="row-click" data-id="${h.idhorario}">
-      <td data-label="Día" class="day-tag">${escapar(h.dia)}</td>
+      <td data-label="Día" class="day-tag">${escapar(nombreDia(h.dia))}</td>
       <td data-label="Horario" class="time">${rango(h)}</td>
-      <td data-label="Materia"><strong>${escapar(nombreMateria(h.materia_idmateria))}</strong></td>
-      <td data-label="Docente" class="muted">${escapar(nombreDocente(h.docente_iddocente))}</td>
-      <td data-label="Aula"><span class="badge badge--school"><span>${escapar(nombreAula(h.aula_idaula))}</span></span></td>
+      <td data-label="Materia"><strong>${escapar(matDe(h))}</strong></td>
+      <td data-label="Docente" class="muted">${escapar(docDe(h))}</td>
+      <td data-label="Aula"><span class="badge badge--school"><span>${escapar(aulaDe(h))}</span></span></td>
       <td data-label="Estudiantes"><span class="badge ${n ? "badge--next" : "badge--off"}">${n} ${n === 1 ? "estudiante" : "estudiantes"}</span></td>
       <td>
         <div class="row-actions">
           <button class="icon-btn" data-accion="estudiantes" data-id="${h.idhorario}" title="Estudiantes" aria-label="Estudiantes de ${escapar(etiqueta(h))}">${icono("users")}</button>
-          <button class="icon-btn" data-accion="editar" data-id="${h.idhorario}" title="Editar" aria-label="Editar ${escapar(etiqueta(h))}">${icono("edit")}</button>
-          <button class="icon-btn icon-btn--danger" data-accion="eliminar" data-id="${h.idhorario}" title="Eliminar" aria-label="Eliminar ${escapar(etiqueta(h))}">${icono("del")}</button>
+          ${esAdmin() ? `<button class="icon-btn" data-accion="editar" data-id="${h.idhorario}" title="Editar" aria-label="Editar ${escapar(etiqueta(h))}">${icono("edit")}</button>
+          <button class="icon-btn icon-btn--danger" data-accion="eliminar" data-id="${h.idhorario}" title="Eliminar" aria-label="Eliminar ${escapar(etiqueta(h))}">${icono("del")}</button>` : ""}
         </div>
       </td>
     </tr>`;
@@ -262,19 +99,19 @@ function pintarLista(lista) {
   $("btnNext").disabled = estado.pagina >= paginas;
 }
 
-/* ---------- VISTA SEMANA ---------- */
+// VISTA SEMANA
 function pintarSemana(lista) {
   $("vistaSemana").innerHTML = DIAS.map(dia => {
     const delDia = lista.filter(h => h.dia === dia);
     return `
     <div class="day">
-      <div class="day__head">${dia}<span>${delDia.length} ${delDia.length === 1 ? "clase" : "clases"}</span></div>
+      <div class="day__head">${nombreDia(dia)}<span>${delDia.length} ${delDia.length === 1 ? "clase" : "clases"}</span></div>
       ${delDia.length ? delDia.map(h => `
         <button class="blk" type="button" data-id="${h.idhorario}" style="--c:${colorMateria(h.materia_idmateria)}" aria-label="Ver ${escapar(etiqueta(h))}">
           <span class="blk__time">${rango(h)}</span>
-          <strong>${escapar(nombreMateria(h.materia_idmateria))}</strong>
-          <span>${escapar(nombreDocente(h.docente_iddocente))}</span>
-          <div class="blk__foot"><span>${escapar(nombreAula(h.aula_idaula))}</span><span>${asignadosDe(h.idhorario).length} est.</span></div>
+          <strong>${escapar(matDe(h))}</strong>
+          <span>${escapar(docDe(h))}</span>
+          <div class="blk__foot"><span>${escapar(aulaDe(h))}</span><span>${asignadosDe(h.idhorario).length} est.</span></div>
         </button>`).join("") : '<div class="day__empty">Sin clases</div>'}
     </div>`;
   }).join("");
@@ -294,34 +131,41 @@ function pintar() {
   $("resumen").textContent = `${n} ${n === 1 ? "horario" : "horarios"} · ${estado.asignaciones.length} ${estado.asignaciones.length === 1 ? "asignación" : "asignaciones"} de estudiantes`;
 }
 
-/* ---------- COMBOS ---------- */
+// COMBOS
 function llenarCombos() {
   const docentes = estado.docentes.slice().sort((a, b) => a.apellidos.localeCompare(b.apellidos, "es"));
   const materias = estado.materias.slice().sort((a, b) => a.nombre_materia.localeCompare(b.nombre_materia, "es"));
   const aulas = estado.aulas.slice().sort((a, b) => a.nombre.localeCompare(b.nombre, "es", { numeric: true }));
-
   const oDoc = docentes.map(d => `<option value="${d.iddocente}">${escapar(d.apellidos)}, ${escapar(d.nombres)}</option>`).join("");
   const oMat = materias.map(m => `<option value="${m.idmateria}">${escapar(m.nombre_materia)}</option>`).join("");
   const oAul = aulas.map(a => `<option value="${a.idaula}">${escapar(a.nombre)}</option>`).join("");
-  const oDia = DIAS.map(d => `<option>${d}</option>`).join("");
+  const oDia = DIAS.map(d => `<option value="${d}">${nombreDia(d)}</option>`).join("");
 
   $("docente_iddocente").innerHTML = '<option value="">Selecciona un docente</option>' + oDoc;
   $("materia_idmateria").innerHTML = '<option value="">Selecciona una materia</option>' + oMat;
   $("aula_idaula").innerHTML = '<option value="">Selecciona un aula</option>' + oAul;
   $("dia").innerHTML = '<option value="">Selecciona un día</option>' + oDia;
-
   $("fDia").innerHTML = '<option value="">Todos los días</option>' + oDia;
   $("fDocente").innerHTML = '<option value="">Todos los docentes</option>' + oDoc;
   $("fAula").innerHTML = '<option value="">Todas las aulas</option>' + oAul;
 }
 
-/* ---------- FORMULARIO DE HORARIO ---------- */
+// FORMULARIO DE HORARIO
 const dlg = $("dlgHorario");
 const form = $("formHorario");
 
+// Errores del backend que se muestran junto al campo correspondiente
+const REGLAS_ERROR = [
+  [/hora de fin/i, "hora_fin"],
+  [/hora de inicio|se cruza/i, "hora_inicio"],
+  [/docente/i, "docente_iddocente"],
+  [/materia/i, "materia_idmateria"],
+  [/aula/i, "aula_idaula"],
+  [/d[ií]a/i, "dia"]
+];
+
 function limpiarErrores() {
-  form.querySelectorAll(".err").forEach(e => (e.textContent = ""));
-  form.querySelectorAll(".is-invalid").forEach(e => e.classList.remove("is-invalid"));
+  limpiarErroresFormulario(form);
 }
 
 function abrirFormulario(h) {
@@ -341,8 +185,7 @@ function abrirFormulario(h) {
 }
 
 function marcarError(campo, msg) {
-  form.querySelector(`[data-err="${campo}"]`).textContent = msg;
-  $(campo).classList.add("is-invalid");
+  marcarErrorCampo(form, campo, msg);
 }
 
 function validar() {
@@ -371,14 +214,12 @@ function validar() {
   }
   if (!ok) return false;
 
-  // Cruces de docente y de aula en el mismo día y hora
   const otros = estado.horarios.filter(h => h.idhorario !== id);
   const choqueDoc = otros.find(h => h.docente_iddocente === candidato.docente_iddocente && solapan(h, candidato));
   if (choqueDoc) { marcarError("docente_iddocente", `Ya tiene clase: ${etiqueta(choqueDoc)}.`); ok = false; }
   const choqueAula = otros.find(h => h.aula_idaula === candidato.aula_idaula && solapan(h, candidato));
   if (choqueAula) { marcarError("aula_idaula", `Aula ocupada: ${etiqueta(choqueAula)}.`); ok = false; }
 
-  // Al editar: los estudiantes ya asignados no pueden quedar con dos clases a la vez
   if (id) {
     const afectados = asignadosDe(id).filter(a =>
       horariosDeEstudiante(a.estudiante_idestudiante).some(h => h.idhorario !== id && solapan(h, candidato)));
@@ -390,12 +231,14 @@ function validar() {
   return ok;
 }
 
+//  GUARDAR HORARIO
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!validar()) { form.querySelector(".is-invalid")?.focus(); return; }
 
-  const h = {
-    idhorario: Number($("idhorario").value) || null,
+  const id = $("idhorario").value;
+  const editando = !!id;
+  const payload = {
     dia: $("dia").value,
     hora_inicio: aSQL($("hora_inicio").value),
     hora_fin: aSQL($("hora_fin").value),
@@ -403,23 +246,28 @@ form.addEventListener("submit", async (e) => {
     materia_idmateria: Number($("materia_idmateria").value),
     aula_idaula: Number($("aula_idaula").value)
   };
-  const editando = !!h.idhorario;
 
-  $("btnGuardar").disabled = true;
+  setCargando($("btnGuardar"), true, "Guardando…");
   try {
-    await api.guardar(h);
-    if (API_URL) estado.horarios = await api.horarios();
+    if (editando) {
+      await apiPut(`/horarios/${id}`, payload);
+      mostrarExito("Horario actualizado correctamente");
+    } else {
+      await apiPost(`/horarios`, payload);
+      mostrarExito("Horario creado correctamente");
+    }
+
+    await cargarHorarios();
     dlg.close();
-    pintar();
-    aviso(editando ? "Horario actualizado" : "Horario creado");
+
   } catch (err) {
-    aviso("No se pudo guardar el horario. Intenta de nuevo.");
+    errorFormulario(form, err, REGLAS_ERROR, "No se pudo guardar el horario");
   } finally {
-    $("btnGuardar").disabled = false;
+    setCargando($("btnGuardar"), false);
   }
 });
 
-/* ---------- DETALLE Y ESTUDIANTES DEL HORARIO ---------- */
+// DETALLE Y ESTUDIANTES DEL HORARIO
 const dlgDet = $("dlgDetalle");
 
 function abrirDetalle(id) {
@@ -436,11 +284,11 @@ function pintarDetalle() {
   const h = horario(estado.detalleId);
   if (!h) return;
 
-  $("detTitulo").textContent = nombreMateria(h.materia_idmateria);
+  $("detTitulo").textContent = matDe(h);
   $("detInfo").innerHTML = `
-    <div class="info"><small>Día y hora</small><strong>${escapar(h.dia)} · ${rango(h)}</strong></div>
-    <div class="info"><small>Docente</small><strong>${escapar(nombreDocente(h.docente_iddocente))}</strong></div>
-    <div class="info"><small>Aula</small><strong>${escapar(nombreAula(h.aula_idaula))}</strong></div>`;
+    <div class="info"><small>Día y hora</small><strong>${escapar(nombreDia(h.dia))} · ${rango(h)}</strong></div>
+    <div class="info"><small>Docente</small><strong>${escapar(docDe(h))}</strong></div>
+    <div class="info"><small>Aula</small><strong>${escapar(aulaDe(h))}</strong></div>`;
 
   pintarAsignados();
   pintarCandidatos();
@@ -466,7 +314,6 @@ function pintarAsignados() {
     : `<li class="slist-empty">${todos.length ? "Ningún estudiante coincide con la búsqueda." : "Aún no hay estudiantes asignados a este horario."}</li>`;
 }
 
-// Estudiantes activos que todavía no están en el horario; se bloquean los que tienen otra clase a esa hora
 function candidatos() {
   const h = horario(estado.detalleId);
   const yaEstan = new Set(asignadosDe(h.idhorario).map(a => a.estudiante_idestudiante));
@@ -481,7 +328,6 @@ function candidatos() {
 function pintarCandidatos() {
   if ($("detAdd").hidden) return;
   const lista = candidatos();
-  // Si un seleccionado quedó bloqueado, se saca de la selección
   lista.forEach(({ e, choque }) => { if (choque) estado.seleccion.delete(e.idestudiante); });
 
   $("addLista").innerHTML = lista.length
@@ -518,44 +364,76 @@ $("addLista").addEventListener("change", (e) => {
   $("btnAddOk").textContent = n ? `Agregar seleccionados (${n})` : "Agregar seleccionados";
 });
 
+// AGREGAR ESTUDIANTES
 $("btnAddOk").addEventListener("click", async () => {
   const ids = [...estado.seleccion];
   if (!ids.length) return;
-  $("btnAddOk").disabled = true;
+
+  const idHorario = estado.detalleId;
+  const btn = $("btnAddOk");
+  setCargando(btn, true, "Agregando…");
+
   let agregados = 0;
-  try {
-    for (const idEst of ids) { await api.asignar(estado.detalleId, idEst); agregados++; }
-    aviso(`${agregados} ${agregados === 1 ? "estudiante agregado" : "estudiantes agregados"}`);
-  } catch (err) {
-    aviso("No se pudieron agregar todos los estudiantes. Intenta de nuevo.");
+  const errores = [];
+
+  for (const idEst of ids) {
+    try {
+      await apiPost('/inscripciones', { horario_idhorario: idHorario, estudiante_idestudiante: idEst });
+      agregados++;
+    } catch (err) {
+      const e = estudiante(idEst);
+      errores.push(`${e ? nombreEst(e) : "Estudiante #" + idEst}: ${mensajeDeError(err)}`);
+    }
   }
-  if (API_URL) estado.asignaciones = await api.asignaciones();
+
+  if (agregados > 0) mostrarExito(`${agregados} ${agregados === 1 ? "estudiante agregado" : "estudiantes agregados"} al horario`);
+  if (errores.length) {
+    mostrarError(`No se pudo agregar a ${errores.length} ${errores.length === 1 ? "estudiante" : "estudiantes"}. ${errores[0]}`);
+  }
+
   estado.seleccion.clear();
+  await cargarInscripciones();
   pintarDetalle();
   pintar();
+  setCargando(btn, false);
 });
 
+// QUITAR ESTUDIANTE
 $("detLista").addEventListener("click", async (e) => {
   const b = e.target.closest("[data-quitar]");
   if (!b) return;
+
+  const idInscripcion = Number(b.dataset.quitar);
+  const ins = estado.asignaciones.find(a => a.idhorario_estudiante === idInscripcion);
+  const est = ins && estudiante(ins.estudiante_idestudiante);
+  const ok = await confirmarAccion(
+    `Se quitará a ${est ? nombreEst(est) : "este estudiante"} del horario. Si ya tiene asistencias registradas, el sistema no lo permitirá.`,
+    null, { titulo: "Quitar estudiante", aceptar: "Quitar" });
+  if (!ok) return;
+
+  setCargando(b, true);
   try {
-    await api.quitar(Number(b.dataset.quitar));
-    if (API_URL) estado.asignaciones = await api.asignaciones();
+    await apiDelete(`/inscripciones/${idInscripcion}`);
+    await cargarInscripciones();
     pintarDetalle();
     pintar();
-    aviso("Estudiante quitado del horario");
+    mostrarExito("Estudiante quitado del horario");
   } catch (err) {
-    aviso("No se pudo quitar al estudiante. Intenta de nuevo.");
+    mostrarError(err, "No se pudo quitar al estudiante.");
+  } finally {
+    setCargando(b, false);
   }
 });
 
+$("btnEditarDesdeDetalle").hidden = !esAdmin();
+$("btnAgregar").hidden = !puedeGestionarMatricula();
 $("btnEditarDesdeDetalle").addEventListener("click", () => {
   const h = horario(estado.detalleId);
   dlgDet.close();
   if (h) abrirFormulario(h);
 });
 
-/* ---------- ELIMINAR HORARIO ---------- */
+// ELIMINAR HORARIO
 let idEliminar = null;
 
 function pedirEliminar(h) {
@@ -568,21 +446,23 @@ function pedirEliminar(h) {
 }
 
 $("btnConfirmarEliminar").addEventListener("click", async () => {
+  const btnDel = $("btnConfirmarEliminar");
+  setCargando(btnDel, true, "Eliminando…");
   try {
-    await api.eliminar(idEliminar);
-    if (API_URL) [estado.horarios, estado.asignaciones] = await Promise.all([api.horarios(), api.asignaciones()]);
+    await apiDelete(`/horarios/${idEliminar}`);
+    await Promise.all([cargarHorarios(), cargarInscripciones()]);
     $("dlgEliminar").close();
     pintar();
-    aviso("Horario eliminado");
+    mostrarExito("Horario eliminado correctamente");
   } catch (err) {
     $("dlgEliminar").close();
-    aviso(err.message === "en_uso"
-      ? "No se puede eliminar: el horario tiene asistencias u otros registros asociados."
-      : "No se pudo eliminar el horario. Intenta de nuevo.");
+    mostrarError(err, "No se puede eliminar: el horario tiene asistencias u otros registros asociados.");
+  } finally {
+    setCargando(btnDel, false);
   }
 });
 
-/* ---------- EVENTOS GENERALES ---------- */
+// EVENTOS GENERALES
 $("tbody").addEventListener("click", (e) => {
   const btn = e.target.closest("[data-accion]");
   const fila = e.target.closest("tr[data-id]");
@@ -609,15 +489,71 @@ $("btnNext").addEventListener("click", () => { estado.pagina++; pintar(); });
 document.querySelectorAll("[data-cerrar]").forEach(b => b.addEventListener("click", () => b.closest("dialog").close()));
 document.querySelectorAll("dialog").forEach(d => d.addEventListener("mousedown", (e) => { if (e.target === d) d.close(); }));
 
-/* ---------- INICIO ---------- */
-(async function iniciar() {
+// CARGA DE DATOS
+async function cargarHorarios() {
   try {
-    [estado.horarios, estado.asignaciones, estado.docentes, estado.materias, estado.aulas, estado.estudiantes] =
-      await Promise.all([api.horarios(), api.asignaciones(), api.docentes(), api.materias(), api.aulas(), api.estudiantes()]);
+    estado.horarios = await apiGet('/horarios');
+    pintar();
   } catch (err) {
-    $("resumen").textContent = "No se pudieron cargar los horarios.";
-    return;
+    $("resumen").textContent = "Error al cargar horarios.";
+    mostrarError(err, "No se pudieron cargar los horarios.");
+    mostrarErrorTabla($("tbody"), err, iniciar);
+    throw err;
   }
-  llenarCombos();
+}
+
+async function cargarInscripciones() {
+  const resultado = [];
+  let fallos = 0;
+  const horarios = estado.horarios.slice();
+
+  for (let i = 0; i < horarios.length; i += 6) {
+    const lote = horarios.slice(i, i + 6);
+    const respuestas = await Promise.allSettled(lote.map(h => apiGet(`/horarios/${h.idhorario}/estudiantes`)));
+    respuestas.forEach((r, k) => {
+      if (r.status === "fulfilled" && Array.isArray(r.value)) {
+        r.value.forEach(ins => resultado.push({
+          idhorario_estudiante: ins.idhorario_estudiante,
+          horario_idhorario: lote[k].idhorario,
+          estudiante_idestudiante: ins.estudiante_idestudiante
+        }));
+      } else if (r.status === "rejected") {
+        fallos++;
+      }
+    });
+  }
+
+  estado.asignaciones = resultado;
+  if (fallos) mostrarAviso(`No se pudo leer los estudiantes de ${fallos} ${fallos === 1 ? "horario" : "horarios"}. Los conteos pueden estar incompletos.`);
   pintar();
-})();
+}
+
+async function cargarCatalogos() {
+  const pedidos = [
+    puedeGestionarMatricula() ? apiGet('/estudiantes') : Promise.resolve([]),
+    esAdmin() ? apiGet('/docentes') : Promise.resolve([]),
+    apiGet('/materias'),
+    apiGet('/aulas')
+  ];
+  const [est, doc, mat, aul] = await Promise.allSettled(pedidos);
+  estado.estudiantes = est.status === "fulfilled" ? est.value : [];
+  estado.docentes = doc.status === "fulfilled" ? doc.value : [];
+  estado.materias = mat.status === "fulfilled" ? mat.value : [];
+  estado.aulas = aul.status === "fulfilled" ? aul.value : [];
+  const fallo = [est, doc, mat, aul].find(r => r.status === "rejected");
+  if (fallo) mostrarError(fallo.reason, "No se pudieron cargar algunos datos auxiliares (docentes, materias, aulas o estudiantes).");
+  llenarCombos();
+}
+
+async function iniciar() {
+  mostrarSkeleton($("tbody"), 5);
+  $("resumen").textContent = "Cargando datos...";
+  try {
+    await cargarCatalogos();
+    await cargarHorarios();
+    await cargarInscripciones();
+  } catch (_) { /* ya se mostró el error */ }
+}
+
+if (!esAdmin()) $("btnNuevo").hidden = true;
+iniciar();

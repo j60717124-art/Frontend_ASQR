@@ -44,7 +44,7 @@ const LOGIN_URL = "../modules/login/login.html";
         encendido = f.on;
         esCentro = f.centro;
       } else if (enFinder(r, c, 1)) {
-        encendido = false;               // separador alrededor de los cuadros
+        encendido = false;
       } else {
         encendido = azar() > 0.48;
       }

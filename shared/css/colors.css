@@ -8,7 +8,7 @@
   --primary-500: #64748b;
   --primary-600: #475569;
   --primary-700: #334155;
-  --primary-800: #1e293b; /* base */
+  --primary-800: #1e293b;
   --primary-900: #0f172a;
   --primary-950: #020617;
 
@@ -19,7 +19,7 @@
   --secondary-300: #93c5fd;
   --secondary-400: #60a5fa;
   --secondary-500: #3b82f6;
-  --secondary-600: #2563eb; /* base */
+  --secondary-600: #2563eb;
   --secondary-700: #1d4ed8;
   --secondary-800: #1e40af;
   --secondary-900: #1e3a8a;
@@ -31,7 +31,7 @@
   --tertiary-200: #a7f3d0;
   --tertiary-300: #6ee7b7;
   --tertiary-400: #34d399;
-  --tertiary-500: #10b981; /* base */
+  --tertiary-500: #10b981;
   --tertiary-600: #059669;
   --tertiary-700: #047857;
   --tertiary-800: #065f46;
@@ -61,7 +61,7 @@
   --neutral-600: #475569;
   --neutral-700: #334155;
   --neutral-800: #1e293b;
-  --neutral-900: #0f172a; /* base */
+  --neutral-900: #0f172a;
   --neutral-950: #020617;
 
   /* Panel de ilustración (siempre oscuro, en ambos temas) */
@@ -75,11 +75,11 @@
 
   /* Fondos */
   --bg:             var(--neutral-50);
-  --bg-glow:        #ffffff;
   --bg-edge:        var(--neutral-200);
-  --surface:        #ffffff;
   --surface-alt:    var(--neutral-100);
   --input-bg:       var(--neutral-100);
+  --bg-glow:        #ffffff;
+  --surface:        #ffffff;
   --overlay:        rgb(15 23 42 / .5);
 
   /* Texto */
@@ -126,12 +126,10 @@
     color-scheme: dark;
 
     --bg:             var(--neutral-900);
-    --bg-glow:        color-mix(in srgb, var(--secondary-900) 55%, var(--neutral-900));
     --bg-edge:        var(--neutral-950);
     --surface:        var(--primary-800);
     --surface-alt:    var(--primary-700);
     --input-bg:       var(--neutral-900);
-    --overlay:        rgb(2 6 23 / .7);
     --text:           var(--neutral-50);
     --text-muted:     var(--neutral-400);
     --text-subtle:    var(--neutral-500);
@@ -143,19 +141,21 @@
     --on-primary:     var(--primary-900);
     --accent:         var(--secondary-400);
     --accent-hover:   var(--secondary-300);
-    --accent-soft:    rgb(59 130 246 / .18);
     --on-accent:      var(--secondary-950);
     --success:        var(--tertiary-400);
     --success-hover:  var(--tertiary-300);
-    --success-soft:   rgb(16 185 129 / .16);
     --on-success:     var(--tertiary-950);
     --brand-label:    var(--cyan-400);
     --title-accent:   var(--tertiary-400);
     --danger:         var(--danger-400);
-    --gradient-brand: linear-gradient(100deg, var(--secondary-500), var(--tertiary-400));
     --focus-ring:     var(--secondary-300);
+    --bg-glow:        color-mix(in srgb, var(--secondary-900) 55%, var(--neutral-900));
+    --gradient-brand: linear-gradient(100deg, var(--secondary-500), var(--tertiary-400));
     --shadow:         0 1px 2px rgb(0 0 0 / .4), 0 8px 24px rgb(0 0 0 / .35);
     --card-shadow:    0 25px 80px rgb(0 0 0 / .55), 0 0 40px rgb(34 211 238 / .07);
+    --overlay:        rgb(2 6 23 / .7);
+    --accent-soft:    rgb(59 130 246 / .18);
+    --success-soft:   rgb(16 185 129 / .16);
   }
 }
 
@@ -163,12 +163,10 @@
   color-scheme: dark;
 
   --bg:             var(--neutral-900);
-  --bg-glow:        color-mix(in srgb, var(--secondary-900) 55%, var(--neutral-900));
   --bg-edge:        var(--neutral-950);
   --surface:        var(--primary-800);
   --surface-alt:    var(--primary-700);
   --input-bg:       var(--neutral-900);
-  --overlay:        rgb(2 6 23 / .7);
   --text:           var(--neutral-50);
   --text-muted:     var(--neutral-400);
   --text-subtle:    var(--neutral-500);
@@ -180,19 +178,21 @@
   --on-primary:     var(--primary-900);
   --accent:         var(--secondary-400);
   --accent-hover:   var(--secondary-300);
-  --accent-soft:    rgb(59 130 246 / .18);
   --on-accent:      var(--secondary-950);
   --success:        var(--tertiary-400);
   --success-hover:  var(--tertiary-300);
-  --success-soft:   rgb(16 185 129 / .16);
   --on-success:     var(--tertiary-950);
   --brand-label:    var(--cyan-400);
   --title-accent:   var(--tertiary-400);
   --danger:         var(--danger-400);
-  --gradient-brand: linear-gradient(100deg, var(--secondary-500), var(--tertiary-400));
   --focus-ring:     var(--secondary-300);
+  --bg-glow:        color-mix(in srgb, var(--secondary-900) 55%, var(--neutral-900));
+  --gradient-brand: linear-gradient(100deg, var(--secondary-500), var(--tertiary-400));
   --shadow:         0 1px 2px rgb(0 0 0 / .4), 0 8px 24px rgb(0 0 0 / .35);
   --card-shadow:    0 25px 80px rgb(0 0 0 / .55), 0 0 40px rgb(34 211 238 / .07);
+  --overlay:        rgb(2 6 23 / .7);
+  --accent-soft:    rgb(59 130 246 / .18);
+  --success-soft:   rgb(16 185 129 / .16);
 }
 
 body {

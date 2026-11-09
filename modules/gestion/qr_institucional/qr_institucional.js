@@ -1,94 +1,17 @@
-/* =========================================================
-   MÓDULO · QR INSTITUCIONAL (código dinámico)
-   Tabla: qr_institucional (idqr_institucional, codigo varchar(255),
-          firma varchar(255), fecha_emision datetime,
-          fecha_expiracion datetime, usado tinyint(1))
+// MÓDULO · QR INSTITUCIONAL
 
-   El QR cambia cada INTERVALO_SEGUNDOS. Cada código lleva una firma
-   y una fecha de expiración, de modo que una foto o captura deja de
-   servir en pocos segundos.
-   ========================================================= */
-
-/* ---------- CONFIGURACIÓN ---------- */
-const INTERVALO_SEGUNDOS = 5;  // cada cuánto cambia el QR
-const GRACIA_SEGUNDOS = 2;     // tiempo extra de validez para quien ya está escaneando
 const MOSTRAR_HISTORIAL = 8;
+const SONDEO_MS = 4000;          // cada cuánto se consulta al backend (detecta QR usado o expirado)
+const REINTENTO_MIN_MS = 2000;   // mínimo entre dos consultas seguidas
+const estado = { actual: null, historial: [], rotando: false, ultimoSegundo: -1, intervalo: 30, ultimaConsulta: 0, sinConexion: false };
 
-/* ---------- CAPA DE DATOS ----------
-   Ahora funciona en modo demostración (el navegador genera los códigos).
-   Para conectarlo a tu backend, pon tu ruta en API_URL. El SERVIDOR es quien
-   debe generar y firmar los códigos; esta pantalla solo los muestra:
-     GET {API_URL}/qr-institucional/actual
-         → { idqr_institucional, codigo, firma, fecha_emision, fecha_expiracion, usado }
-         Devuelve el código vigente y crea uno nuevo cuando pasan INTERVALO_SEGUNDOS.
-     GET {API_URL}/qr-institucional?limit=8
-         → últimos códigos emitidos, del más reciente al más antiguo.
-   Envía las fechas en formato ISO 8601 con zona horaria (ej.: 2026-10-13T16:32:05Z). */
-const API_URL = ""; // ej.: "/api"
-
-const SECRETO_DEMO = "clave-de-demostracion-no-usar-en-produccion";
-const estado = { actual: null, historial: [], rotando: false, ultimoHistorial: 0, ultimoSegundo: -1 };
-
-const hex = (n) => Array.from(crypto.getRandomValues(new Uint8Array(n)), b => b.toString(16).padStart(2, "0")).join("");
-const b64url = (bytes) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-
-// Firma HMAC-SHA256 (requiere https o localhost). Si no está disponible, usa una firma de relleno solo para la demo.
-async function firmar(texto) {
-  try {
-    const enc = new TextEncoder();
-    const clave = await crypto.subtle.importKey("raw", enc.encode(SECRETO_DEMO), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
-    return b64url(new Uint8Array(await crypto.subtle.sign("HMAC", clave, enc.encode(texto))));
-  } catch (e) {
-    return "demo-" + hex(16);
-  }
-}
-
-const leerLocal = () => {
-  try {
-    const g = JSON.parse(localStorage.getItem("qr_institucional_demo"));
-    if (Array.isArray(g)) return g;
-  } catch (e) {}
-  return [];
-};
-
-const api = {
-  async actual() {
-    if (API_URL) {
-      const r = await fetch(`${API_URL}/qr-institucional/actual`, { cache: "no-store" });
-      if (!r.ok) throw new Error("actual");
-      return r.json();
-    }
-    const ahora = Date.now();
-    const codigo = hex(16);
-    const emision = new Date(ahora).toISOString();
-    const expiracion = new Date(ahora + (INTERVALO_SEGUNDOS + GRACIA_SEGUNDOS) * 1000).toISOString();
-    const registro = {
-      idqr_institucional: Math.max(0, ...estado.historial.map(h => h.idqr_institucional)) + 1,
-      codigo,
-      firma: await firmar(`${codigo}|${emision}|${expiracion}`),
-      fecha_emision: emision,
-      fecha_expiracion: expiracion,
-      usado: 0
-    };
-    estado.historial.unshift(registro);
-    estado.historial = estado.historial.slice(0, 200);
-    localStorage.setItem("qr_institucional_demo", JSON.stringify(estado.historial));
-    return registro;
-  },
-  async historial() {
-    if (API_URL) {
-      const r = await fetch(`${API_URL}/qr-institucional?limit=${MOSTRAR_HISTORIAL}`, { cache: "no-store" });
-      if (!r.ok) throw new Error("historial");
-      return r.json();
-    }
-    return estado.historial;
-  }
-};
-
-/* ---------- UTILIDADES ---------- */
+// UTILIDADES
 const $ = (id) => document.getElementById(id);
 const escapar = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const hora = (iso) => new Date(iso).toLocaleTimeString("es-ES", { hour12: false });
+const ts = (v) => parseFechaBolivia(v)?.getTime() ?? NaN;
+const hora = (v) => { const d = parseFechaBolivia(v); return d ? d.toLocaleTimeString("es-ES", { hour12: false }) : "—"; };
+const emisionDe = (r) => ts(r.fecha_expiracion) - estado.intervalo * 1000;
+const horaEmision = (r) => { const e = emisionDe(r); return Number.isNaN(e) ? "—" : new Date(e).toLocaleTimeString("es-ES", { hour12: false }); };
 const pad = (n) => String(n).padStart(6, "0");
 const reducirMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -104,7 +27,7 @@ function qrSvg(texto) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${t} ${t}" shape-rendering="crispEdges" role="img" aria-label="Código QR institucional"><rect width="${t}" height="${t}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
 }
 
-// Lo que lleva el QR: el lector envía esto al servidor, que verifica firma, expiración y uso.
+// Lo que lleva el QR: código + firma (el backend lo validará)
 const cargaUtil = (r) => `QRI:${r.codigo}:${r.firma}`;
 
 function setConexion(ok) {
@@ -112,10 +35,10 @@ function setConexion(ok) {
   $("liveText").textContent = ok ? "EN VIVO" : "SIN CONEXIÓN";
 }
 
-/* ---------- MOSTRAR UN CÓDIGO NUEVO ---------- */
+//  MOSTRAR UN CÓDIGO NUEVO
 function pintarDatos(r) {
   $("numero").textContent = `N.º ${pad(r.idqr_institucional)}`;
-  $("emitido").textContent = hora(r.fecha_emision);
+  $("emitido").textContent = horaEmision(r);
   $("vence").textContent = hora(r.fecha_expiracion);
   $("firma").textContent = `firma ${String(r.firma).slice(0, 8)}…`;
 }
@@ -123,96 +46,100 @@ function pintarDatos(r) {
 function mostrar(registro, conAnimacion) {
   const svg = qrSvg(cargaUtil(registro));
   const aplicar = () => {
-    $("qrSvg").innerHTML = svg ?? '<div class="qrcard__msg">No se pudo cargar el generador de QR. Revisa tu conexión a internet.</div>';
+    $("qrSvg").innerHTML = svg ?? '<div class="qrcard__msg">No se pudo cargar el generador de QR.</div>';
     pintarDatos(registro);
   };
 
   const card = $("qrCard");
   if (conAnimacion && !reducirMovimiento.matches) {
     card.classList.remove("is-flip");
-    void card.offsetWidth; // reinicia la animación
+    void card.offsetWidth;
     card.classList.add("is-flip");
-    setTimeout(aplicar, 310); // se cambia el código cuando la tarjeta está de canto
+    setTimeout(aplicar, 310);
   } else {
     aplicar();
   }
 
-  const emisionMs = Date.parse(registro.fecha_emision);
-  estado.actual = { ...registro, rotMs: emisionMs + INTERVALO_SEGUNDOS * 1000 };
+  // Guardamos el QR actual con su fecha de expiración
+  estado.actual = registro;
+
+  // Agregamos al historial local
+  if (!estado.historial.some(h => h.idqr_institucional === registro.idqr_institucional)) {
+    estado.historial.unshift(registro);
+    estado.historial = estado.historial.slice(0, MOSTRAR_HISTORIAL);
+    pintarHistorial();
+  }
 }
 
+// ROTACIÓN
 async function rotar() {
   if (estado.rotando) return;
+  if (Date.now() - estado.ultimaConsulta < REINTENTO_MIN_MS) return;
   estado.rotando = true;
+  estado.ultimaConsulta = Date.now();
   try {
-    const nuevo = await api.actual();
-    if (API_URL && estado.actual && nuevo.codigo === estado.actual.codigo) {
-      estado.actual.rotMs = Date.now() + 500; // el servidor aún no rotó: reintenta pronto
-    } else {
+    const nuevo = await apiGet('/qr-institucional');
+
+    if (!estado.actual || nuevo.codigo !== estado.actual.codigo) {
+      if (estado.actual && ts(estado.actual.fecha_expiracion) > Date.now()) estado.actual.usado = 1;
       mostrar(nuevo, !!estado.actual);
+      $("seg").textContent = Math.max(0, Math.ceil((ts(nuevo.fecha_expiracion) - Date.now()) / 1000));
     }
+
+    if (estado.sinConexion) mostrarExito("Conexión con el servidor restablecida.");
+    estado.sinConexion = false;
     setConexion(true);
-    await actualizarHistorial();
   } catch (e) {
     setConexion(false);
-    if (estado.actual) estado.actual.rotMs = Date.now() + 2000;
-    else estado.actual = { rotMs: Date.now() + 2000 };
+    if (!estado.sinConexion) mostrarError(e, "No se pudo actualizar el código QR. Se reintentará automáticamente.");
+    estado.sinConexion = true;
   } finally {
     estado.rotando = false;
   }
 }
 
-/* ---------- HISTORIAL ---------- */
-async function actualizarHistorial() {
-  // Con servidor se consulta como máximo cada 10 s para no sobrecargarlo
-  if (API_URL && Date.now() - estado.ultimoHistorial < 10000 && estado.historial.length) return;
-  try {
-    estado.historial = await api.historial();
-    estado.ultimoHistorial = Date.now();
-  } catch (e) {}
-  pintarHistorial();
-}
-
+// HISTORIAL
 function estadoDe(r) {
   if (Number(r.usado) === 1) return '<span class="badge badge--next">Usado</span>';
-  return Date.now() < Date.parse(r.fecha_expiracion)
+  return Date.now() < ts(r.fecha_expiracion)
     ? '<span class="badge badge--ok">Activo</span>'
     : '<span class="badge badge--off">Expirado</span>';
 }
 
 function pintarHistorial() {
-  const lista = estado.historial.slice(0, MOSTRAR_HISTORIAL);
+  const lista = estado.historial;
   $("vacio").hidden = lista.length > 0;
   $("tbody").innerHTML = lista.map(r => `
     <tr>
       <td class="num"><strong>${pad(r.idqr_institucional)}</strong></td>
-      <td class="muted num">${hora(r.fecha_emision)}</td>
+      <td class="muted num">${horaEmision(r)}</td>
       <td class="muted num">${hora(r.fecha_expiracion)}</td>
       <td class="mono">${escapar(String(r.firma).slice(0, 14))}…</td>
       <td>${estadoDe(r)}</td>
     </tr>`).join("");
 }
 
-/* ---------- CUENTA REGRESIVA (anillo + segundos) ---------- */
+// CUENTA REGRESIVA
 function cuadro() {
   const a = estado.actual;
-  if (a) {
-    const resto = a.rotMs - Date.now();
-    const frac = Math.min(1, Math.max(0, resto / (INTERVALO_SEGUNDOS * 1000)));
+  if (a && a.fecha_expiracion) {
+    const resto = ts(a.fecha_expiracion) - Date.now();
+    const total = estado.intervalo * 1000;
+    const frac = Math.min(1, Math.max(0, resto / total));
     $("ringBar").style.strokeDashoffset = String(100 * (1 - frac));
 
     const seg = Math.max(0, Math.ceil(resto / 1000));
     if (seg !== estado.ultimoSegundo) {
       estado.ultimoSegundo = seg;
       $("seg").textContent = seg;
-      pintarHistorial(); // refresca los estados (Activo / Expirado) una vez por segundo
+      pintarHistorial();
     }
     if (resto <= 0) rotar();
   }
   requestAnimationFrame(cuadro);
 }
 
-/* ---------- INCLINACIÓN 3D CON EL MOUSE ---------- */
+// INCLINACIÓN 3D CON EL MOUSE
 const escena = $("scene"), tilt = $("tilt");
 escena.addEventListener("pointermove", (e) => {
   if (e.pointerType === "touch" || reducirMovimiento.matches) return;
@@ -228,19 +155,25 @@ escena.addEventListener("pointerleave", () => {
   tilt.style.setProperty("--ry", "0deg");
 });
 
-/* ---------- PANTALLA COMPLETA ---------- */
+// PANTALLA COMPLETA
 $("btnFs").addEventListener("click", () => {
   const el = $("hero");
   if (document.fullscreenElement) document.exitFullscreen();
   else (el.requestFullscreen || el.webkitRequestFullscreen)?.call(el);
 });
 
-/* ---------- INICIO ---------- */
-(function iniciar() {
-  $("txtIntervalo").textContent = INTERVALO_SEGUNDOS;
-  $("seg").textContent = INTERVALO_SEGUNDOS;
-  if (!API_URL) estado.historial = leerLocal();
-  pintarHistorial();
-  rotar();                       // primer código
-  requestAnimationFrame(cuadro); // arranca la cuenta regresiva
+// INICIO
+(async function iniciar() {
+  try {
+    const cfg = await apiGet('/configuracion-geocerca');
+    estado.intervalo = Number(cfg.intervalo_rotacion_segundos) || estado.intervalo;
+  } catch (e) {
+    mostrarAviso("No se pudo leer el intervalo de rotación; se usará " + estado.intervalo + " s.");
+  }
+  $("txtIntervalo").textContent = estado.intervalo;
+  $("seg").textContent = estado.intervalo;
+
+  await rotar();
+  setInterval(rotar, SONDEO_MS);        // detecta cuando un docente usa el QR
+  requestAnimationFrame(cuadro);
 })();
