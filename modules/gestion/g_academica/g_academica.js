@@ -100,7 +100,6 @@ function pintar() {
 const dlg = $("dlgGestion");
 const form = $("formGestion");
 
-// Errores del backend que se muestran junto al campo correspondiente
 const REGLAS_ERROR = [[/nombre de la gesti/i, "nombre"], [/fecha de fin/i, "fecha_fin"], [/fecha de inicio/i, "fecha_inicio"]];
 
 function limpiarErrores() {
@@ -145,7 +144,7 @@ function validar() {
   const ini = $("fecha_inicio").value, fin = $("fecha_fin").value;
 
   if (nombre.length < 3) { marcarError("nombre", "Escribe al menos 3 caracteres."); ok = false; }
-  else if (estado.lista.some(g => g.idgestion_academica !== id && normalizar(g.nombre) === normalizar(nombre))) {
+  else if (estado.lista.some(g => String(g.idgestion_academica) !== String(id) && normalizar(g.nombre) === normalizar(nombre))) {
     marcarError("nombre", "Ya existe una gestión con ese nombre."); ok = false;
   }
 
@@ -155,7 +154,7 @@ function validar() {
   if (ini && fin) {
     if (fin <= ini) { marcarError("fecha_fin", "La fecha de fin debe ser posterior a la de inicio."); ok = false; }
     else {
-      const cruce = estado.lista.find(g => g.idgestion_academica !== id && ini <= g.fecha_fin && g.fecha_inicio <= fin);
+      const cruce = estado.lista.find(g => String(g.idgestion_academica) !== String(id) && ini <= g.fecha_fin && g.fecha_inicio <= fin);
       if (cruce) { marcarError("fecha_inicio", `Estas fechas se cruzan con «${cruce.nombre}» (${fmtFecha(cruce.fecha_inicio)} – ${fmtFecha(cruce.fecha_fin)}).`); ok = false; }
     }
   }
@@ -197,14 +196,21 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-// ACCIONES DE FILA
+// ACCIONES DE FILA (CORREGIDO: Usando String para evitar fallos de tipo)
 let idEliminar = null;
 
 $("tbody").addEventListener("click", (e) => {
   const btn = e.target.closest("[data-accion]");
   if (!btn) return;
-  const ges = estado.lista.find(x => x.idgestion_academica === Number(btn.dataset.id));
-  if (!ges) return;
+
+  const id = String(btn.dataset.id);
+  // Buscamos comparando ambos como String
+  const ges = estado.lista.find(x => String(x.idgestion_academica) === id);
+
+  if (!ges) {
+    console.warn("Gestión no encontrada para id:", id);
+    return;
+  }
 
   if (btn.dataset.accion === "editar") abrirFormulario(ges);
 

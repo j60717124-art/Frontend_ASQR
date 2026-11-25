@@ -8,10 +8,11 @@ const POR_PAGINA = 10;
 const $ = (id) => document.getElementById(id);
 const escapar = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const normalizar = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-const cursoDe = (id) => estado.cursos.find(c => c.idcurso === id);
-const nombreNivel = (id) => estado.niveles.find(n => n.idnivel === id)?.nivel ?? "Sin nivel";
-const ordenNivel = (id) => { const i = estado.niveles.findIndex(n => n.idnivel === id); return i < 0 ? 999 : i; };
-const nombreColegio = (id) => estado.colegios.find(c => c.idcolegio === id)?.nombre ?? "Sin colegio";
+const cursoDe = (id) => estado.cursos.find(c => String(c.idcurso) === String(id));
+const nombreNivel = (id) => estado.niveles.find(n => String(n.idnivel) === String(id))?.nivel ?? "Sin nivel";
+const ordenNivel = (id) => { const i = estado.niveles.findIndex(n => String(n.idnivel) === String(id)); return i < 0 ? 999 : i; };
+const nombreColegio = (id) => estado.colegios.find(c => String(c.idcolegio) === String(id))?.nombre ?? "Sin colegio";
+
 const ICO = {
   edit: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   del: '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/>'
@@ -84,7 +85,7 @@ function llenarCombos() {
   const muchosColegios = estado.colegios.length > 1;
   const grupos = estado.niveles.map(n => {
     const cursos = estado.cursos
-      .filter(c => c.nivel_idnivel === n.idnivel)
+      .filter(c => String(c.nivel_idnivel) === String(n.idnivel))
       .sort((a, b) => a.nombre.localeCompare(b.nombre, "es", { numeric: true }));
     if (!cursos.length) return "";
     return `<optgroup label="${escapar(n.nivel)}">${cursos.map(c =>
@@ -116,7 +117,7 @@ function sincronizarLetras() {
   const curso = Number($("curso_idcurso").value);
   const id = Number($("idparalelo").value) || null;
   const actual = $("nombre").value.trim().toUpperCase();
-  const usadas = new Set(estado.paralelos.filter(p => p.curso_idcurso === curso && p.idparalelo !== id).map(p => p.nombre));
+  const usadas = new Set(estado.paralelos.filter(p => String(p.curso_idcurso) === String(curso) && String(p.idparalelo) !== String(id)).map(p => p.nombre));
 
   $("letras").innerHTML = LETRAS_SUGERIDAS.map(l =>
     `<button type="button" data-l="${l}" aria-pressed="${l === actual}" ${usadas.has(l) ? 'disabled title="Ya existe en este curso" style="opacity:.4;cursor:not-allowed"' : ""}>${l}</button>`).join("");
@@ -156,7 +157,7 @@ function validar() {
 
   if (!letra) { marcarError("nombre", "Escribe la letra del paralelo."); ok = false; }
   else if (!/^[A-Z0-9]$/.test(letra)) { marcarError("nombre", "Usa un único carácter: una letra A-Z o un número (ej.: A, B, 1)."); ok = false; }
-  else if (curso && estado.paralelos.some(p => p.idparalelo !== id && p.curso_idcurso === curso && p.nombre === letra)) {
+  else if (curso && estado.paralelos.some(p => String(p.idparalelo) !== String(id) && String(p.curso_idcurso) === String(curso) && p.nombre === letra)) {
     marcarError("nombre", `El paralelo ${letra} ya existe en este curso.`); ok = false;
   }
   return ok;
@@ -208,16 +209,24 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-// ACCIONES DE FILA
+// ACCIONES DE FILA (CORREGIDO)
 let idEliminar = null;
 
 $("tbody").addEventListener("click", (e) => {
   const btn = e.target.closest("[data-accion]");
   if (!btn) return;
-  const par = estado.paralelos.find(x => x.idparalelo === Number(btn.dataset.id));
-  if (!par) return;
+
+  const id = String(btn.dataset.id);
+  // Buscamos el paralelo comparando los IDs como String
+  const par = estado.paralelos.find(x => String(x.idparalelo) === id);
+
+  if (!par) {
+    console.warn("Paralelo no encontrado para id:", id);
+    return;
+  }
 
   if (btn.dataset.accion === "editar") abrirFormulario(par);
+
   if (btn.dataset.accion === "eliminar") {
     const c = cursoDe(par.curso_idcurso);
     idEliminar = par.idparalelo;

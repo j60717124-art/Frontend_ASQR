@@ -23,7 +23,8 @@ const ICO = {
   edit: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   del: '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/>'
 };
-const icono = (n) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[n]}</svg>`;
+// Nos aseguramos de que el SVG no capture los clics
+const icono = (n) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;" aria-hidden="true">${ICO[n]}</svg>`;
 
 // LISTADO
 function filtrados() {
@@ -62,8 +63,8 @@ function pintar() {
       <td data-label="Registrado" class="muted">${fmtFecha(d.fecha_agregacion)}</td>
       <td>
         <div class="row-actions">
-          <button class="icon-btn" data-accion="editar" data-id="${d.iddocente}" title="Editar" aria-label="Editar ${escapar(nombreCompleto(d))}">${icono("edit")}</button>
-          <button class="icon-btn icon-btn--danger" data-accion="eliminar" data-id="${d.iddocente}" title="Eliminar" aria-label="Eliminar ${escapar(nombreCompleto(d))}">${icono("del")}</button>
+          <button type="button" class="icon-btn" data-accion="editar" data-id="${d.iddocente}" title="Editar" aria-label="Editar ${escapar(nombreCompleto(d))}">${icono("edit")}</button>
+          <button type="button" class="icon-btn icon-btn--danger" data-accion="eliminar" data-id="${d.iddocente}" title="Eliminar" aria-label="Eliminar ${escapar(nombreCompleto(d))}">${icono("del")}</button>
         </div>
       </td>
     </tr>`;
@@ -113,7 +114,6 @@ function abrirFormulario(doc) {
   $("clave").value = "";
   $("hintClave").textContent = doc ? "Déjala vacía para conservar la actual." : "Mínimo 8 caracteres, con al menos una letra y un número.";
   $("estado").value = doc?.estado ?? "Activo";
-  $("fecha_agregacion").value = doc ? fmtFechaHora(doc.fecha_agregacion) : "Se asigna al guardar";
   dlg.showModal();
   $("nombres").focus();
 }
@@ -136,23 +136,22 @@ function validar() {
     ["telefono", validadores.telefono($("telefono").value)],
     ["n_usuario", validadores.usuario($("n_usuario").value)],
     ["correo", validadores.correo($("correo").value)],
-    // En alta la contraseña es obligatoria; al editar solo se valida si se escribe una nueva
     ["clave", validadores.clave($("clave").value, !editando)]
   ];
   for (const [campo, msg] of reglas) if (msg) { marcarError(campo, msg); ok = false; }
 
   if (!form.querySelector('[data-err="ci"]').textContent &&
-      estado.lista.some(d => d.iddocente !== id && d.ci.toUpperCase() === ci)) {
+      estado.lista.some(d => String(d.iddocente) !== String(id) && d.ci.toUpperCase() === ci)) {
     marcarError("ci", "Ya hay un docente registrado con ese CI."); ok = false;
   }
   const usuario = $("n_usuario").value.trim().toLowerCase();
   if (!form.querySelector('[data-err="n_usuario"]').textContent &&
-      estado.lista.some(d => d.iddocente !== id && String(d.n_usuario).toLowerCase() === usuario)) {
+      estado.lista.some(d => String(d.iddocente) !== String(id) && String(d.n_usuario).toLowerCase() === usuario)) {
     marcarError("n_usuario", "El nombre de usuario ya existe."); ok = false;
   }
   const correo = $("correo").value.trim().toLowerCase();
   if (!form.querySelector('[data-err="correo"]').textContent &&
-      estado.lista.some(d => d.iddocente !== id && String(d.correo).toLowerCase() === correo)) {
+      estado.lista.some(d => String(d.iddocente) !== String(id) && String(d.correo).toLowerCase() === correo)) {
     marcarError("correo", "Ya existe una cuenta registrada con ese correo."); ok = false;
   }
   return ok;
@@ -190,7 +189,6 @@ form.addEventListener("submit", async (e) => {
     correo: $("correo").value.trim().toLowerCase(),
     estado: $("estado").value
   };
-  // La contraseña solo se envía si se escribió una (en edición, vacía = conservar la actual)
   if ($("clave").value) payload.clave = $("clave").value;
   setCargando($("btnGuardar"), true, "Guardando…");
   try {
@@ -212,16 +210,26 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-// ACCIONES DE FILA
+// ACCIONES DE FILA (CORREGIDO)
 let idEliminar = null;
 
 $("tbody").addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-accion]");
+  const btn = e.target.closest("button[data-accion]");
   if (!btn) return;
-  const doc = estado.lista.find(x => x.iddocente === Number(btn.dataset.id));
-  if (!doc) return;
 
-  if (btn.dataset.accion === "editar") abrirFormulario(doc);
+  const id = String(btn.dataset.id);
+  // Buscamos comparando ambos lados como String
+  const doc = estado.lista.find(x => String(x.iddocente) === id);
+
+  if (!doc) {
+    console.warn("Docente no encontrado para id:", id);
+    return;
+  }
+
+  if (btn.dataset.accion === "editar") {
+    abrirFormulario(doc);
+  }
+
   if (btn.dataset.accion === "eliminar") {
     idEliminar = doc.iddocente;
     $("delTexto").textContent = `Se eliminará a ${doc.nombres} ${doc.apellidos} (CI ${doc.ci}). También se eliminará su cuenta de acceso. Esta acción no se puede deshacer.`;
@@ -266,7 +274,6 @@ async function cargarDocentes() {
 }
 
 (async function iniciar() {
-  mostrarSkeleton($("tbody"), 5);
   mostrarSkeleton($("tbody"), 5);
   $("resumen").textContent = "Cargando docentes...";
   await cargarDocentes();

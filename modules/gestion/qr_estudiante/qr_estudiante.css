@@ -453,111 +453,115 @@ input[type="checkbox"] {
   height: 16px;
 }
 
-/* MODAL DEL QR (Diseño Carnet) */
+/* MODAL DEL QR (Diseño Carnet Unificado) */
 .modal--qr {
   width: min(640px, calc(100vw - 24px));
 }
 .modal--qr .modal__body {
   background: var(--surface-alt);
-  padding: 30px;
-  display: flex;
-  justify-content: center;
-}
-
-.idcard-modal {
-  width: 100%;
-  max-width: 400px;
-  background: #fff;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  box-shadow: 0 10px 30px rgba(0,0,0,.08);
-  overflow: hidden;
+  padding: 30px 20px;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
-.idcard-modal__head {
+
+/* ID CARD (Usado tanto en el modal como en la impresión) */
+.idcard {
+  width: 85.6mm;
+  height: 54mm;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  border-radius: 3mm;
+  background: #fff;
+  color: #0f172a;
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08); /* Sombra solo visible en pantalla */
+}
+
+.idcard__head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
-  background: var(--primary);
+  gap: 3mm;
+  padding: 2.2mm 4mm;
+  background: #1e293b;
   color: #fff;
 }
-.idcard-modal__school {
-  font-size: 14px;
-  font: 1em sans-serif;
+.idcard__school {
+  max-width: 48mm;
+  font-size: 8pt;
   font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.idcard-modal__kind {
-  font-size: 9px;
+.idcard__kind {
+  font-size: 5.5pt;
   font-weight: 700;
-  letter-spacing: 1px;
-  color: #bae6fd;
+  letter-spacing: .8pt;
+  color: #67e8f9;
   white-space: nowrap;
 }
-.idcard-modal__body {
+.idcard__body {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding: 24px 20px;
+  gap: 3mm;
+  padding: 2.5mm 4mm;
 }
-.idcard-modal__info {
-  flex: 1;
+.idcard__info {
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: .4mm;
 }
-.idcard-modal__info small {
-  font-size: 10px;
+.idcard__info small {
+  margin-top: 1.4mm;
+  font-size: 5.5pt;
   font-weight: 700;
-  letter-spacing: .5px;
+  letter-spacing: .6pt;
   text-transform: uppercase;
   color: #64748b;
-  margin-top: 8px;
 }
-.idcard-modal__info small:first-child {
+.idcard__info small:first-child {
   margin-top: 0;
 }
-.idcard-modal__name {
-  font-size: 18px;
+.idcard__name {
+  font-size: 10pt;
   font-weight: 800;
-  color: #0f172a;
-  line-height: 1.2;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
 }
-.idcard-modal__info b {
-  font-size: 14px;
-  color: #334155;
+.idcard__info b {
+  font-size: 8.5pt;
 }
-.idcard-modal__qr {
-  width: 130px;
+.idcard__qr {
+  width: 30mm;
   flex-shrink: 0;
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
 }
-.idcard-modal__qr img {
-  width: 130px;
-  height: 130px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  padding: 4px;
-  background: #fff;
+.idcard__qr img {
+  display: block;
+  width: 30mm;
+  height: 30mm;
 }
-.idcard-modal__qr small {
-  font-size: 9px;
+.idcard__qr small {
+  display: block;
+  margin-top: .6mm;
+  font-size: 5pt;
   color: #64748b;
 }
-.idcard-modal__stripe {
-  height: 8px;
-  background: linear-gradient(90deg, var(--primary), var(--success));
+.idcard__stripe {
+  height: 2mm;
+  background: linear-gradient(90deg, #2563eb, #10b981);
 }
 
 .warn-note {
@@ -568,6 +572,8 @@ input[type="checkbox"] {
   line-height: 1.45;
   background: color-mix(in srgb, var(--danger) 10%, transparent);
   color: var(--danger);
+  width: 100%;
+  text-align: center;
 }
 
 /* RESPONSIVE */
@@ -657,120 +663,10 @@ input[type="checkbox"] {
   .go {
     display: none;
   }
-  .idcard-modal__body {
-    flex-direction: column;
-    text-align: center;
-    gap: 16px;
-  }
-  .idcard-modal__info {
-     align-items: center;
-    }
-  .idcard-modal__qr {
-    width: 150px;
-  }
-  .idcard-modal__qr img {
-    width: 150px;
-    height: 150px;
-  }
 }
 
 /* TARJETA DE ESTUDIANTE (solo se ve al imprimir) */
 #printArea { display: none; }
-
-.idcard {
-  width: 85.6mm;
-  height: 54mm;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: .3mm solid #cbd5e1;
-  border-radius: 3mm;
-  background: #fff; color: #0f172a;
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-print-color-adjust: exact;
-  print-color-adjust: exact;
-  break-inside: avoid;
-  page-break-inside: avoid;
-}
-.idcard__head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 3mm;
-  padding: 2.2mm 4mm;
-  background: #1e293b;
-  color: #fff;
-}
-.idcard__school {
-  max-width: 48mm;
-  font-size: 8pt;
-  font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.idcard__kind {
-  font-size: 5.5pt;
-  font-weight: 700;
-  letter-spacing: .8pt;
-  color: #67e8f9;
-  white-space: nowrap;
-}
-.idcard__body {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 3mm;
-  padding: 2.5mm 4mm;
-}
-.idcard__info {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: .4mm;
-}
-.idcard__info small {
-  margin-top: 1.4mm;
-  font-size: 5.5pt;
-  font-weight: 700;
-  letter-spacing: .6pt;
-  text-transform: uppercase;
-  color: #64748b;
-}
-.idcard__info small:first-child {
-  margin-top: 0;
-}
-.idcard__name {
-  font-size: 10pt;
-  font-weight: 800;
-  line-height: 1.15;
-  overflow-wrap: anywhere;
-}
-.idcard__info b {
-  font-size: 8.5pt;
-}
-.idcard__qr {
-  width: 30mm;
-  flex-shrink: 0;
-  text-align: center;
-}
-.idcard__qr img {
-  display: block;
-  width: 30mm;
-  height: 30mm;
-}
-.idcard__qr small {
-  display: block;
-  margin-top: .6mm;
-  font-size: 5pt;
-  color: #64748b;
-}
-.idcard__stripe {
-  height: 2mm;
-  background: linear-gradient(90deg, #2563eb, #10b981);
-}
 
 @media print {
   @page {
@@ -792,5 +688,9 @@ input[type="checkbox"] {
     grid-template-columns: repeat(2, 85.6mm);
     gap: 6mm 8mm;
     justify-content: center;
+  }
+  /* Aseguramos que en la impresión no haya sombras */
+  .idcard {
+    box-shadow: none !important;
   }
 }

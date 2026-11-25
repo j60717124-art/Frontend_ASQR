@@ -702,7 +702,10 @@
 .room strong {
   font-size: 13.5px;
   font-weight: 600;
-  overflow-wrap: anywhere;
+  /* Previene que nombres largos rompan la tabla */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .badge--school {

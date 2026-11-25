@@ -79,7 +79,7 @@
     </section>
   </main>
 
-  <!-- MODAL: QR Y DATOS DEL ESTUDIANTE (Diseño Carnet) -->
+  <!-- MODAL: QR Y DATOS DEL ESTUDIANTE -->
   <dialog class="modal modal--qr" id="dlgQr" aria-labelledby="qrTitulo">
     <header class="modal__head">
       <h2 id="qrTitulo">Credencial del estudiante</h2>
@@ -107,6 +107,9 @@
 
   <!-- Área exclusiva de impresión: tarjetas de estudiante -->
   <div id="printArea" aria-hidden="true"></div>
+
+  <!-- LIBRERÍA PARA GENERAR QR LOCALMENTE -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 
   <script src="/connection/config.js"></script>
   <script src="/connection/api.js"></script>

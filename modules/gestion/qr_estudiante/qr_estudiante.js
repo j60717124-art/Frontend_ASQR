@@ -14,7 +14,6 @@ const iniciales = (e) => {
   return (n[0] || "") + (a[0] || "");
 };
 
-// Reemplazos seguros por si las funciones globales no existen
 const fFecha = (f) => typeof formatearFecha === 'function' ? formatearFecha(f) : String(f || "").split(' ')[0];
 const fFechaHora = (f) => typeof formatearFechaHora === 'function' ? formatearFechaHora(f) : String(f || "");
 
@@ -34,9 +33,17 @@ const ICO = {
   chevron: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>'
 };
 
-// GENERADOR DE QR (Usando QuickChart API)
-function getQrImageUrl(texto) {
-  return `https://quickchart.io/qr?text=${encodeURIComponent(texto)}&size=300&margin=2`;
+// GENERADOR DE QR LOCAL
+function getQrDataUrl(texto) {
+  try {
+    const qr = qrcode(0, 'M');
+    qr.addData(texto);
+    qr.make();
+    return qr.createDataURL(4, 2);
+  } catch (e) {
+    console.error("Error al generar QR localmente:", e);
+    return "";
+  }
 }
 
 // LISTADO Y PINTADO
@@ -116,7 +123,7 @@ function pintar() {
   if ($("resumen")) $("resumen").textContent = `${total} ${total === 1 ? "estudiante" : "estudiantes"} · ${con} con QR vigente · ${total - con} sin QR`;
 }
 
-// MODAL DEL QR (Diseño Carnet)
+// MODAL DEL QR (Unificado con el diseño de impresión)
 const dlgQr = $("dlgQr");
 
 function abrirQr(id) {
@@ -134,7 +141,6 @@ function renderQr() {
   const colegio = estado.colegio || "Sistema de Asistencia QR";
 
   if (!q) {
-    // Vista si el estudiante NO tiene QR
     if ($("qrBody")) {
       $("qrBody").innerHTML = `
         <div style="text-align:center; padding: 40px 20px; color: #64748b; width: 100%;">
@@ -150,31 +156,11 @@ function renderQr() {
     return;
   }
 
-  // Vista si el estudiante SÍ tiene QR (Diseño de Carnet)
+  // Inyectamos exactamente el mismo HTML de la tarjeta (la clase .idcard)
   if ($("qrBody")) {
     $("qrBody").innerHTML = `
-      <div class="idcard-modal">
-        <div class="idcard-modal__head">
-          <span class="idcard-modal__school">${escapar(colegio)}</span>
-          <span class="idcard-modal__kind">CREDENCIAL ESTUDIANTIL</span>
-        </div>
-        <div class="idcard-modal__body">
-          <div class="idcard-modal__info">
-            <small>Estudiante</small>
-            <span class="idcard-modal__name">${escapar(e.nombres)} ${escapar(e.apellidos)}</span>
-            <small>C.I.</small>
-            <b>${escapar(e.ci)}</b>
-            <small>N.º de QR</small>
-            <b>${String(q.idqr_estudiante).padStart(6, "0")}</b>
-          </div>
-          <div class="idcard-modal__qr">
-            <img src="${getQrImageUrl(q.codigo)}" alt="QR">
-            <small>Escanea al ingresar</small>
-          </div>
-        </div>
-        <div class="idcard-modal__stripe"></div>
-      </div>
-      ${e.estado_estudiante !== "Activo" ? `<p class="warn-note" style="width:100%; text-align:center; margin-top:20px;">Este estudiante figura como ${escapar(e.estado_estudiante.toLowerCase())}.</p>` : ""}
+      ${tarjetaHTML(e, q)}
+      ${e.estado_estudiante !== "Activo" ? `<p class="warn-note">Este estudiante figura como ${escapar(e.estado_estudiante.toLowerCase())}.</p>` : ""}
     `;
   }
 
@@ -210,7 +196,7 @@ if (dlgQr) {
   });
 }
 
-// IMPRESIÓN DE TARJETAS
+// IMPRESIÓN DE TARJETAS (Genera el mismo HTML que ves en el modal)
 function tarjetaHTML(e, q) {
   const colegio = estado.colegio || "Sistema de Asistencia QR";
   return `
@@ -229,7 +215,7 @@ function tarjetaHTML(e, q) {
         <b>${String(q.idqr_estudiante).padStart(6, "0")}</b>
       </div>
       <div class="idcard__qr">
-        <img src="${getQrImageUrl(q.codigo)}" alt="QR">
+        <img src="${getQrDataUrl(q.codigo)}" alt="QR">
         <small>Escanea al ingresar</small>
       </div>
     </div>
@@ -250,7 +236,10 @@ function imprimir(ids) {
     $("printArea").innerHTML = conQr.map(x => tarjetaHTML(x.e, x.q)).join("");
   }
   if (omitidos && typeof mostrarAviso === 'function') mostrarAviso(`${omitidos} sin QR no se incluyeron.`);
-  window.print();
+
+  setTimeout(() => {
+    window.print();
+  }, 150);
 }
 
 window.addEventListener("afterprint", () => { if ($("printArea")) $("printArea").innerHTML = ""; });
@@ -267,13 +256,25 @@ if ($("chkTodos")) {
 if ($("tbody")) {
   $("tbody").addEventListener("click", (e) => {
     const chk = e.target.closest("[data-sel]");
+
     if (chk) {
       const id = Number(chk.dataset.sel);
-      chk.checked ? estado.seleccion.add(id) : estado.seleccion.delete(id);
-      pintar();
+      if (chk.checked) estado.seleccion.add(id);
+      else estado.seleccion.delete(id);
+
+      const fila = chk.closest("tr");
+      if (fila) fila.classList.toggle("is-selected", chk.checked);
+
+      const n = estado.seleccion.size;
+      if ($("btnImprimirSel")) {
+        $("btnImprimirSel").disabled = n === 0;
+        $("txtImprimirSel").textContent = n ? `Imprimir seleccionados (${n})` : "Imprimir seleccionados";
+      }
       return;
     }
+
     if (e.target.closest(".td-check")) return;
+
     const fila = e.target.closest("tr[data-id]");
     if (fila) abrirQr(Number(fila.dataset.id));
   });

@@ -31,25 +31,21 @@
             <circle cx="11" cy="11" r="7"/>
             <path d="m20 20-3.5-3.5"/>
           </svg>
-          <input type="search" id="fBuscar" placeholder="Buscar por aula o ubicación" autocomplete="off" aria-label="Buscar aulas">
+          <input type="search" id="fBuscar" placeholder="Buscar por nombre de aula o ubicación" autocomplete="off" aria-label="Buscar aulas">
         </label>
+
         <select class="select" id="fColegio" aria-label="Filtrar por colegio" hidden>
           <option value="">Todos los colegios</option>
         </select>
+
+        <select class="select" id="fUbicacion" aria-label="Filtrar por ubicación">
+          <option value="">Todas las ubicaciones</option>
+        </select>
       </div>
 
-      <div class="table-wrap">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Aula</th>
-              <th>Ubicación</th>
-              <th>Colegio</th>
-              <th class="th-actions"><span class="sr-only">Acciones</span></th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
+      <div class="aulas-container">
+        <div class="grid-aulas" id="contenedorAulas"></div>
+
         <div class="empty" id="vacio" hidden>
           <strong>No hay aulas para mostrar</strong>
           <span>Cambia los filtros o crea un aula nueva.</span>
@@ -84,7 +80,7 @@
         <div class="grid">
           <div class="f f--full">
             <label for="nombre">Nombre del aula</label>
-            <input class="input" id="nombre" maxlength="100" autocomplete="off" placeholder="Ej.: Aula 101 o Laboratorio de Computación" required>
+            <input class="input" id="nombre" maxlength="100" autocomplete="off" placeholder="Ej.: Aula 101 o Laboratorio" required>
             <div class="meta">
               <small class="err" data-err="nombre"></small>
               <small class="count" id="cntNombre">0/100</small>

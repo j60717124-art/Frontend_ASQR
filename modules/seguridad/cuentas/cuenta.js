@@ -100,6 +100,7 @@ function abrirFormulario(cuenta) {
   $("btnGuardar").textContent = editando ? "Guardar cambios" : "Guardar cuenta";
   $("hintClave").textContent = editando ? "Déjala vacía para conservar la actual." : "Mínimo 8 caracteres, con al menos una letra y un número.";
   $("clave").type = "password";
+  $("verClave").setAttribute("aria-label", "Mostrar contraseña");
   $("idcuenta").value = cuenta?.idcuenta ?? "";
   $("n_usuario").value = cuenta?.n_usuario ?? "";
   $("correo").value = cuenta?.correo ?? "";
@@ -227,6 +228,7 @@ $("btnConfirmarEliminar").addEventListener("click", async () => {
 $("btnNueva").addEventListener("click", () => abrirFormulario(null));
 ["fBuscar", "fRol", "fEstado"].forEach(id => $(id).addEventListener("input", pintar));
 
+// Toggle de contraseña (el único que queda)
 $("verClave").addEventListener("click", () => {
   const c = $("clave");
   const ver = c.type === "password";

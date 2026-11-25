@@ -474,22 +474,42 @@
 .err:empty {
   display: none;
 }
+
+/* SECCIÓN DE CONTRASEÑA  */
 .pass {
   position: relative;
   display: flex;
   align-items: center;
 }
 .pass .input {
-  padding-right: 46px;
+  padding-right: 48px; /* Espacio para nuestro botón */
 }
-.pass .icon-btn,
-.pass .chip {
+.pass .input::-ms-reveal,
+.pass .input::-ms-clear {
+  display: none; /* Oculta el ojo nativo de Microsoft Edge/IE */
+}
+.pass .input::-webkit-search-cancel-button,
+.pass .input::-webkit-clear-button {
+  display: none; /* Oculta la X nativa de Webkit */
+}
+.pass .icon-btn {
   position: absolute;
-  right: 4px;
+  right: 6px;
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
 }
-.pass .chip {
-  right: 0;
- }
+.pass .icon-btn:hover {
+  background: var(--surface-alt);
+  color: var(--text);
+}
+.pass .icon-btn:focus {
+  outline: none; /* Quita el borde azul molesto al hacer clic */
+}
+
 .adv {
   margin-top: 20px;
   border-top: 1px solid var(--border);

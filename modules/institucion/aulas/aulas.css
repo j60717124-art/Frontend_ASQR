@@ -135,6 +135,7 @@
   flex-wrap: wrap;
   padding: 16px 20px;
   border-bottom: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .field-search {
@@ -229,103 +230,124 @@
   flex: 0 1 190px;
 }
 
-/* TABLA */
-.table-wrap {
-  overflow-x: auto;
+/* TARJETAS DE AULAS (CORREGIDO) */
+.aulas-container {
+  padding: 20px;
 }
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 700px;
-}
-.table th {
-  padding: 12px 20px;
-  text-align: left;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text-subtle);
-  background: var(--surface-alt);
-  white-space: nowrap;
-}
-.table td {
-  padding: 14px 20px;
-  font-size: 13.5px;
-  border-top: 1px solid var(--border);
-  vertical-align: middle;
-}
-.table tbody tr {
-  transition: background .2s ease;
-}
-.table tbody tr:hover {
-  background: var(--surface-alt);
-}
-.th-actions {
-  width: 100px;
-}
-.muted {
-  color: var(--text-muted);
-}
-.num {
-  font-variant-numeric: tabular-nums;
+.grid-aulas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
 }
 
-.user {
+.aula-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  /* CORRECCIÓN: Evita que la tarjeta se estire más de la cuenta */
+  min-width: 0;
+  overflow: hidden;
+}
+.aula-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgb(0 0 0 / .06);
+  border-color: var(--accent);
+}
+
+.aula-card__head {
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  min-width: 0;
+}
+.aula-card__body {
+  padding: 12px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.aula-card__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 8px 12px;
+  background: var(--surface-alt);
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 14px 14px;
+}
+
+.aula-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.aula-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  font-weight: 600;
+  color: var(--text-subtle);
+}
+.aula-info .muted {
+  font-size: 13.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ICONO DE AULA */
+.room {
   display: flex;
   align-items: center;
   gap: 12px;
   min-width: 0;
 }
-.user__avatar {
+.room__ico {
   width: 38px;
   height: 38px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
+  padding: 9px;
   flex-shrink: 0;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: #fff;
+  border-radius: 11px;
+  background: var(--accent-soft);
+  color: var(--accent);
 }
-.user strong {
-  font-size: 13.5px;
-  font-weight: 600;
- }
-
-.row-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 2px;
+.room__ico svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11.5px;
+.room strong {
+  font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.badge::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
+
+/* BADGE DEL COLEGIO (CORREGIDO) */
+.badge--school {
+  display: inline-flex;
+  background: var(--accent-soft);
+  color: var(--accent);
+  max-width: 100%;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 4px 10px;
 }
-.badge--ok  {
-  background: var(--success-soft);
-  color: var(--success);
+.badge--school::before {
+  display: none;
 }
-.badge--off {
-  background: var(--surface-alt);
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-}
-.badge--out {
-  background: color-mix(in srgb, var(--danger) 15%, transparent);
-  color: var(--danger);
+.badge--school span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .empty {
@@ -468,6 +490,32 @@
   display: none;
 }
 
+.input--area {
+  height: auto;
+  padding: 11px 12px;
+  resize: vertical;
+  min-height: 84px;
+  line-height: 1.45;
+}
+.meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 16px;
+}
+.count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-subtle);
+}
+.hint {
+  font-size: 12px;
+  color: var(--text-subtle);
+}
+.hint.is-warn {
+  color: var(--danger);
+}
+
 /* TOAST */
 .toast {
   position: fixed;
@@ -505,7 +553,7 @@
   .acc {
     padding: 20px 14px 40px;
     gap: 18px;
-  }}
+  }
   .acc-title {
     font-size: 21px;
   }
@@ -523,47 +571,11 @@
     flex: 1 1 100%;
   }
 
-  .table {
-    min-width: 0;
-  }
-  .table thead {
-    display: none;
-  }
-  .table, .table tbody, .table tr, .table td {
-    display: block;
-    width: 100%;
-  }
-  .table tr {
+  .aulas-container {
     padding: 14px;
-    border-top: 1px solid var(--border);
   }
-  .table tr:first-child {
-    border-top: 0;
-  }
-  .table td {
-    border: 0;
-    padding: 5px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-  }
-  .table td[data-label]::before {
-    content: attr(data-label);
-    font-size: 12px;
-    color: var(--text-subtle);
-    font-weight: 600;
-  }
-  .table td[data-label="Aula"] {
-    display: block;
-    padding-bottom: 8px;
-  }
-  .table td[data-label="Aula"]::before {
-    display: none;
-  }
-  .row-actions {
-    width: 100%;
-    padding-top: 4px;
+  .grid-aulas {
+    grid-template-columns: 1fr;
   }
 
   .pager {
@@ -578,95 +590,11 @@
   .modal__foot .btn {
     flex: 1;
   }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .modal[open], .toast {
     animation: none;
     transition: none;
-  }
-}
-
-/* ESPECÍFICO DE AULA  */
-.select[hidden] {
-  display: none;
-}
-
-.room {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-.room__ico {
-  width: 38px;
-  height: 38px;
-  padding: 9px;
-  flex-shrink: 0;
-  border-radius: 11px;
-  background: var(--accent-soft);
-  color: var(--accent);
-}
-.room__ico svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-.room strong {
-  font-size: 13.5px;
-  font-weight: 600;
-  overflow-wrap: anywhere;
-}
-
-.badge--school {
-  background: var(--accent-soft);
-  color: var(--accent);
-  max-width: 260px;
-}
-.badge--school::before {
-  display: none;
-}
-.badge--school span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.input--area {
-  height: auto;
-  padding: 11px 12px;
-  resize: vertical;
-  min-height: 84px;
-  line-height: 1.45;
-}
-.meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 16px;
-}
-.count {
-  margin-left: auto;
-  font-size: 12px;
-  color: var(--text-subtle);
-}
-.hint {
-  font-size: 12px;
-  color: var(--text-subtle);
-}
-.hint.is-warn {
-  color: var(--danger);
-}
-.table td.loc {
-  max-width: 340px;
-  overflow-wrap: anywhere;
-}
-
-@media (max-width: 700px) {
-  .table td.loc {
-    max-width: none;
-    text-align: right;
-  }
-  .badge--school {
-    max-width: 70%;
   }
 }

@@ -7,9 +7,10 @@ const $ = (id) => document.getElementById(id);
 const escapar = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const normalizar = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const limpiarEspacios = (s) => s.trim().replace(/\s+/g, " ");
-const nombreColegio = (id) => estado.colegios.find(c => c.idcolegio === id)?.nombre ?? "Sin colegio";
-const nombreNivel = (id) => estado.niveles.find(n => n.idnivel === id)?.nivel ?? "Sin nivel";
-const ordenNivel = (id) => { const i = estado.niveles.findIndex(n => n.idnivel === id); return i < 0 ? 999 : i; };
+const nombreColegio = (id) => estado.colegios.find(c => String(c.idcolegio) === String(id))?.nombre ?? "Sin colegio";
+const nombreNivel = (id) => estado.niveles.find(n => String(n.idnivel) === String(id))?.nivel ?? "Sin nivel";
+const ordenNivel = (id) => { const i = estado.niveles.findIndex(n => String(n.idnivel) === String(id)); return i < 0 ? 999 : i; };
+
 const ICO = {
   edit: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   del: '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/>',
@@ -85,7 +86,6 @@ function llenarCombos() {
 const dlg = $("dlgCurso");
 const form = $("formCurso");
 
-// Errores del backend que se muestran junto al campo correspondiente
 const REGLAS_ERROR = [[/colegio/i, "colegio_idcolegio"], [/nivel/i, "nivel_idnivel"], [/curso/i, "nombre"]];
 function contador() { $("cntNombre").textContent = `${$("nombre").value.length}/20`; }
 function limpiarErrores() {
@@ -125,13 +125,14 @@ function validar() {
   const nombre = limpiarEspacios($("nombre").value);
   const nivel = Number($("nivel_idnivel").value);
   const colegio = Number($("colegio_idcolegio").value);
+
   if (nombre.length < 1) { marcarError("nombre", "Escribe al menos 1 caracter."); ok = false; }
   if (!nivel) { marcarError("nivel_idnivel", "Selecciona el nivel del curso."); ok = false; }
   if (!colegio) { marcarError("colegio_idcolegio", "Selecciona el colegio."); ok = false; }
 
-  // Validación local para evitar duplicados
+  // Validación local para evitar duplicados (convirtiendo a String para evitar fallos)
   if (nombre.length >= 1 && nivel && colegio &&
-      estado.cursos.some(c => c.idcurso !== id && c.nivel_idnivel === nivel && c.colegio_idcolegio === colegio && normalizar(c.nombre) === normalizar(nombre))) {
+      estado.cursos.some(c => String(c.idcurso) !== String(id) && String(c.nivel_idnivel) === String(nivel) && String(c.colegio_idcolegio) === String(colegio) && normalizar(c.nombre) === normalizar(nombre))) {
     marcarError("nombre", "Ya existe un curso con ese nombre en este nivel y colegio."); ok = false;
   }
   return ok;
@@ -172,16 +173,24 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-// ACCIONES DE FILA
+// ACCIONES DE FILA (CORREGIDO)
 let idEliminar = null;
 
 $("tbody").addEventListener("click", (e) => {
   const btn = e.target.closest("[data-accion]");
   if (!btn) return;
-  const cur = estado.cursos.find(x => x.idcurso === Number(btn.dataset.id));
-  if (!cur) return;
+
+  const id = String(btn.dataset.id);
+  // Buscamos comparando ambos lados como String
+  const cur = estado.cursos.find(x => String(x.idcurso) === id);
+
+  if (!cur) {
+    console.warn("Curso no encontrado para id:", id);
+    return;
+  }
 
   if (btn.dataset.accion === "editar") abrirFormulario(cur);
+
   if (btn.dataset.accion === "eliminar") {
     idEliminar = cur.idcurso;
     $("delTexto").textContent = `Se eliminará el curso «${cur.nombre}» de ${nombreNivel(cur.nivel_idnivel)}. Esta acción no se puede deshacer.`;
